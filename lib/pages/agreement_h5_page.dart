@@ -19,14 +19,11 @@ class _AgreementH5PageState extends State<AgreementH5Page> {
   @override
   void initState() {
     super.initState();
-    filePath = widget.index == 0 ? 'assets/yhxy.html' : 'assets/ysxy.html';
+    filePath = widget.index == 0 ? 'https://yimabao.cn/readtemplate/user-agreement' : 'https://yimabao.cn/readtemplate/privacy-policy';
   }
 
   _loadHtmlFromAssets() async {
-    String fileHtmlContents = await rootBundle.loadString(filePath);
-    _webViewController.loadUrl(Uri.dataFromString(fileHtmlContents,
-        mimeType: 'text/html', encoding: Encoding.getByName('utf-8'))
-        .toString());
+    _webViewController.loadUrl(filePath);
   }
   @override
   void dispose() {

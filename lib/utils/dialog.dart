@@ -14,6 +14,10 @@ typedef DialogBtnAction = void Function();
 
 class MyDialog {
 
+  static showWith(BuildContext context, {required String message, bool barrierDismissible = true, required DialogBtnAction sureBtnAction , String title = "提示", String cancelBtnTitle = "取消", String sureBtnTitle = "确定", DialogBtnAction? cancelAction, bool isOnlysureBtn = false, bool onWillPopValue = true}) {
+    MyDialog.showCustomDialog(context: context, msg: message, sureBtnCallback: sureBtnAction, cancelBtnTitle: cancelBtnTitle, sureBtnTitle: sureBtnTitle, title: title, barrierDismissible: barrierDismissible, cancelBtnCallback: cancelAction, isOnlySureBtn: isOnlysureBtn, onWillPopValue: onWillPopValue);
+  }
+
   static Future<T?> showAddRecordDateDialog<T>({required BuildContext context, Widget? customBody, String title = "记录哪一天"}) {
     return showCustomDialog<T?>(context: context, isHideBottomBar: true, customBody: customBody, title: title, msg: null);
   }

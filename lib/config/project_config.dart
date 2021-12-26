@@ -1,6 +1,7 @@
 class ProjectConfig{
   static const bool DEBUG = false;
-  static const String BASE_URL = "http://yimabao.cn";
+  static const String BASE_URL = "http://api.yimabao.cn";
+  // static const String DOWN_BASE_URL = "https://api.yimabao.cn";
   static const String APP_NAME = '';
   static const String COOKIE_KEY = '';
   static const String IOS_APP_ID = "";
@@ -12,4 +13,6 @@ class ProjectConfig{
   static const cycleKey = "CYCLEKEY";
   static const String adAndroidAppId = "5191472";
   static const String adAndroidId = "887507780";
+  static const String adIosAppId = "5240487";
+  static const String adIosId = "887636059";
 }

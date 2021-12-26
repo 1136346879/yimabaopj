@@ -7,9 +7,20 @@ class CacheUtil {
   /// 获取缓存大小
   static Future<String> total() async {
     Directory tempDir = await getTemporaryDirectory();
-    print("---------123----${tempDir}");
-    if (tempDir == null) return "0.0K";
-    int total = await _reduce(tempDir);
+    Directory? fileDir;
+    if(Platform.isAndroid) {
+      fileDir = await getExternalStorageDirectory();
+    }
+    Directory? apkDir;
+    if(fileDir != null) {
+      var _locatPath = fileDir.path + '/Download/';
+      apkDir = Directory(_locatPath!);
+    }
+    // print("---------123----${tempDir}");
+    if (tempDir == null && apkDir == null) return "0.0K";
+    int tempTotal = await _reduce(tempDir);
+    int apkTotal = apkDir == null ? 0 : await _reduce(apkDir);
+    int total = tempTotal + apkTotal;
     if(total == 0) {
       return "0.0K";
     }
@@ -22,6 +33,18 @@ class CacheUtil {
     Directory tempDir = await getTemporaryDirectory();
     if (tempDir == null) return;
     await _delete(tempDir);
+
+    Directory? fileDir;
+    if(Platform.isAndroid) {
+      fileDir = await getExternalStorageDirectory();
+    }
+    Directory? apkDir;
+
+    if(fileDir != null) {
+      var _locatPath = fileDir.path + '/Download/';
+      apkDir = Directory(_locatPath!);
+      await apkDir.delete(recursive: true);
+    }
   }
 
   /// 递归缓存目录，计算缓存大小

@@ -4,6 +4,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_unionad/flutter_unionad.dart';
+import 'package:fluwx_no_pay/fluwx_no_pay.dart';
+import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
+// import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:yimareport/api/db_api.dart';
 import 'package:yimareport/config/project_config.dart';
@@ -26,6 +29,7 @@ class _LoadingPageState extends State<LoadingPage> with SingleTickerProviderStat
     SystemChrome.setEnabledSystemUIOverlays([]);
     // _requestPermission();
     WidgetsBinding.instance?.addPostFrameCallback((_) async {
+      registerWxApi(appId: "wxfa505eddadc31630",universalLink: "https://www.yimabao.cn/apple-app-site-association");
       _privacy();
       _initRegister();
       await DBAPI.load();
@@ -38,9 +42,16 @@ class _LoadingPageState extends State<LoadingPage> with SingleTickerProviderStat
     SystemChrome.setEnabledSystemUIOverlays(SystemUiOverlay.values);
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     bool hasAgree = sharedPreferences.getBool(ProjectConfig.agreementKey) ?? false;
-    Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) {
-      return hasAgree ? HomePage() : AgreementPage();
-    }));
+    // if(Platform.isAndroid) {
+      Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) {
+        return hasAgree ? HomePage() : AgreementPage();
+      }));
+    // } else {
+    //   Navigator.pushReplacement(context, CupertinoPageRoute(builder: (_) {
+    //     return hasAgree ? HomePage() : AgreementPage();
+    //   }));
+    // }
+
   }
   @override
   void dispose() {
@@ -52,7 +63,7 @@ class _LoadingPageState extends State<LoadingPage> with SingleTickerProviderStat
     _init = await FlutterUnionad.register(
         androidAppId: "${ProjectConfig.adAndroidAppId}",
         //穿山甲广告 Android appid 必填
-        iosAppId: "5098580",
+        iosAppId: "${ProjectConfig.adIosAppId}",
         //穿山甲广告 ios appid 必填
         useTextureView: true,
         //使用TextureView控件播放视频,默认为SurfaceView,当有SurfaceView冲突的场景，可以使用TextureView 选填
@@ -79,7 +90,7 @@ class _LoadingPageState extends State<LoadingPage> with SingleTickerProviderStat
   }
 
   // void _requestPermission() async {
-  //   await [Permission.storage, Permission.phone].request();
+  //   await [Permission.storage, Permission.requestInstallPackages].request();
   //   if (await Permission.storage.isDenied) {
   //     // showToast('权限被禁用，部分功能可能无法使用');
   //   }
@@ -123,7 +134,7 @@ class _LoadingPageState extends State<LoadingPage> with SingleTickerProviderStat
                 //android 开屏广告广告id 必填
                 androidCodeId: "${ProjectConfig.adAndroidId}",
                 //ios 开屏广告广告id 必填
-                iosCodeId: "887367774",
+                iosCodeId: "${ProjectConfig.adIosId}",
                 //是否支持 DeepLink 选填
                 supportDeepLink: true,
                 // 期望view 宽度 dp 选填 mIsExpress=true必填
@@ -141,6 +152,7 @@ class _LoadingPageState extends State<LoadingPage> with SingleTickerProviderStat
                     // Navigator.pop(context);
                   },
                   onFail: (error) {
+                    print("开屏广告fail: ${error.toString()}");
                     goToNextPage();
                   },
                   onFinish: () {
@@ -152,6 +164,7 @@ class _LoadingPageState extends State<LoadingPage> with SingleTickerProviderStat
                     goToNextPage();
                   },
                   onTimeOut: () {
+                    print("开屏超时");
                     goToNextPage();
                   },
                 ),
@@ -166,6 +179,7 @@ class _LoadingPageState extends State<LoadingPage> with SingleTickerProviderStat
     }
     return Scaffold(
       body: Container(
+        color: Colors.black,
         child: contentView(),
       ),
     );

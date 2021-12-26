@@ -23,10 +23,10 @@ class MineAPI {
   static SharedPreferences? prefs;
 
   // //获取版本信息
-  final VERSIONINFO = "/version/update";
+  final VERSIONINFO = "/deploy/appver";
   Future<VersionEntity> versionInfo(Map<String, dynamic> params,{BuildContext? buildContext}) async {
     // var personId = userinfo.personId;
-    VersionEntity entity = await HttpManager.instance.request<VersionEntity>(Method.POST, VERSIONINFO, params: params, buildContext: buildContext);
+    VersionEntity entity = await HttpManager.instance.request<VersionEntity>(Method.GET, VERSIONINFO, params: params, buildContext: buildContext, contentType: HttpContentType.form);
     return entity;
   }
 

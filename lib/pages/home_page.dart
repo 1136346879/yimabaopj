@@ -1,12 +1,17 @@
+import 'dart:io';
+import 'dart:math';
+
 import 'package:flustars/flustars.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:package_info/package_info.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:yimareport/api/db_api.dart';
 import 'package:yimareport/config/project_config.dart';
 import 'package:yimareport/config/project_style.dart';
 import 'package:yimareport/db/entities/record.dart';
+import 'package:yimareport/entities/version_entity.dart';
 import 'package:yimareport/request/mine_api.dart';
 import 'package:yimareport/utils/dialog.dart';
 
@@ -34,7 +39,6 @@ class _HomePageState extends State<HomePage> {
     WidgetsBinding.instance?.addPostFrameCallback((_) async {
       refreshRecord();
       getCycle();
-      fetchVersionInfo();
     });
   }
   getCycle() async {
@@ -137,9 +141,7 @@ class _HomePageState extends State<HomePage> {
       addRecord();
     }, title: title, sureBtnTitleColor: Colors.blue, cancelBtnTitleColor: Colors.blue);
   }
-  fetchVersionInfo() {
-    MineAPI.instance.versionInfo({"verNum": "1.0"});
-  }
+
 
   getNowDate() {
     // return _now;
@@ -211,7 +213,7 @@ class _HomePageState extends State<HomePage> {
             Container(
               margin: EdgeInsets.all(10.0),
               padding: EdgeInsets.all(10.0),
-              height: 400,
+              height: min(MediaQuery.of(context).size.width, MediaQuery.of(context).size.height * 0.4) ,
               decoration: new BoxDecoration(
                 color: Colors.black,
                 borderRadius: BorderRadius.all(Radius.circular(8.0)),
@@ -402,7 +404,7 @@ class _HomePageState extends State<HomePage> {
     }
     return Scaffold(
       appBar: AppBar(
-        leadingWidth: 150,
+        leadingWidth: 170,
         brightness: Brightness.dark,
         elevation: 0,
         backgroundColor: PS.backgroundColor,
@@ -417,7 +419,7 @@ class _HomePageState extends State<HomePage> {
                 refreshRecord();
                 getCycle();
               },
-              child: Icon(Icons.settings),
+              child: Icon(Icons.settings, size: 32,),
           )),
           SizedBox(width: 10,)
         ],

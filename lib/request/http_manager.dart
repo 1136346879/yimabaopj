@@ -55,13 +55,13 @@ class HttpManager {
     };
     dio.interceptors.add(_CookieInterceptor());
     dio.interceptors.add(LogInterceptor(responseBody: true, requestBody: true));
-    (dio.httpClientAdapter as DefaultHttpClientAdapter).onHttpClientCreate =
-         (client) {
-       client.findProxy = (uri) {
-         return "PROXY 192.168.2.151:8888";
-         return "PROXY 192.168.1.102:8888";
-       };
-     };
+    // (dio.httpClientAdapter as DefaultHttpClientAdapter).onHttpClientCreate =
+    //      (client) {
+    //    client.findProxy = (uri) {
+    //      return "PROXY 192.168.123.96:8888";
+    //      return "PROXY 192.168.1.102:8888";
+    //    };
+    //  };
   }
   //
   // setDomain(String httpPrefix, String url) async {
@@ -211,9 +211,9 @@ class _CookieInterceptor extends Interceptor {
   @override
   void onResponse(Response response, ResponseInterceptorHandler handler) {
     //接口code判断全拦截？
-    if(response?.statusCode == 200 && response?.data["code"] != 200) {
+    if(response?.statusCode == 200 && response?.data["status"] != 'success') {
       var exceptionMsg = "${response?.data["message"] ?? ""}";
-      print("code: ${response?.data["code"] ?? ""} message: ${exceptionMsg}");
+      print("code: ${response?.data["status"] ?? ""} message: ${exceptionMsg}");
       var serverException = DioError(requestOptions: response.requestOptions, response: response, error: exceptionMsg);
       handler.reject(serverException);
       return;

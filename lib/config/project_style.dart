@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 class PS {
   static const double largeTextTitleSize = 36.0;  //标题文字大小
   static const double textTitleSize = 20.0;  //标题文字大小
-  static const double textNormalSize = 17.0;  //普通文字大小
+  static const double textNormalSize = 16.0;  //普通文字大小
   static const double textSmallSize = 15.0;  //samll文字大小
   static const double buttonNormalHeight = 45.0;  //普通按钮大小
   static const double buttonSmallHeight = 30.0;  //普通按钮大小
