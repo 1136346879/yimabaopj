@@ -7,6 +7,7 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:yimareport/config/project_config.dart';
 import 'package:yimareport/config/project_style.dart';
+import 'package:yimareport/request/mine_api.dart';
 import 'package:yimareport/utils/my_router.dart';
 import 'package:yimareport/view/custom_button.dart';
 
@@ -287,8 +288,17 @@ class _CycleDialogContentState extends State<CycleDialogContent> {
   }
   setCycle(int doing, int cycle) async {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-    sharedPreferences.setInt(ProjectConfig.doingKey, doing);
-    sharedPreferences.setInt(ProjectConfig.cycleKey, cycle);
+
+    if(MineAPI.instance.getAccount() != null) {
+      sharedPreferences.setInt(ProjectConfig.doingKey, doing);
+      sharedPreferences.setInt(ProjectConfig.cycleKey, cycle);
+      sharedPreferences.setInt(ProjectConfig.cycleNeedSyncKey, DateTime.now().millisecondsSinceEpoch);
+    } else {
+      sharedPreferences.setInt(ProjectConfig.localDoingKey, doing);
+      sharedPreferences.setInt(ProjectConfig.localCycleKey, cycle);
+    }
+    await MineAPI.instance.memberSyncCircle();
+
   }
   @override
   Widget build(BuildContext context) {

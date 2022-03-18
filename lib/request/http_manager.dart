@@ -10,6 +10,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:yimareport/config/project_config.dart';
 import 'package:yimareport/generated/json/base/json_convert_content.dart';
 import 'package:yimareport/utils/dialog.dart';
+import 'package:yimareport/utils/my_router.dart';
 import 'package:yimareport/utils/toast_util.dart';
 
 class CacheDomain {
@@ -59,7 +60,7 @@ class HttpManager {
     //      (client) {
     //    client.findProxy = (uri) {
     //      return "PROXY 192.168.123.96:8888";
-    //      return "PROXY 192.168.1.102:8888";
+    //      return "10.1.6.119:8888";
     //    };
     //  };
   }
@@ -101,6 +102,7 @@ class HttpManager {
       if (ProjectConfig.DEBUG) Logger.log(_dataMap.toString());
       t = JsonConvert.fromJsonAsT(_dataMap);
       await _loadingDialog?.dismissLoadingDialog();
+      // MyDialog.showAlertDialog(MyRouter.navigatorKey.currentContext!, () { }, title: , message: "123");
       return t;
     } catch (error) {
       await _loadingDialog?.dismissLoadingDialog();

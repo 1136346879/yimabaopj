@@ -1,5 +1,7 @@
 import 'dart:io';
 
+import 'package:device_info/device_info.dart';
+import 'package:flustars/flustars.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -10,7 +12,10 @@ import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:yimareport/api/db_api.dart';
 import 'package:yimareport/config/project_config.dart';
+import 'package:yimareport/db/entities/local_record.dart';
+import 'package:yimareport/db/entities/record.dart';
 import 'package:yimareport/pages/home_page.dart';
+import 'package:yimareport/request/mine_api.dart';
 
 import 'agreement_page.dart';
 
@@ -33,10 +38,22 @@ class _LoadingPageState extends State<LoadingPage> with SingleTickerProviderStat
       _privacy();
       _initRegister();
       await DBAPI.load();
+      MineAPI();
+      // await Future.delayed(const Duration(milliseconds: 1000));
+      await dbMigration();
       SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
       ProjectConfig.yimaCycle = sharedPreferences.getInt(ProjectConfig.doingKey) ?? 7;
       ProjectConfig.yimaDuration = sharedPreferences.getInt(ProjectConfig.cycleKey) ?? 28;
     });
+  }
+  Future<void> initPlatformState() async {
+    DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
+    AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
+    // androidInfo.androidId //android唯一标识
+    // androidInfo.model; //android设备名
+    // xx.identifierForVendor//ios 唯一标识
+    // xx.name//ios设备名
+    print('Running on ${androidInfo.model}');  // e.g. "Moto G (4)"
   }
   goToNextPage() async {
     SystemChrome.setEnabledSystemUIOverlays(SystemUiOverlay.values);
@@ -52,6 +69,26 @@ class _LoadingPageState extends State<LoadingPage> with SingleTickerProviderStat
     //   }));
     // }
 
+  }
+  dbMigration() async {
+    print("转移数据");
+    //数据导到新表， 更改字段及类型
+    List<Record>? _dataSource = await DBAPI.sharedInstance.recordDao.findAllRecords();
+    print("数据长度-- ${_dataSource.length}");
+    if(_dataSource.length == 0) return;
+    List<LocalRecord> _localData = _dataSource.map((item) {
+      LocalRecord localRecord = LocalRecord(
+          null,
+          "${DateUtil.getDateTime(item.operationTime)!.millisecondsSinceEpoch}",
+          "${DateUtil.getDateTime(item.addTime)!.millisecondsSinceEpoch}",
+          item.type,
+          isDeleted: item.isDeleted
+      );
+      // LocalRecord localRecord = LocalRecord()..markAt = DateUtil.getDateTime(item.operationTime)!.millisecondsSinceEpoch..createAt = DateUtil.getDateTime(item.addTime)!.millisecondsSinceEpoch..type = item.type..isDeleted = item.isDeleted;
+      return localRecord;
+    }).toList();
+    await DBAPI.sharedInstance.localRecordDao.batchInsertRecords(_localData);
+    await DBAPI.sharedInstance.recordDao.deleteAll();
   }
   @override
   void dispose() {
@@ -151,8 +188,9 @@ class _LoadingPageState extends State<LoadingPage> with SingleTickerProviderStat
                     print("开屏广告点击");
                     // Navigator.pop(context);
                   },
-                  onFail: (error) {
+                  onFail: (error) async {
                     print("开屏广告fail: ${error.toString()}");
+                    await Future.delayed(const Duration(milliseconds: 1000));
                     goToNextPage();
                   },
                   onFinish: () {

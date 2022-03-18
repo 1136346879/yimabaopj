@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:package_info/package_info.dart';
 import 'package:yimareport/config/project_style.dart';
+import 'package:yimareport/utils/version_update_util.dart';
 
 import 'agreement_h5_page.dart';
 
@@ -22,6 +23,9 @@ class _AboutPageState extends State<AboutPage> {
     _localVersion = packageInfo.version;
     setState(() {});
   }
+  fetchVersionInfo() async {
+    VersionUpdateUtil().checkVersion(context);
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -33,6 +37,7 @@ class _AboutPageState extends State<AboutPage> {
         backgroundColor: PS.backgroundColor,
       ),
       body: Container(
+        color: Colors.grey.shade200,
         child: ListView(
           physics: const NeverScrollableScrollPhysics(),
           children: [
@@ -44,6 +49,7 @@ class _AboutPageState extends State<AboutPage> {
                 }));
               },
               child: Container(
+                color: Colors.white,
                 padding: EdgeInsets.all(16),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -63,6 +69,7 @@ class _AboutPageState extends State<AboutPage> {
                 }));
               },
               child: Container(
+                color: Colors.white,
                 padding: EdgeInsets.all(16),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -75,6 +82,7 @@ class _AboutPageState extends State<AboutPage> {
             ),
             Divider(height: 1,),
             Container(
+              color: Colors.white,
               padding: EdgeInsets.all(16),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -88,6 +96,26 @@ class _AboutPageState extends State<AboutPage> {
                 ],
               ),
             ),
+
+            Divider(height: 1,),
+
+            GestureDetector(
+              behavior: HitTestBehavior.opaque,
+              onTap: () async {
+                fetchVersionInfo();
+              },
+              child: Container(
+                color: Colors.white,
+                padding: EdgeInsets.all(16),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text("检查更新", style: PS.normalTextStyle(),),
+                    // Icon(Icons.chevron_right, color: Colors.grey,)
+                  ],
+                ),
+              ),
+            ),
             Divider(height: 1,),
 
             GestureDetector(
@@ -95,6 +123,7 @@ class _AboutPageState extends State<AboutPage> {
               onTap: () async {
               },
               child: Container(
+                color: Colors.white,
                 padding: EdgeInsets.all(16),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,

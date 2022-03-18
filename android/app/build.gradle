@@ -49,6 +49,12 @@ android {
             keyAlias 'ymb'
             keyPassword '123456'
         }
+        debug {
+            storeFile rootProject.file('key/ymb.jsk')
+            storePassword '123456'
+            keyAlias 'ymb'
+            keyPassword '123456'
+        }
     }
 
     buildTypes {

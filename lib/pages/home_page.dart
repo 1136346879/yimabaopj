@@ -1,17 +1,17 @@
 import 'dart:io';
 import 'dart:math';
 
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flustars/flustars.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:package_info/package_info.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:yimareport/api/db_api.dart';
 import 'package:yimareport/config/project_config.dart';
 import 'package:yimareport/config/project_style.dart';
-import 'package:yimareport/db/entities/record.dart';
-import 'package:yimareport/entities/version_entity.dart';
+import 'package:yimareport/db/entities/local_record.dart';
+import 'package:yimareport/db/entities/member_record.dart';
 import 'package:yimareport/request/mine_api.dart';
 import 'package:yimareport/utils/dialog.dart';
 
@@ -22,51 +22,107 @@ class HomePage extends StatefulWidget {
   _HomePageState createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
 
-  Record? lastRecord;
-  List<List<Record>> dataSource = [];
+  dynamic lastRecord;
+  List<List<dynamic>> dataSource = [];
   AddRecordDateDialogController _addRecordDateDialogController = AddRecordDateDialogController();
   DateTime _now = DateTime.now();
   bool isHideOperationArea = false;
   late int doingVal = 7;
   late int cycleVal = 28;
   var lastPopTime;
-
+  var netSubscription;
+  var isFirstLoad = true;
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance?.addPostFrameCallback((_) async {
-      refreshRecord();
-      getCycle();
+      await MineAPI.instance.memberSyncData();
+      await refreshRecord();
+      await getCycle();
+    });
+    WidgetsBinding.instance?.addObserver(this);
+    netSubscription = Connectivity().onConnectivityChanged.listen((ConnectivityResult result) async {
+      if(result == ConnectivityResult.mobile || result == ConnectivityResult.wifi) {
+        if(isFirstLoad) {
+          isFirstLoad = false;
+          return;
+        }
+        //监听网络变化
+        await MineAPI.instance.memberSyncData();
+        await MineAPI.instance.memberSyncCircle();
+        await refreshRecord();
+        await getCycle();
+      }
     });
   }
+  @override
+  Future<void> didChangeAppLifecycleState(AppLifecycleState state) async {
+    super.didChangeAppLifecycleState(state);
+    print('state = $state');
+    if(state == AppLifecycleState.paused) {
+      print('APP进入后台');
+    } else  if (state == AppLifecycleState.resumed) {
+      print('APP进入前台');
+      await MineAPI.instance.memberSyncData();
+      await MineAPI.instance.memberSyncCircle();
+      await refreshRecord();
+      await getCycle();
+    } else  if (state == AppLifecycleState.inactive) {
+
+    }
+  }
+
+  ///移除监听器
+  @override
+  void dispose() {
+    WidgetsBinding.instance?.removeObserver(this);
+    netSubscription.cancel();
+    super.dispose();
+  }
   getCycle() async {
+    await MineAPI.instance.memberSyncCircle();
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-    doingVal = sharedPreferences.getInt(ProjectConfig.doingKey) ?? 7;
-    cycleVal = sharedPreferences.getInt(ProjectConfig.cycleKey) ?? 28;
+    if(MineAPI.instance.getAccount() != null) {
+      doingVal = sharedPreferences.getInt(ProjectConfig.doingKey) ?? 7;
+      cycleVal = sharedPreferences.getInt(ProjectConfig.cycleKey) ?? 28;
+    } else {
+      doingVal = sharedPreferences.getInt(ProjectConfig.localDoingKey) ?? 7;
+      cycleVal = sharedPreferences.getInt(ProjectConfig.localCycleKey) ?? 28;
+    }
+
     setState(() {});
   }
   refreshRecord() async {
-    lastRecord = await getLastRecord();
     dataSource = await getAllRecords();
+    lastRecord = await getLastRecord();
     var _isHideOperationArea = false;
     //如果经期 > 设定值+2 自动标记经期结束, 日期为标定日期
     if(lastRecord != null) {
       //判断
-      var duration = getNowDate().difference(DateUtil.getDateTime(lastRecord!.operationTime)!).inDays + 1;
-      var isDoing = lastRecord!.type == 1;
+      var duration = getNowDate().difference(DateUtil.getDateTimeByMs(int.parse(lastRecord["markAt"]))).inDays + 1;
+      var isDoing = lastRecord["type"] == 1;
       var circle = isDoing ? doingVal : cycleVal;
       if(isDoing) {
         if (duration > 14 ) {
           // 更改：经期状态持续14天，若大于14天仍未标记结束，则自动标记设定值当天结束。
-          var record = Record(
+          // var record = Record(
+          //     null,
+          //     DateUtil.formatDate(DateUtil.getDateTime(lastRecord!.operationTime)!.add(Duration(days: circle - 1)) ,format: "yyyy-MM-dd"),
+          //     DateUtil.formatDate(getNowDate(),format: "yyyy-MM-dd"),
+          //     2
+          // );
+          // await DBAPI.sharedInstance.recordDao.insertRecord(record);
+          // var record = LocalRecord()..markAt = DateUtil.getDateTimeByMs(lastRecord!.markAt!).add(Duration(days: circle - 1)).millisecondsSinceEpoch..createAt = getNowDate().millisecondsSinceEpoch..type = 2;
+          var record = LocalRecord(
               null,
-              DateUtil.formatDate(DateUtil.getDateTime(lastRecord!.operationTime)!.add(Duration(days: circle - 1)) ,format: "yyyy-MM-dd"),
-              DateUtil.formatDate(getNowDate(),format: "yyyy-MM-dd"),
+              "${DateUtil.getDateTimeByMs(int.parse(lastRecord["markAt"])).add(Duration(days: circle - 1)).millisecondsSinceEpoch}",
+              "${getNowDate().millisecondsSinceEpoch}",
               2
           );
-          await DBAPI.sharedInstance.recordDao.insertRecord(record);
+          // await DBAPI.sharedInstance.localRecordDao.insertRecord(record);
+          await MineAPI.instance.insertRecord(record, buildContext: context);
           refreshRecord();
         }
         else if (duration < 3) {
@@ -89,24 +145,50 @@ class _HomePageState extends State<HomePage> {
     } else if (recordDateType == "前天") {
       date = getNowDate().subtract(Duration(days: 2));
     }
-    var record = Record(
-        null,
-        DateUtil.formatDate(date,format: "yyyy-MM-dd"),
-        DateUtil.formatDate(getNowDate(),format: "yyyy-MM-dd"),
-        lastRecord?.type == 1 ? 2 : 1
-    );
-    await DBAPI.sharedInstance.recordDao.insertRecord(record);
+    // var record = Record(
+    //     null,
+    //     DateUtil.formatDate(date,format: "yyyy-MM-dd"),
+    //     DateUtil.formatDate(getNowDate(),format: "yyyy-MM-dd"),
+    //     lastRecord?.type == 1 ? 2 : 1
+    // );
+    // await DBAPI.sharedInstance.recordDao.insertRecord(record);
+    // var record = LocalRecord()..markAt = date.millisecondsSinceEpoch..createAt = getNowDate().millisecondsSinceEpoch..type = lastRecord?.type == 1 ? 2 : 1;
+    var account = MineAPI.instance.getAccount();
+    if(account != null) {
+      var record = MemberRecord(
+          null,
+          "${date.millisecondsSinceEpoch}",
+          "${getNowDate().millisecondsSinceEpoch}",
+          lastRecord == null ? 1 : lastRecord["type"] == 1 ? 2 : 1,
+          account.user_id!
+      );
+      await MineAPI.instance.insertRecord(record);
+    } else {
+      var record = LocalRecord(
+          null,
+          "${date.millisecondsSinceEpoch}",
+          "${getNowDate().millisecondsSinceEpoch}",
+          lastRecord == null ? 1 : lastRecord["type"] == 1 ? 2 : 1
+      );
+      await MineAPI.instance.insertRecord(record);
+    }
+    // await DBAPI.sharedInstance.localRecordDao.insertRecord(record);
+
     refreshRecord();
   }
   getLastRecord() async {
-    var last = await DBAPI.sharedInstance.recordDao.findLastRecord();
+    // var last = await DBAPI.sharedInstance.localRecordDao.findLastRecord();
+    // return last;
+    var last = await MineAPI.instance.getLastRecord();
     return last;
   }
   getAllRecords() async {
-    List<Record>? _dataSource = await DBAPI.sharedInstance.recordDao.findAllRecords();
-    List<List<Record>> result = [];
-    List<Record> tempItem = [];
-    _dataSource.asMap().forEach((index, element) {
+    // List<LocalRecord>? _dataSource = await DBAPI.sharedInstance.localRecordDao.findAllRecords();
+    List<dynamic>? _dataSource = await MineAPI.instance.getAllRecord();
+    print("展示数据长度${_dataSource?.length}");
+    List<List<dynamic>> result = [];
+    List<dynamic> tempItem = [];
+    _dataSource?.asMap().forEach((index, element) {
       tempItem.add(element);
       if(tempItem.length == 2) {
         result.add(tempItem);
@@ -133,7 +215,7 @@ class _HomePageState extends State<HomePage> {
         date = getNowDate().subtract(Duration(days: 2));
       }
       //判断
-      var isDoing = lastRecord!.type == 1;
+      var isDoing = lastRecord["type"] == 1;
       title = isDoing ? "姨妈走了吗?" : "姨妈来了吗?";
     }
 
@@ -144,12 +226,16 @@ class _HomePageState extends State<HomePage> {
 
 
   getNowDate() {
-    // return _now;
-    return DateTime.now();
+    String ymd = DateUtil.formatDate(_now, format: "yyyy-MM-dd");
+    String hms = DateUtil.formatDate(DateTime.now(), format: "HH:mm:ss");
+    DateTime? time = DateUtil.getDateTime("${ymd} ${hms}");
+    // DateTime.now() = date.month;
+    return time!;
+    // return DateTime.now();
   }
 
   Future<void> _selectDate() async {
-    return;
+    // return;
     final DateTime? date = await showDatePicker(
       context: context,
       initialDate: _now,
@@ -157,7 +243,11 @@ class _HomePageState extends State<HomePage> {
       lastDate: DateTime(2100),
     );
     if (date == null) return;
-    _now = date;
+    String ymd = DateUtil.formatDate(date, format: "yyyy-MM-dd");
+    String hms = DateUtil.formatDate(DateTime.now(), format: "HH:mm:ss");
+    DateTime? time = DateUtil.getDateTime("${ymd} ${hms}");
+    // DateTime.now() = date.month;
+    _now = time!;
     ProjectConfig.now = _now;
     setState(() {
 
@@ -170,8 +260,8 @@ class _HomePageState extends State<HomePage> {
     Widget contentView() {
       if(lastRecord != null) {
         //判断
-        var duration = getNowDate().difference(DateUtil.getDateTime(lastRecord!.operationTime)!).inDays + 1;
-        var isDoing = lastRecord!.type == 1;
+        var duration = getNowDate().difference(DateUtil.getDateTimeByMs(int.parse(lastRecord["markAt"]))).inDays + 1;
+        var isDoing = lastRecord["type"] == 1;
         var circle = isDoing ? doingVal : cycleVal;
         var tip = "";
         if(isDoing) {
@@ -234,9 +324,9 @@ class _HomePageState extends State<HomePage> {
                           children: [
                             Padding(
                               padding: const EdgeInsets.only(top: 5.0),
-                              child: Text("${DateUtil.formatDateStr(lastRecord?.operationTime ?? "",format: "MM月dd日")}", style: PS.smallTextStyle(color: Colors.white),),
+                              child: Text("${DateUtil.formatDateMs(int.parse(lastRecord['markAt']),format: "MM月dd日")}", style: PS.smallTextStyle(color: Colors.white),),
                             ),
-                            Text("${lastRecord!.type == 1 ? "来" : "走"}", style: PS.largeTitleTextStyle(color: Colors.white),)
+                            Text("${lastRecord["type"] == 1 ? "来" : "走"}", style: PS.largeTitleTextStyle(color: Colors.white),)
                           ],
                           crossAxisAlignment: CrossAxisAlignment.start,
                         ),
@@ -262,7 +352,7 @@ class _HomePageState extends State<HomePage> {
                             padding: const EdgeInsets.only(bottom: 30.0, right: 5),
                             child: Text("第", style: PS.titleTextStyle(color: Colors.white),),
                           ),
-                          Text("${getNowDate().difference(DateUtil.getDateTime(lastRecord!.operationTime)!).inDays + 1}", style: TextStyle(color: Colors.white, fontSize: 120),),
+                          Text("${getNowDate().difference(DateUtil.getDateTimeByMs(int.parse(lastRecord["markAt"]))).inDays + 1}", style: TextStyle(color: Colors.white, fontSize: 120),),
                           Padding(
                             padding: const EdgeInsets.only(bottom: 30.0, left: 5),
                             child: Text("天", style: PS.titleTextStyle(color: Colors.white),),
@@ -335,14 +425,14 @@ class _HomePageState extends State<HomePage> {
                           Row(children: [
                             Text("姨妈期：", style: PS.normalTextStyle(color: Colors.white),),
                             SizedBox(width: 5,),
-                            Text(dataSource[index].length == 2 ?  "${(DateUtil.getDateTime(dataSource[index].last.operationTime)!.difference(DateUtil.getDateTime(dataSource[index].first.operationTime)!).inDays + 1)}天" : "", style: PS.normalTextStyle(color: Colors.white),),
+                            Text(dataSource[index].length == 2 ?  "${(DateUtil.getDateTimeByMs(int.parse(dataSource[index].last["markAt"]) ).difference(DateUtil.getDateTimeByMs(int.parse(dataSource[index].first["markAt"]))).inDays + 1)}天" : "", style: PS.normalTextStyle(color: Colors.white),),
                           ],),
                           Row(children: [
-                            Text("开始：", style: PS.normalTextStyle(color: Colors.white),),
-                            SizedBox(width: 5,),
-                            Text("${dataSource[index].first.operationTime}", style: PS.normalTextStyle(color: Colors.white),),
-                            Text("，结束：", style: PS.normalTextStyle(color: Colors.white),),
-                            Offstage(offstage: dataSource[index].length != 2, child: Text("${dataSource[index].last.operationTime}", style: PS.normalTextStyle(color: Colors.white),)),
+                            // Text("开始：", style: PS.normalTextStyle(color: Colors.white),),
+                            // SizedBox(width: 5,),
+                            Text("${DateUtil.formatDateMs(int.parse(dataSource[index].first["markAt"]), format: "yyyy-MM-dd")}", style: PS.normalTextStyle(color: Colors.white),),
+                            Text(" - ", style: PS.normalTextStyle(color: Colors.white),),
+                            Offstage(offstage: dataSource[index].length != 2, child: Text("${DateUtil.formatDateMs(int.parse(dataSource[index].last["markAt"]), format: "yyyy-MM-dd")}", style: PS.normalTextStyle(color: Colors.white),)),
                           ],),
                         ],
                       )
@@ -408,7 +498,12 @@ class _HomePageState extends State<HomePage> {
         brightness: Brightness.dark,
         elevation: 0,
         backgroundColor: PS.backgroundColor,
-        leading: GestureDetector(onTap: _selectDate, child: Center(child: Text(DateUtil.formatDate(getNowDate(),format: "yyyy年MM月dd日"), style: PS.smallTextStyle(color: PS.secondTextColor)))),
+        leading: GestureDetector(onTap: _selectDate, child: Center(child: Row(
+          children: [
+            SizedBox(width: 10,),
+            Text("${DateUtil.formatDate(getNowDate(),format: "MM.dd")} ${DateUtil.getWeekday(getNowDate(), languageCode: "zh", short: true)}", style: PS.smallTextStyle(color: PS.secondTextColor)),
+          ],
+        ))),
         actions: [
           Center(child: GestureDetector(
               behavior: HitTestBehavior.opaque,

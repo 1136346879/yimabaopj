@@ -19,7 +19,11 @@ class CacheUtil {
     // print("---------123----${tempDir}");
     if (tempDir == null && apkDir == null) return "0.0K";
     int tempTotal = await _reduce(tempDir);
-    int apkTotal = apkDir == null ? 0 : await _reduce(apkDir);
+    bool? hasExisted = await apkDir?.exists();
+    int apkTotal = 0;
+    if(hasExisted!) {
+      apkTotal = apkDir == null ? 0 : await _reduce(apkDir);
+    }
     int total = tempTotal + apkTotal;
     if(total == 0) {
       return "0.0K";
