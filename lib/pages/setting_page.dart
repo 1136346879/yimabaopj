@@ -205,26 +205,26 @@ class _SettingPageState extends State<SettingPage> {
               ),
             ),
             Container(width: double.infinity, height: 10, color: Colors.grey.shade200,),
-            GestureDetector(
-              behavior: HitTestBehavior.opaque,
-              onTap: () async {
-                await MineAPI.instance.clear({"user_id": MineAPI.instance.getAccount()?.user_id, "uuid": await MineAPI.instance.getUUID()});
-                await DBAPI.sharedInstance.memberRecordDao.deleteAll();
-                showToast("清除成功");
-              },
-              child: Container(
-                padding: EdgeInsets.all(16),
-                color: Colors.white,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text("清除服务器和本地用户数据(测试用)", style: PS.normalTextStyle(),),
-                    // Icon(Icons.chevron_right, color: Colors.grey,)
-                  ],
-                ),
-              ),
-            ),
-            Divider(height: 1,),
+            // GestureDetector(
+            //   behavior: HitTestBehavior.opaque,
+            //   onTap: () async {
+            //     await MineAPI.instance.clear({"user_id": MineAPI.instance.getAccount()?.user_id, "uuid": await MineAPI.instance.getUUID()});
+            //     await DBAPI.sharedInstance.memberRecordDao.deleteAll();
+            //     showToast("清除成功");
+            //   },
+            //   child: Container(
+            //     padding: EdgeInsets.all(16),
+            //     color: Colors.white,
+            //     child: Row(
+            //       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            //       children: [
+            //         Text("清除服务器和本地用户数据(测试用)", style: PS.normalTextStyle(),),
+            //         // Icon(Icons.chevron_right, color: Colors.grey,)
+            //       ],
+            //     ),
+            //   ),
+            // ),
+            // Divider(height: 1,),
 
             GestureDetector(
               behavior: HitTestBehavior.opaque,

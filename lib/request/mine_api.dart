@@ -178,7 +178,7 @@ class MineAPI {
       await DBAPI.sharedInstance.localRecordDao.deleteAll();
     }
     //测试
-    MyDialog.showAlertDialog(buildContext!, () { }, title: "调试提示", message: "服务器isRmLocData字段为${isRmLocData ? 'true. 会删除野数据' : 'false. 会保留野数据'}");
+    // MyDialog.showAlertDialog(buildContext!, () { }, title: "调试提示", message: "服务器isRmLocData字段为${isRmLocData ? 'true. 会删除野数据' : 'false. 会保留野数据'}");
   }
   //返回未同步代表删除的第一条数据
   _findMemberNeedSyncDeleteRecord() async {

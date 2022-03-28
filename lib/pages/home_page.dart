@@ -95,6 +95,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     setState(() {});
   }
   refreshRecord() async {
+    _now = DateTime.now(); //正式环境需要打开
     dataSource = await getAllRecords();
     lastRecord = await getLastRecord();
     var _isHideOperationArea = false;
@@ -226,16 +227,17 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
 
 
   getNowDate() {
-    String ymd = DateUtil.formatDate(_now, format: "yyyy-MM-dd");
-    String hms = DateUtil.formatDate(DateTime.now(), format: "HH:mm:ss");
-    DateTime? time = DateUtil.getDateTime("${ymd} ${hms}");
-    // DateTime.now() = date.month;
-    return time!;
+    // String ymd = DateUtil.formatDate(_now, format: "yyyy-MM-dd");
+    // String hms = DateUtil.formatDate(DateTime.now(), format: "HH:mm:ss");
+    // DateTime? time = DateUtil.getDateTime("${ymd} ${hms}");
+    // // DateTime.now() = date.month;
+    // return time!;
+    return _now;
     // return DateTime.now();
   }
 
   Future<void> _selectDate() async {
-    // return;
+    return;
     final DateTime? date = await showDatePicker(
       context: context,
       initialDate: _now,
@@ -430,9 +432,9 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                           Row(children: [
                             // Text("开始：", style: PS.normalTextStyle(color: Colors.white),),
                             // SizedBox(width: 5,),
-                            Text("${DateUtil.formatDateMs(int.parse(dataSource[index].first["markAt"]), format: "yyyy-MM-dd")}", style: PS.normalTextStyle(color: Colors.white),),
+                            Text("${DateUtil.formatDateMs(int.parse(dataSource[index].first["markAt"]), format: "yyyy.M.d")}", style: PS.normalTextStyle(color: Colors.white),),
                             Text(" - ", style: PS.normalTextStyle(color: Colors.white),),
-                            Offstage(offstage: dataSource[index].length != 2, child: Text("${DateUtil.formatDateMs(int.parse(dataSource[index].last["markAt"]), format: "yyyy-MM-dd")}", style: PS.normalTextStyle(color: Colors.white),)),
+                            Offstage(offstage: dataSource[index].length != 2, child: Text("${DateUtil.formatDateMs(int.parse(dataSource[index].last["markAt"]), format: "yyyy.M.d")}", style: PS.normalTextStyle(color: Colors.white),)),
                           ],),
                         ],
                       )
