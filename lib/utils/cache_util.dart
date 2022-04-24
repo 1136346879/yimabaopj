@@ -21,7 +21,7 @@ class CacheUtil {
     int tempTotal = await _reduce(tempDir);
     bool? hasExisted = await apkDir?.exists();
     int apkTotal = 0;
-    if(hasExisted!) {
+    if(hasExisted == null) {
       apkTotal = apkDir == null ? 0 : await _reduce(apkDir);
     }
     int total = tempTotal + apkTotal;

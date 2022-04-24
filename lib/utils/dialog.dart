@@ -224,7 +224,7 @@ class AddRecordDateDialogContent extends StatefulWidget {
 class _AddRecordDateDialogContentState extends State<AddRecordDateDialogContent> {
   // final addressController = TextEditingController();
   String result = "今天";
-  final dataSource = ["今天", "昨天", "前天"];
+  final dataSource = ["前天", "昨天", "今天"];
   @override
   void initState() {
     super.initState();
@@ -245,9 +245,9 @@ class _AddRecordDateDialogContentState extends State<AddRecordDateDialogContent>
                     behavior: HitTestBehavior.opaque,
                     onTap: (){
                       result = dataSource[index];
-                      Navigator.of(context).pop();
+                      Navigator.of(context).pop(result);
                     },
-                    child: Container(width: double.infinity, padding: EdgeInsets.all(12), child: Center(child: Text(dataSource[index], style: PS.normalTextStyle(color: index == 0 ? Colors.red : PS.textBlueColor),))),
+                    child: Container(width: double.infinity, padding: EdgeInsets.all(12), child: Center(child: Text(dataSource[index], style: PS.normalTextStyle(color: index == 2 ? Colors.red : PS.textBlueColor),))),
                   );
               },
               separatorBuilder: (cxt, index) {
@@ -280,8 +280,13 @@ class _CycleDialogContentState extends State<CycleDialogContent> {
   }
   getCycleInfo() async {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-    doingVal = sharedPreferences.getInt(ProjectConfig.doingKey) ?? 7;
-    cycleVal = sharedPreferences.getInt(ProjectConfig.cycleKey) ?? 28;
+    if(MineAPI.instance.getAccount() != null) {
+      doingVal = sharedPreferences.getInt(ProjectConfig.doingKey) ?? 7;
+      cycleVal = sharedPreferences.getInt(ProjectConfig.cycleKey) ?? 28;
+    } else {
+      doingVal = sharedPreferences.getInt(ProjectConfig.localDoingKey) ?? 7;
+      cycleVal = sharedPreferences.getInt(ProjectConfig.localCycleKey) ?? 28;
+    }
     doingPickerSelectedIndex = doingDataSource.indexOf(doingVal);
     cyclePickerSelectedIndex = cycleDataSource.indexOf(cycleVal);
     setState(() {});

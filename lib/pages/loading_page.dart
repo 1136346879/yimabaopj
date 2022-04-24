@@ -15,6 +15,7 @@ import 'package:yimareport/config/project_config.dart';
 import 'package:yimareport/db/entities/local_record.dart';
 import 'package:yimareport/db/entities/record.dart';
 import 'package:yimareport/pages/home_page.dart';
+import 'package:yimareport/pages/main_page.dart';
 import 'package:yimareport/request/mine_api.dart';
 
 import 'agreement_page.dart';
@@ -61,7 +62,7 @@ class _LoadingPageState extends State<LoadingPage> with SingleTickerProviderStat
     bool hasAgree = sharedPreferences.getBool(ProjectConfig.agreementKey) ?? false;
     // if(Platform.isAndroid) {
       Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) {
-        return hasAgree ? HomePage() : AgreementPage();
+        return hasAgree ? MainPage() : AgreementPage();
       }));
     // } else {
     //   Navigator.pushReplacement(context, CupertinoPageRoute(builder: (_) {
@@ -186,6 +187,10 @@ class _LoadingPageState extends State<LoadingPage> with SingleTickerProviderStat
                   },
                   onClick: () {
                     print("开屏广告点击");
+                    if(Platform.isIOS){ // 设置状态栏背景及颜色
+                      goToNextPage();
+                    }
+
                     // Navigator.pop(context);
                   },
                   onFail: (error) async {

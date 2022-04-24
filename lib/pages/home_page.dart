@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 import 'dart:math';
 
@@ -14,7 +15,10 @@ import 'package:yimareport/db/entities/local_record.dart';
 import 'package:yimareport/db/entities/member_record.dart';
 import 'package:yimareport/request/mine_api.dart';
 import 'package:yimareport/utils/dialog.dart';
+import 'package:yimareport/utils/event_bus_util.dart';
 
+import '../main.dart';
+import 'record_page.dart';
 import 'setting_page.dart';
 
 class HomePage extends StatefulWidget {
@@ -22,10 +26,10 @@ class HomePage extends StatefulWidget {
   _HomePageState createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
+class _HomePageState extends State<HomePage> with WidgetsBindingObserver, AutomaticKeepAliveClientMixin implements RouteAware {
 
   dynamic lastRecord;
-  List<List<dynamic>> dataSource = [];
+  Map<String, dynamic> dataSource = {"index": 0};
   AddRecordDateDialogController _addRecordDateDialogController = AddRecordDateDialogController();
   DateTime _now = DateTime.now();
   bool isHideOperationArea = false;
@@ -34,13 +38,19 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   var lastPopTime;
   var netSubscription;
   var isFirstLoad = true;
+  StreamSubscription? _tabChangeSubscription;
   @override
   void initState() {
     super.initState();
+    _tabChangeSubscription = eventBus.on<TabChangeEvent>().listen((event) {
+      getCycle();
+      refreshRecord();
+    });
     WidgetsBinding.instance?.addPostFrameCallback((_) async {
+      refreshRecord();
       await MineAPI.instance.memberSyncData();
-      await refreshRecord();
       await getCycle();
+      await refreshRecord();
     });
     WidgetsBinding.instance?.addObserver(this);
     netSubscription = Connectivity().onConnectivityChanged.listen((ConnectivityResult result) async {
@@ -70,15 +80,24 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
       await refreshRecord();
       await getCycle();
     } else  if (state == AppLifecycleState.inactive) {
-
+      print('APP进入xx');
     }
   }
+
+  @override
+  void didChangeDependencies() {
+    routeObserver.subscribe(this, ModalRoute.of(context) as PageRoute);
+    super.didChangeDependencies();
+  }
+
 
   ///移除监听器
   @override
   void dispose() {
     WidgetsBinding.instance?.removeObserver(this);
     netSubscription.cancel();
+    routeObserver.unsubscribe(this);
+    _tabChangeSubscription?.cancel();
     super.dispose();
   }
   getCycle() async {
@@ -199,22 +218,32 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     if(tempItem.length > 0) {
       result.add(tempItem);
     }
-    return result.reversed.toList();
+    // return result.reversed.toList();
+    var reverList = result.reversed.toList();
+    if(reverList.length > 0) {
+      return {'index': reverList.length, "data": reverList.first};
+    }
   }
   showAddRecordDateDialog() async {
-    await MyDialog.showAddRecordDateDialog(context: context, customBody: AddRecordDateDialogContent(controller: _addRecordDateDialogController));
+    var r = await MyDialog.showAddRecordDateDialog(context: context, customBody: AddRecordDateDialogContent(controller: _addRecordDateDialogController));
     setState(() {});
+    return r;
   }
   showAddRecordDialog() async {
+    var hasCheck = await showAddRecordDateDialog();
+    if(hasCheck == null) return;
     String title = "姨妈来了吗?";
+    String title2 = "";
+    var recordDateType;
+    recordDateType = _addRecordDateDialogController.selectedRecordDate;
+    var date = getNowDate();
+    if(recordDateType == "昨天") {
+      date = getNowDate().subtract(Duration(days: 1));
+    } else if (recordDateType == "前天") {
+      date = getNowDate().subtract(Duration(days: 2));
+    }
+    title2 = "${DateUtil.formatDate(date, format: 'MM月dd日')}，${recordDateType}";
     if(lastRecord != null) {
-      var recordDateType = _addRecordDateDialogController.selectedRecordDate;
-      var date = getNowDate();
-      if(recordDateType == "昨天") {
-        date = getNowDate().subtract(Duration(days: 1));
-      } else if (recordDateType == "前天") {
-        date = getNowDate().subtract(Duration(days: 2));
-      }
       //判断
       var isDoing = lastRecord["type"] == 1;
       title = isDoing ? "姨妈走了吗?" : "姨妈来了吗?";
@@ -222,7 +251,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
 
     MyDialog.showAlertDialog(context, () {
       addRecord();
-    }, title: title, sureBtnTitleColor: Colors.blue, cancelBtnTitleColor: Colors.blue);
+    }, title: title, message: title2, sureBtnTitleColor: Colors.blue, cancelBtnTitleColor: Colors.blue);
   }
 
 
@@ -300,6 +329,54 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
           }
         }
         String btnTitle = isDoing ? "姨妈走了" : "姨妈来了";
+        Widget RecordContainer = Container();
+        if(dataSource["index"] != 0) {
+          RecordContainer = Container(
+            padding: EdgeInsets.symmetric(vertical: 6, horizontal: 5),
+            child: Row(
+              children: [
+                Container(
+                  width: 45,
+                  height: 45,
+                  color: Color.fromRGBO(255, 255, 255, 0.2),
+                  child: Center(
+                    child: Text("${dataSource["index"]}", style: PS.titleTextStyle(color: Colors.white),),
+                  ),
+                ),
+                SizedBox(width: 10,),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Row(children: [
+                    //   Text("姨妈期：", style: PS.normalTextStyle(color: Colors.white),),
+                    //   SizedBox(width: 5,),
+                    //   Text("", style: PS.normalTextStyle(color: Colors.white),),
+                    // ],),
+                    // Row(children: [
+                    //   // Text("开始：", style: PS.normalTextStyle(color: Colors.white),),
+                    //   // SizedBox(width: 5,),
+                    //   Text("${DateUtil.formatDateMs(int.parse(dataSource?["data"]?["markAt"]), format: "yyyy.M.d")}", style: PS.normalTextStyle(color: Colors.white),),
+                    //   Text(" - ", style: PS.normalTextStyle(color: Colors.white),),
+                    //   // Offstage(offstage: dataSource["data"].length != 2, child: Text("${DateUtil.formatDateMs(int.parse(dataSource["data"].last["markAt"]), format: "yyyy.M.d")}", style: PS.normalTextStyle(color: Colors.white),)),
+                    // ],),
+                    Row(children: [
+                      Text("姨妈期：", style: PS.normalTextStyle(color: Colors.white),),
+                      SizedBox(width: 5,),
+                      Text(dataSource["data"].length == 2 ?  "${(DateUtil.getDateTimeByMs(int.parse(dataSource["data"].last["markAt"]) ).difference(DateUtil.getDateTimeByMs(int.parse(dataSource["data"].first["markAt"]))).inDays + 1)}天" : "", style: PS.normalTextStyle(color: Colors.white),),
+                    ],),
+                    Row(children: [
+                      // Text("开始：", style: PS.normalTextStyle(color: Colors.white),),
+                      // SizedBox(width: 5,),
+                      Text("${DateUtil.formatDateMs(int.parse(dataSource["data"].first["markAt"]), format: "yyyy.M.d")}", style: PS.normalTextStyle(color: Colors.white),),
+                      Text(" - ", style: PS.normalTextStyle(color: Colors.white),),
+                      Offstage(offstage: dataSource["data"].length != 2, child: Text("${DateUtil.formatDateMs(int.parse(dataSource["data"].last["markAt"]), format: "yyyy.M.d")}", style: PS.normalTextStyle(color: Colors.white),)),
+                    ],),
+                  ],
+                )
+              ],
+            ),
+          );
+        }
         return Column(
           children: [
             Container(
@@ -369,18 +446,86 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
               ),
             ),
             SizedBox(height: 10,),
+            // Offstage(
+            //   offstage: dataSource["index"] == 0,
+            //   child: Container(
+            //     padding: EdgeInsets.symmetric(vertical: 6, horizontal: 5),
+            //     child: Row(
+            //       children: [
+            //         Container(
+            //           width: 45,
+            //           height: 45,
+            //           color: Color.fromRGBO(255, 255, 255, 0.2),
+            //           child: Center(
+            //             child: Text("${dataSource["index"]}", style: PS.titleTextStyle(color: Colors.white),),
+            //           ),
+            //         ),
+            //         SizedBox(width: 10,),
+            //         Column(
+            //           crossAxisAlignment: CrossAxisAlignment.start,
+            //           children: [
+            //             Row(children: [
+            //               Text("姨妈期：", style: PS.normalTextStyle(color: Colors.white),),
+            //               SizedBox(width: 5,),
+            //               Text("", style: PS.normalTextStyle(color: Colors.white),),
+            //             ],),
+            //             Row(children: [
+            //               // Text("开始：", style: PS.normalTextStyle(color: Colors.white),),
+            //               // SizedBox(width: 5,),
+            //               Text("${DateUtil.formatDateMs(int.parse(dataSource?["data"]?["markAt"]), format: "yyyy.M.d")}", style: PS.normalTextStyle(color: Colors.white),),
+            //               Text(" - ", style: PS.normalTextStyle(color: Colors.white),),
+            //               // Offstage(offstage: dataSource["data"].length != 2, child: Text("${DateUtil.formatDateMs(int.parse(dataSource["data"].last["markAt"]), format: "yyyy.M.d")}", style: PS.normalTextStyle(color: Colors.white),)),
+            //             ],),
+            //           ],
+            //         )
+            //       ],
+            //     ),
+            //   ),
+            // ),
+            GestureDetector(
+                behavior: HitTestBehavior.opaque,
+              onTap: () async {
+                await Navigator.push(context, MaterialPageRoute(builder: (_) {
+                  return RecordPage();
+                }));
+                refreshRecord();
+                getCycle();
+              },
+                child: Column(
+                  children: [
+                    Container(
+                      decoration: new BoxDecoration(
+                        color: Color.fromRGBO(255, 255, 255, 0.2),
+                        borderRadius: BorderRadius.only(topLeft: Radius.circular(8.0), topRight: Radius.circular(8.0)),
+                        // borderRadius: BorderRadius.all(Radius.circular(8.0)),
+                        //设置四周边框
+                        // border: new Border.all(width: 1, color: Colors.grey.shade800),
+                        // boxShadow: [BoxShadow(color: Colors.grey.shade800, blurRadius: 9.0)],
+                      ),
+                      margin: EdgeInsets.symmetric(horizontal: 5),
+                      width: double.infinity,
+                      height: 40,
+                      child: Center(
+                        child: Text("历史记录", style: PS.normalTextStyle(color: Colors.white70),),
+                      ),
+                    ),
+                    RecordContainer,
+                  ],
+                )
+            ),
             Offstage(
               // offstage: lastRecord?.addTime == DateUtil.formatDate(getNowDate(), format: "yyyy-MM-dd"),
               offstage: isHideOperationArea,
               child: Column(
                 children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      GestureDetector(onTap: showAddRecordDateDialog, child: Text("${_addRecordDateDialogController.selectedRecordDate}", style: PS.normalTextStyle(color: PS.secondTextColor),)),
-                    ],
-                  ),
+                  // Row(
+                  //   mainAxisAlignment: MainAxisAlignment.center,
+                  //   children: [
+                  //     GestureDetector(onTap: showAddRecordDateDialog, child: Text("${_addRecordDateDialogController.selectedRecordDate}", style: PS.normalTextStyle(color: PS.secondTextColor),)),
+                  //   ],
+                  // ),
                   Container(
+                    margin: EdgeInsets.only(top: 50),
                     padding: EdgeInsets.fromLTRB(50, 20, 50, 20),
                     width: double.infinity,
                     height: 85,
@@ -406,46 +551,46 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
               ),
             ),
 
-            Expanded(
-              child: ListView.builder(itemBuilder: (cxt, index) {
-                return Container(
-                  padding: EdgeInsets.symmetric(vertical: 6, horizontal: 5),
-                  child: Row(
-                    children: [
-                      Container(
-                        width: 45,
-                        height: 45,
-                        color: Color.fromRGBO(255, 255, 255, 0.2),
-                        child: Center(
-                          child: Text("${dataSource.length - index}", style: PS.titleTextStyle(color: Colors.white),),
-                        ),
-                      ),
-                      SizedBox(width: 10,),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(children: [
-                            Text("姨妈期：", style: PS.normalTextStyle(color: Colors.white),),
-                            SizedBox(width: 5,),
-                            Text(dataSource[index].length == 2 ?  "${(DateUtil.getDateTimeByMs(int.parse(dataSource[index].last["markAt"]) ).difference(DateUtil.getDateTimeByMs(int.parse(dataSource[index].first["markAt"]))).inDays + 1)}天" : "", style: PS.normalTextStyle(color: Colors.white),),
-                          ],),
-                          Row(children: [
-                            // Text("开始：", style: PS.normalTextStyle(color: Colors.white),),
-                            // SizedBox(width: 5,),
-                            Text("${DateUtil.formatDateMs(int.parse(dataSource[index].first["markAt"]), format: "yyyy.M.d")}", style: PS.normalTextStyle(color: Colors.white),),
-                            Text(" - ", style: PS.normalTextStyle(color: Colors.white),),
-                            Offstage(offstage: dataSource[index].length != 2, child: Text("${DateUtil.formatDateMs(int.parse(dataSource[index].last["markAt"]), format: "yyyy.M.d")}", style: PS.normalTextStyle(color: Colors.white),)),
-                          ],),
-                        ],
-                      )
-                    ],
-                  ),
-                );
-              },
-                itemCount: dataSource.length,
-                shrinkWrap: false,
-              ),
-            )
+            // Expanded(
+            //   child: ListView.builder(itemBuilder: (cxt, index) {
+            //     return Container(
+            //       padding: EdgeInsets.symmetric(vertical: 6, horizontal: 5),
+            //       child: Row(
+            //         children: [
+            //           Container(
+            //             width: 45,
+            //             height: 45,
+            //             color: Color.fromRGBO(255, 255, 255, 0.2),
+            //             child: Center(
+            //               child: Text("${dataSource.length - index}", style: PS.titleTextStyle(color: Colors.white),),
+            //             ),
+            //           ),
+            //           SizedBox(width: 10,),
+            //           Column(
+            //             crossAxisAlignment: CrossAxisAlignment.start,
+            //             children: [
+            //               Row(children: [
+            //                 Text("姨妈期：", style: PS.normalTextStyle(color: Colors.white),),
+            //                 SizedBox(width: 5,),
+            //                 Text(dataSource[index].length == 2 ?  "${(DateUtil.getDateTimeByMs(int.parse(dataSource[index].last["markAt"]) ).difference(DateUtil.getDateTimeByMs(int.parse(dataSource[index].first["markAt"]))).inDays + 1)}天" : "", style: PS.normalTextStyle(color: Colors.white),),
+            //               ],),
+            //               Row(children: [
+            //                 // Text("开始：", style: PS.normalTextStyle(color: Colors.white),),
+            //                 // SizedBox(width: 5,),
+            //                 Text("${DateUtil.formatDateMs(int.parse(dataSource[index].first["markAt"]), format: "yyyy.M.d")}", style: PS.normalTextStyle(color: Colors.white),),
+            //                 Text(" - ", style: PS.normalTextStyle(color: Colors.white),),
+            //                 Offstage(offstage: dataSource[index].length != 2, child: Text("${DateUtil.formatDateMs(int.parse(dataSource[index].last["markAt"]), format: "yyyy.M.d")}", style: PS.normalTextStyle(color: Colors.white),)),
+            //               ],),
+            //             ],
+            //           )
+            //         ],
+            //       ),
+            //     );
+            //   },
+            //     itemCount: dataSource.length,
+            //     shrinkWrap: false,
+            //   ),
+            // )
           ],
         );
       } else {
@@ -464,7 +609,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                GestureDetector(onTap: showAddRecordDateDialog, child: Text("${_addRecordDateDialogController.selectedRecordDate}", style: PS.normalTextStyle(color: PS.secondTextColor),)),
+                // GestureDetector(onTap: showAddRecordDateDialog, child: Text("${_addRecordDateDialogController.selectedRecordDate}", style: PS.normalTextStyle(color: PS.secondTextColor),)),
               ],
             ),
             Container(
@@ -495,31 +640,34 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
 
     }
     return Scaffold(
-      appBar: AppBar(
-        leadingWidth: 170,
-        brightness: Brightness.dark,
-        elevation: 0,
-        backgroundColor: PS.backgroundColor,
-        leading: GestureDetector(onTap: _selectDate, child: Center(child: Row(
-          children: [
-            SizedBox(width: 10,),
-            Text("${DateUtil.formatDate(getNowDate(),format: "MM.dd")} ${DateUtil.getWeekday(getNowDate(), languageCode: "zh", short: true)}", style: PS.smallTextStyle(color: PS.secondTextColor)),
-          ],
-        ))),
-        actions: [
-          Center(child: GestureDetector(
-              behavior: HitTestBehavior.opaque,
-              onTap: () async {
-                await Navigator.push(context, MaterialPageRoute(builder: (_) {
-                  return SettingPage();
-                }));
-                refreshRecord();
-                getCycle();
-              },
-              child: Icon(Icons.settings, size: 32,),
-          )),
-          SizedBox(width: 10,)
-        ],
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(0),
+        child: AppBar(
+          leadingWidth: 170,
+          brightness: Brightness.light,
+          elevation: 0,
+          backgroundColor: PS.backgroundColor,
+          // leading: GestureDetector(onTap: _selectDate, child: Center(child: Row(
+          //   children: [
+          //     SizedBox(width: 10,),
+          //     Text("${DateUtil.formatDate(getNowDate(),format: "MM.dd")} ${DateUtil.getWeekday(getNowDate(), languageCode: "zh", short: true)}", style: PS.smallTextStyle(color: PS.secondTextColor)),
+          //   ],
+          // ))),
+          // actions: [
+          //   Center(child: GestureDetector(
+          //       behavior: HitTestBehavior.opaque,
+          //       onTap: () async {
+          //         await Navigator.push(context, MaterialPageRoute(builder: (_) {
+          //           return RecordPage();
+          //         }));
+          //         refreshRecord();
+          //         getCycle();
+          //       },
+          //       child: Icon(Icons.settings, size: 32,),
+          //   )),
+          //   SizedBox(width: 10,)
+          // ],
+        ),
       ),
 
       body: WillPopScope(
@@ -542,6 +690,35 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
         ),
       ),
     );
+  }
+
+  @override
+  // TODO: implement wantKeepAlive
+  bool get wantKeepAlive => true;
+
+  @override
+  void didPop() {
+    // TODO: implement didPop
+    print("didPop");
+  }
+
+  @override
+  void didPopNext() {
+    // TODO: implement didPopNext
+    print("didPopNext");
+
+  }
+
+  @override
+  void didPush() {
+    // TODO: implement didPush
+    print("didPush");
+  }
+
+  @override
+  void didPushNext() {
+    print("didPushNext");
+    // TODO: implement didPushNext
   }
 }
 

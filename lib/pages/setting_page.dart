@@ -117,12 +117,15 @@ class _SettingPageState extends State<SettingPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text("设置"),
-        // leadingWidth: 150,
-        brightness: Brightness.dark,
-        elevation: 0,
-        backgroundColor: PS.backgroundColor,
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(0),
+        child: AppBar(
+          title: Text(""),
+          // leadingWidth: 150,
+          brightness: Brightness.dark,
+          elevation: 0,
+          backgroundColor: PS.backgroundColor,
+        ),
       ),
       body: Container(
         color: Colors.grey.shade200,
@@ -142,7 +145,6 @@ class _SettingPageState extends State<SettingPage> {
                     child: Center(
                       child: Column(
                         children: [
-                          SizedBox(height: 5,),
                           GestureDetector(onTap: () {
                             print("点击登录");
                             sendWeChatAuth(scope: "snsapi_userinfo", state: "wechat_sdk_yimabao");
@@ -226,26 +228,26 @@ class _SettingPageState extends State<SettingPage> {
             // ),
             // Divider(height: 1,),
 
-            GestureDetector(
-              behavior: HitTestBehavior.opaque,
-              onTap: () async {
-                Navigator.push(context, MaterialPageRoute(builder: (_) {
-                  return MemberPage();
-                }));
-              },
-              child: Container(
-                color: Colors.white,
-                padding: EdgeInsets.all(16),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text("会员", style: PS.normalTextStyle(),),
-                    // Icon(Icons.chevron_right, color: Colors.grey,)
-                  ],
-                ),
-              ),
-            ),
-            Divider(height: 1,),
+            // GestureDetector(
+            //   behavior: HitTestBehavior.opaque,
+            //   onTap: () async {
+            //     Navigator.push(context, MaterialPageRoute(builder: (_) {
+            //       return MemberPage();
+            //     }));
+            //   },
+            //   child: Container(
+            //     color: Colors.white,
+            //     padding: EdgeInsets.all(16),
+            //     child: Row(
+            //       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            //       children: [
+            //         Text("会员", style: PS.normalTextStyle(),),
+            //         // Icon(Icons.chevron_right, color: Colors.grey,)
+            //       ],
+            //     ),
+            //   ),
+            // ),
+            // Divider(height: 1,),
             GestureDetector(
               behavior: HitTestBehavior.opaque,
               onTap: () async {

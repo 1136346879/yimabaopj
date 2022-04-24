@@ -8,7 +8,19 @@ PODS:
   - Ads-CN-Beta/Domestic (4.1.0.1)
   - app_installer (1.1.0):
     - Flutter
+  - connectivity_plus (0.0.1):
+    - Flutter
+    - ReachabilitySwift
+  - device_info (0.0.1):
+    - Flutter
   - Flutter (1.0.0)
+  - flutter_inappwebview (0.0.1):
+    - Flutter
+    - flutter_inappwebview/Core (= 0.0.1)
+    - OrderedSet (~> 5.0)
+  - flutter_inappwebview/Core (0.0.1):
+    - Flutter
+    - OrderedSet (~> 5.0)
   - flutter_unionad (0.0.1):
     - Ads-CN-Beta (~> 4.1.0.1)
     - Flutter
@@ -20,10 +32,12 @@ PODS:
   - FMDB (2.7.5):
     - FMDB/standard (= 2.7.5)
   - FMDB/standard (2.7.5)
+  - OrderedSet (5.0.0)
   - package_info (0.0.1):
     - Flutter
   - path_provider_ios (0.0.1):
     - Flutter
+  - ReachabilitySwift (5.0.0)
   - shared_preferences (0.0.1):
     - Flutter
   - sqflite (0.0.2):
@@ -35,7 +49,10 @@ PODS:
 
 DEPENDENCIES:
   - app_installer (from `.symlinks/plugins/app_installer/ios`)
+  - connectivity_plus (from `.symlinks/plugins/connectivity_plus/ios`)
+  - device_info (from `.symlinks/plugins/device_info/ios`)
   - Flutter (from `Flutter`)
+  - flutter_inappwebview (from `.symlinks/plugins/flutter_inappwebview/ios`)
   - flutter_unionad (from `.symlinks/plugins/flutter_unionad/ios`)
   - fluttertoast (from `.symlinks/plugins/fluttertoast/ios`)
   - fluwx_no_pay (from `.symlinks/plugins/fluwx_no_pay/ios`)
@@ -49,13 +66,21 @@ SPEC REPOS:
   trunk:
     - Ads-CN-Beta
     - FMDB
+    - OrderedSet
+    - ReachabilitySwift
     - Toast
 
 EXTERNAL SOURCES:
   app_installer:
     :path: ".symlinks/plugins/app_installer/ios"
+  connectivity_plus:
+    :path: ".symlinks/plugins/connectivity_plus/ios"
+  device_info:
+    :path: ".symlinks/plugins/device_info/ios"
   Flutter:
     :path: Flutter
+  flutter_inappwebview:
+    :path: ".symlinks/plugins/flutter_inappwebview/ios"
   flutter_unionad:
     :path: ".symlinks/plugins/flutter_unionad/ios"
   fluttertoast:
@@ -76,13 +101,18 @@ EXTERNAL SOURCES:
 SPEC CHECKSUMS:
   Ads-CN-Beta: ebf133f5812a8e618c68302580d6e39186d5287c
   app_installer: 4301996bd8f3c6f75776416b8885a6d92928306f
+  connectivity_plus: 413a8857dd5d9f1c399a39130850d02fe0feaf7e
+  device_info: d7d233b645a32c40dfdc212de5cf646ca482f175
   Flutter: 50d75fe2f02b26cc09d224853bb45737f8b3214a
+  flutter_inappwebview: bfd58618f49dc62f2676de690fc6dcda1d6c3721
   flutter_unionad: 140720b3a24cbf9fd3aadbcc9e411ec24bd6fd7f
   fluttertoast: 6122fa75143e992b1d3470f61000f591a798cc58
   fluwx_no_pay: 3003d5187cfd3c98712838f465960f4742b05999
   FMDB: 2ce00b547f966261cd18927a3ddb07cb6f3db82a
+  OrderedSet: aaeb196f7fef5a9edf55d89760da9176ad40b93c
   package_info: 873975fc26034f0b863a300ad47e7f1ac6c7ec62
   path_provider_ios: 7d7ce634493af4477d156294792024ec3485acd5
+  ReachabilitySwift: 985039c6f7b23a1da463388634119492ff86c825
   shared_preferences: af6bfa751691cdc24be3045c43ec037377ada40d
   sqflite: 6d358c025f5b867b29ed92fc697fd34924e11904
   Toast: 91b396c56ee72a5790816f40d3a94dd357abc196

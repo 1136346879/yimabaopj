@@ -2,18 +2,24 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:yimareport/pages/new_home.dart';
+import 'package:intl/date_symbol_data_local.dart';
 
 import 'pages/loading_page.dart';
 import 'utils/my_router.dart';
 
+final RouteObserver<PageRoute> routeObserver = RouteObserver();
+
 void main() {
-  runApp(MyApp());
-  if(Platform.isAndroid){ // 设置状态栏背景及颜色
-    SystemUiOverlayStyle systemUiOverlayStyle = SystemUiOverlayStyle(statusBarColor: Colors.transparent);
-    // SystemChrome.setSystemUIOverlayStyle(systemUiOverlayStyle);
-    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light);
-    // SystemChrome.setEnabledSystemUIOverlays([]); //隐藏状态栏
-  }
+  initializeDateFormatting().then((_) => runApp(MyApp()));
+  // runApp(MyApp());
+  // if(Platform.isAndroid){ // 设置状态栏背景及颜色
+  //   SystemUiOverlayStyle systemUiOverlayStyle = SystemUiOverlayStyle(statusBarColor: Colors.transparent);
+  //   // SystemChrome.setSystemUIOverlayStyle(systemUiOverlayStyle);
+  //   SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light);
+  //   // SystemChrome.setEnabledSystemUIOverlays([]); //隐藏状态栏
+  // }
+  SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light);
 }
 
 class MyApp extends StatelessWidget {
@@ -36,7 +42,9 @@ class MyApp extends StatelessWidget {
         // brightness: Brightness.dark,
         primarySwatch: Colors.blue,
       ),
-      home: LoadingPage(),
+      // home: LoadingPage(),
+      home: NewHome(),
+      navigatorObservers: [routeObserver],
     );
   }
 }
