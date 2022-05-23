@@ -187,34 +187,40 @@ class _RecordPageState extends State<RecordPage> with WidgetsBindingObserver {
         return Column(
           children: [
             Expanded(
-              child: ListView.builder(itemBuilder: (cxt, index) {
+              child: ListView.separated(itemBuilder: (cxt, index) {
                 return Container(
+                  color: Colors.white,
                   padding: EdgeInsets.symmetric(vertical: 6, horizontal: 5),
                   child: Row(
                     children: [
                       Container(
                         width: 45,
                         height: 45,
-                        color: Color.fromRGBO(255, 255, 255, 0.2),
+                        decoration: BoxDecoration(
+                            color: Color(0xffFFCCDD),
+                            borderRadius: BorderRadius.all(Radius.circular(8)),
+                            // border: Border.all(color: PS.cb2b2b2, width: 1)
+                        ),
                         child: Center(
                           child: Text("${dataSource.length - index}", style: PS.titleTextStyle(color: Colors.white),),
                         ),
                       ),
                       SizedBox(width: 10,),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          Row(children: [
-                            Text("姨妈期：", style: PS.normalTextStyle(color: Colors.white),),
-                            SizedBox(width: 5,),
-                            Text(dataSource[index].length == 2 ?  "${(DateUtil.getDateTimeByMs(int.parse(dataSource[index].last["markAt"]) ).difference(DateUtil.getDateTimeByMs(int.parse(dataSource[index].first["markAt"]))).inDays + 1)}天" : "", style: PS.normalTextStyle(color: Colors.white),),
-                          ],),
                           Row(children: [
                             // Text("开始：", style: PS.normalTextStyle(color: Colors.white),),
                             // SizedBox(width: 5,),
-                            Text("${DateUtil.formatDateMs(int.parse(dataSource[index].first["markAt"]), format: "yyyy.M.d")}", style: PS.normalTextStyle(color: Colors.white),),
-                            Text(" - ", style: PS.normalTextStyle(color: Colors.white),),
-                            Offstage(offstage: dataSource[index].length != 2, child: Text("${DateUtil.formatDateMs(int.parse(dataSource[index].last["markAt"]), format: "yyyy.M.d")}", style: PS.normalTextStyle(color: Colors.white),)),
+                            Text("${DateUtil.formatDateMs(int.parse(dataSource[index].first["markAt"]), format: "yyyy年M月d日")}", style: PS.normalTextStyle(color: PS.cb2b2b2),),
+                            Text(" ~ ", style: PS.normalTextStyle(color: PS.cb2b2b2),),
+                            Offstage(offstage: dataSource[index].length != 2, child: Text("${DateUtil.formatDateMs(int.parse(dataSource[index].last["markAt"]), format: "yyyy年M月d日")}", style: PS.normalTextStyle(color: PS.cb2b2b2),)),
+                          ],),
+                          // SizedBox(width: 10,),
+                          Row(children: [
+                            Text("， ", style: PS.normalTextStyle(color: PS.cb2b2b2),),
+                            // SizedBox(width: 5,),
+                            Text(dataSource[index].length == 2 ?  "${(DateUtil.getDateTimeByMs(int.parse(dataSource[index].last["markAt"]) ).difference(DateUtil.getDateTimeByMs(int.parse(dataSource[index].first["markAt"]))).inDays + 1)}天" : "", style: PS.normalTextStyle(color: PS.cb2b2b2),),
                           ],),
                         ],
                       )
@@ -224,13 +230,16 @@ class _RecordPageState extends State<RecordPage> with WidgetsBindingObserver {
               },
                 itemCount: dataSource.length,
                 shrinkWrap: false,
+                separatorBuilder: (ctx, index) {
+                  return Divider(height: 0.5,);
+                },
               ),
             )
           ],
         );
       } else {
         return Center(
-          child: Text("无记录", style: TextStyle(color: Colors.white, fontSize: 30, fontWeight: FontWeight.w600),),
+          child: Text("", style: TextStyle(color: Colors.white, fontSize: 30, fontWeight: FontWeight.w600),),
         );
       }
 
@@ -238,14 +247,16 @@ class _RecordPageState extends State<RecordPage> with WidgetsBindingObserver {
     }
     return Scaffold(
       appBar: AppBar(
-        title: Text("历史记录"),
+        title: Text("经期记录"),
         brightness: Brightness.dark,
         elevation: 0,
-        backgroundColor: PS.backgroundColor,
+        backgroundColor: Colors.white,
+        foregroundColor: PS.c353535
       ),
 
       body: Container(
         color: PS.backgroundColor,
+        padding: EdgeInsets.only(top: 5),
         child: contentView(),
 
       ),

@@ -114,7 +114,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver, Automa
     setState(() {});
   }
   refreshRecord() async {
-    _now = DateTime.now(); //正式环境需要打开
+    // _now = DateTime.now(); //正式环境需要打开
     dataSource = await getAllRecords();
     lastRecord = await getLastRecord();
     var _isHideOperationArea = false;
@@ -256,21 +256,21 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver, Automa
 
 
   getNowDate() {
-    // String ymd = DateUtil.formatDate(_now, format: "yyyy-MM-dd");
-    // String hms = DateUtil.formatDate(DateTime.now(), format: "HH:mm:ss");
-    // DateTime? time = DateUtil.getDateTime("${ymd} ${hms}");
-    // // DateTime.now() = date.month;
-    // return time!;
-    return _now;
+    String ymd = DateUtil.formatDate(_now, format: "yyyy-MM-dd");
+    String hms = DateUtil.formatDate(DateTime.now(), format: "HH:mm:ss");
+    DateTime? time = DateUtil.getDateTime("${ymd} ${hms}");
+    // DateTime.now() = date.month;
+    return time!;
+    // return _now;
     // return DateTime.now();
   }
 
   Future<void> _selectDate() async {
-    return;
+    // return;
     final DateTime? date = await showDatePicker(
       context: context,
       initialDate: _now,
-      firstDate: _now,
+      firstDate: _now.subtract(Duration(days: 210)),
       lastDate: DateTime(2100),
     );
     if (date == null) return;
@@ -641,18 +641,18 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver, Automa
     }
     return Scaffold(
       appBar: PreferredSize(
-        preferredSize: Size.fromHeight(0),
+        preferredSize: Size.fromHeight(100),
         child: AppBar(
           leadingWidth: 170,
           brightness: Brightness.light,
           elevation: 0,
           backgroundColor: PS.backgroundColor,
-          // leading: GestureDetector(onTap: _selectDate, child: Center(child: Row(
-          //   children: [
-          //     SizedBox(width: 10,),
-          //     Text("${DateUtil.formatDate(getNowDate(),format: "MM.dd")} ${DateUtil.getWeekday(getNowDate(), languageCode: "zh", short: true)}", style: PS.smallTextStyle(color: PS.secondTextColor)),
-          //   ],
-          // ))),
+          leading: GestureDetector(onTap: _selectDate, child: Center(child: Row(
+            children: [
+              SizedBox(width: 10,),
+              Text("${DateUtil.formatDate(getNowDate(),format: "MM.dd")} ${DateUtil.getWeekday(getNowDate(), languageCode: "zh", short: true)}", style: PS.smallTextStyle(color: PS.secondTextColor)),
+            ],
+          ))),
           // actions: [
           //   Center(child: GestureDetector(
           //       behavior: HitTestBehavior.opaque,

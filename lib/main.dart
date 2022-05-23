@@ -1,17 +1,38 @@
 import 'dart:io';
 
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:yimareport/pages/new_home.dart';
 import 'package:intl/date_symbol_data_local.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 
 import 'pages/loading_page.dart';
 import 'utils/my_router.dart';
 
 final RouteObserver<PageRoute> routeObserver = RouteObserver();
 
-void main() {
-  initializeDateFormatting().then((_) => runApp(MyApp()));
+Future<void> main() async {
+  // initializeDateFormatting().then((_) => runApp(MyApp()));
+  WidgetsFlutterBinding.ensureInitialized();
+  await EasyLocalization.ensureInitialized();
+  // initializeDateFormatting().then((_) =>
+  await SentryFlutter.init(
+        (options) {
+      options.dsn = 'https://a02ddcca9b6a463b9b9d212847d9b4af@o1254437.ingest.sentry.io/6422337';
+      // Set tracesSampleRate to 1.0 to capture 100% of transactions for performance monitoring.
+      // We recommend adjusting this value in production.
+      options.tracesSampleRate = 1.0;
+    },
+    appRunner: () => runApp(
+      EasyLocalization(
+          supportedLocales: [Locale('zh')],
+          path: 'assets/translations', // <-- change the path of the translation files
+          fallbackLocale: Locale('zh'),
+          child: MyApp()
+      ),
+    ),
+  );
+  // );
   // runApp(MyApp());
   // if(Platform.isAndroid){ // 设置状态栏背景及颜色
   //   SystemUiOverlayStyle systemUiOverlayStyle = SystemUiOverlayStyle(statusBarColor: Colors.transparent);
@@ -20,6 +41,14 @@ void main() {
   //   // SystemChrome.setEnabledSystemUIOverlays([]); //隐藏状态栏
   // }
   SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light);
+}
+
+class MyBehavior extends ScrollBehavior {
+  @override
+  Widget buildViewportChrome(
+      BuildContext context, Widget child, AxisDirection axisDirection) {
+    return child;
+  }
 }
 
 class MyApp extends StatelessWidget {
@@ -41,9 +70,24 @@ class MyApp extends StatelessWidget {
         // is not restarted.
         // brightness: Brightness.dark,
         primarySwatch: Colors.blue,
+        primaryColor: Colors.redAccent,
+        // appBarTheme: AppBarTheme(
+        //   backgroundColor: Colors.white,
+        //     titleTextStyle: TextStyle(color: PS.c353535)
+        // )
       ),
-      // home: LoadingPage(),
-      home: NewHome(),
+      builder: (context, child) {
+        return ScrollConfiguration(
+          behavior: MyBehavior(),
+          child: child!,
+        );
+      },
+
+      localizationsDelegates: context.localizationDelegates,
+      supportedLocales: context.supportedLocales,
+      locale: context.locale,
+      home: LoadingPage(),
+      // home: NewHome(),
       navigatorObservers: [routeObserver],
     );
   }

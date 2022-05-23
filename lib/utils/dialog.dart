@@ -22,7 +22,7 @@ class MyDialog {
   static Future<T?> showAddRecordDateDialog<T>({required BuildContext context, Widget? customBody, String title = "记录哪一天"}) {
     return showCustomDialog<T?>(context: context, isHideBottomBar: true, customBody: customBody, title: title, msg: null);
   }
-  static void showAlertDialog(
+  static Future<void> showAlertDialog(
       BuildContext context, VoidCallback callback,
       {String title = '提示',
         String? message,
@@ -33,8 +33,8 @@ class MyDialog {
         String sureBtnTitle = "确定",
         Color sureBtnTitleColor = PS.primaryColor,
         Color cancelBtnTitleColor = PS.textBlackColor,
-      }) {
-    showCustomDialog(context: context, msg: message, cancelBtnCallback: cancelBtnCallback, sureBtnCallback: callback, title: title, isOnlySureBtn: isOnlySureBtn, onWillPopValue: onWillPopValue, barrierDismissible: barrierDismissible, sureBtnTitle: sureBtnTitle, sureBtnTitleColor: sureBtnTitleColor, cancelBtnTitleColor: cancelBtnTitleColor);
+      }) async {
+    await showCustomDialog(context: context, msg: message, cancelBtnCallback: cancelBtnCallback, sureBtnCallback: callback, title: title, isOnlySureBtn: isOnlySureBtn, onWillPopValue: onWillPopValue, barrierDismissible: barrierDismissible, sureBtnTitle: sureBtnTitle, sureBtnTitleColor: sureBtnTitleColor, cancelBtnTitleColor: cancelBtnTitleColor);
   }
 
   static Future<T?> showCustomDialog<T>(

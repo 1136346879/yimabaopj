@@ -1,13 +1,20 @@
 PODS:
-  - Ads-CN-Beta (4.1.0.1):
-    - Ads-CN-Beta/BUAdSDK (= 4.1.0.1)
-  - Ads-CN-Beta/BUAdSDK (4.1.0.1):
+  - Ads-CN-Beta (4.4.0.6):
+    - Ads-CN-Beta/BUAdSDK (= 4.4.0.6)
+  - Ads-CN-Beta/BUAdSDK (4.4.0.6):
     - Ads-CN-Beta/BUFoundation
     - Ads-CN-Beta/Domestic
-  - Ads-CN-Beta/BUFoundation (4.1.0.1)
-  - Ads-CN-Beta/Domestic (4.1.0.1)
+  - Ads-CN-Beta/BUFoundation (4.4.0.6):
+    - BURelyFoundation (= 0.0.1.53)
+  - Ads-CN-Beta/Domestic (4.4.0.6):
+    - Ads-CN-Beta/BUFoundation
   - app_installer (1.1.0):
     - Flutter
+  - BURelyFoundation (0.0.1.53):
+    - BURelyFoundation/HM (= 0.0.1.53)
+    - BURelyFoundation/NETWork (= 0.0.1.53)
+  - BURelyFoundation/HM (0.0.1.53)
+  - BURelyFoundation/NETWork (0.0.1.53)
   - connectivity_plus (0.0.1):
     - Flutter
     - ReachabilitySwift
@@ -22,7 +29,7 @@ PODS:
     - Flutter
     - OrderedSet (~> 5.0)
   - flutter_unionad (0.0.1):
-    - Ads-CN-Beta (~> 4.1.0.1)
+    - Ads-CN-Beta (~> 4.4.0.0)
     - Flutter
   - fluttertoast (0.0.2):
     - Flutter
@@ -35,9 +42,18 @@ PODS:
   - OrderedSet (5.0.0)
   - package_info (0.0.1):
     - Flutter
+  - package_info_plus (0.4.5):
+    - Flutter
   - path_provider_ios (0.0.1):
     - Flutter
   - ReachabilitySwift (5.0.0)
+  - Sentry (7.11.0):
+    - Sentry/Core (= 7.11.0)
+  - Sentry/Core (7.11.0)
+  - sentry_flutter (0.0.1):
+    - Flutter
+    - FlutterMacOS
+    - Sentry (~> 7.11.0)
   - shared_preferences (0.0.1):
     - Flutter
   - sqflite (0.0.2):
@@ -57,17 +73,21 @@ DEPENDENCIES:
   - fluttertoast (from `.symlinks/plugins/fluttertoast/ios`)
   - fluwx_no_pay (from `.symlinks/plugins/fluwx_no_pay/ios`)
   - package_info (from `.symlinks/plugins/package_info/ios`)
+  - package_info_plus (from `.symlinks/plugins/package_info_plus/ios`)
   - path_provider_ios (from `.symlinks/plugins/path_provider_ios/ios`)
+  - sentry_flutter (from `.symlinks/plugins/sentry_flutter/ios`)
   - shared_preferences (from `.symlinks/plugins/shared_preferences/ios`)
   - sqflite (from `.symlinks/plugins/sqflite/ios`)
   - webview_flutter (from `.symlinks/plugins/webview_flutter/ios`)
 
 SPEC REPOS:
-  trunk:
+  https://github.com/CocoaPods/Specs.git:
     - Ads-CN-Beta
+    - BURelyFoundation
     - FMDB
     - OrderedSet
     - ReachabilitySwift
+    - Sentry
     - Toast
 
 EXTERNAL SOURCES:
@@ -89,8 +109,12 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/fluwx_no_pay/ios"
   package_info:
     :path: ".symlinks/plugins/package_info/ios"
+  package_info_plus:
+    :path: ".symlinks/plugins/package_info_plus/ios"
   path_provider_ios:
     :path: ".symlinks/plugins/path_provider_ios/ios"
+  sentry_flutter:
+    :path: ".symlinks/plugins/sentry_flutter/ios"
   shared_preferences:
     :path: ".symlinks/plugins/shared_preferences/ios"
   sqflite:
@@ -99,25 +123,29 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/webview_flutter/ios"
 
 SPEC CHECKSUMS:
-  Ads-CN-Beta: ebf133f5812a8e618c68302580d6e39186d5287c
+  Ads-CN-Beta: 8c80fc2aa05f603579d0f5b1e4fc2afa2fba4112
   app_installer: 4301996bd8f3c6f75776416b8885a6d92928306f
+  BURelyFoundation: 7734bcadb9dc458b2fa341b3126dfd9049a1542e
   connectivity_plus: 413a8857dd5d9f1c399a39130850d02fe0feaf7e
   device_info: d7d233b645a32c40dfdc212de5cf646ca482f175
   Flutter: 50d75fe2f02b26cc09d224853bb45737f8b3214a
   flutter_inappwebview: bfd58618f49dc62f2676de690fc6dcda1d6c3721
-  flutter_unionad: 140720b3a24cbf9fd3aadbcc9e411ec24bd6fd7f
+  flutter_unionad: f0c288ddd53a672d1cea5ce4c543473f5eb38e46
   fluttertoast: 6122fa75143e992b1d3470f61000f591a798cc58
   fluwx_no_pay: 3003d5187cfd3c98712838f465960f4742b05999
   FMDB: 2ce00b547f966261cd18927a3ddb07cb6f3db82a
   OrderedSet: aaeb196f7fef5a9edf55d89760da9176ad40b93c
   package_info: 873975fc26034f0b863a300ad47e7f1ac6c7ec62
+  package_info_plus: 6c92f08e1f853dc01228d6f553146438dafcd14e
   path_provider_ios: 7d7ce634493af4477d156294792024ec3485acd5
   ReachabilitySwift: 985039c6f7b23a1da463388634119492ff86c825
+  Sentry: 0c5cd63d714187b4a39c331c1f0eb04ba7868341
+  sentry_flutter: efb3df2c203cd03aad255892a8d628a458656d14
   shared_preferences: af6bfa751691cdc24be3045c43ec037377ada40d
   sqflite: 6d358c025f5b867b29ed92fc697fd34924e11904
   Toast: 91b396c56ee72a5790816f40d3a94dd357abc196
   webview_flutter: 3603125dfd3bcbc9d8d418c3f80aeecf331c068b
 
-PODFILE CHECKSUM: aafe91acc616949ddb318b77800a7f51bffa2a4c
+PODFILE CHECKSUM: 9e5cd6db26f07ed562fe9112d1f0028592377d92
 
-COCOAPODS: 1.10.0
+COCOAPODS: 1.11.3

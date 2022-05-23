@@ -6,6 +6,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:device_info/device_info.dart';
 import 'package:flustars/flustars.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:fluwx_no_pay/fluwx_no_pay.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:package_info/package_info.dart';
@@ -19,6 +20,7 @@ import 'package:yimareport/entities/login_entity.dart';
 import 'package:yimareport/entities/version_entity.dart';
 import 'package:yimareport/generated/json/base/json_convert_content.dart';
 import 'package:yimareport/pages/about_page.dart';
+import 'package:yimareport/request/mark_api.dart';
 import 'package:yimareport/request/mine_api.dart';
 import 'package:yimareport/utils/cache_util.dart';
 import 'package:yimareport/utils/dialog.dart';
@@ -26,6 +28,10 @@ import 'package:yimareport/utils/toast_util.dart';
 import 'package:yimareport/utils/version_update_util.dart';
 
 import 'member_page.dart';
+import 'new_pages/diaries_page.dart';
+import 'new_pages/temperaturies_page.dart';
+import 'new_pages/weights_page.dart';
+import 'record_page.dart';
 
 class SettingPage extends StatefulWidget {
   @override
@@ -82,12 +88,13 @@ class _SettingPageState extends State<SettingPage> {
     }
 
     LoginEntity entity = await MineAPI.instance.login({"code": code, "uuid": uuid, "dev_info": dev_info});
-    //更新头像TODO
+    //更新头像
     await MineAPI.instance.setAccount(entity.data!);
     userInfo = entity.data!;
     setState(() {});
     await MineAPI.instance.memberLoginSyncData(buildContext: context);
     await MineAPI.instance.memberSyncCircle();
+    await MarkAPI.instance.markSyncData(isOnlyPush: false);
     getCycle();
     //同步信息
   }
@@ -121,6 +128,7 @@ class _SettingPageState extends State<SettingPage> {
         preferredSize: Size.fromHeight(0),
         child: AppBar(
           title: Text(""),
+          systemOverlayStyle: SystemUiOverlayStyle(statusBarColor: Colors.white),
           // leadingWidth: 150,
           brightness: Brightness.dark,
           elevation: 0,
@@ -128,15 +136,15 @@ class _SettingPageState extends State<SettingPage> {
         ),
       ),
       body: Container(
-        color: Colors.grey.shade200,
+        color: PS.backgroundColor,
         child: ListView(
           physics: const NeverScrollableScrollPhysics(),
           children: [
 
             // Material(child: Image.network('https://wx.qlogo.cn/mmopen/vi_32/6pVibWocQNNxFMjQ83sRibZDG2dPcbxelicVjQmaYxnw7FqXNn3F5t0qOYXfodr2BdQ4khiclFdsm7HtcFQ49cljjQ/132', width: 50, height: 50,color: Colors.white,), borderRadius: BorderRadius.circular(25),),
             Container(
-              color: Colors.black,
-              height: 120,
+              color: Colors.white,
+              height: 95,
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -148,9 +156,9 @@ class _SettingPageState extends State<SettingPage> {
                           GestureDetector(onTap: () {
                             print("点击登录");
                             sendWeChatAuth(scope: "snsapi_userinfo", state: "wechat_sdk_yimabao");
-                          }, child: Image.asset("images/wechat.png", width: 60, height: 60,)),
+                          }, child: Image.asset("images/wechat.png", width: 50, height: 50,)),
                           SizedBox(height: 10,),
-                          Text("登录", style: PS.normalTextStyle(color: Colors.white))
+                          Text("登录", style: PS.normalTextStyle())
                         ],
                       ),
                     ),
@@ -159,22 +167,22 @@ class _SettingPageState extends State<SettingPage> {
                       offstage: userInfo == null,
                       child: Column(
                         children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            children: [
-                            GestureDetector(
-                                onTap: () {
-                                  MyDialog.showAlertDialog(context, () async{
-                                    await MineAPI.instance.memberLogout(context);
-                                    userInfo = null;
-                                    getCycle();
-                                  }, title: "提示", message: "确认退出登录？", isOnlySureBtn: false, sureBtnTitle: "退出", sureBtnTitleColor: Colors.red);
-
-                                },
-                                child: Text("退出登录", style: PS.normalTextStyle(color: Colors.white)),
-                            ),
-                              SizedBox(width: 10,)
-                          ],),
+                          // Row(
+                          //   mainAxisAlignment: MainAxisAlignment.end,
+                          //   children: [
+                          //   GestureDetector(
+                          //       onTap: () {
+                          //         MyDialog.showAlertDialog(context, () async{
+                          //           await MineAPI.instance.memberLogout(context);
+                          //           userInfo = null;
+                          //           getCycle();
+                          //         }, title: "提示", message: "确认退出登录？", isOnlySureBtn: false, sureBtnTitle: "退出", sureBtnTitleColor: Colors.red);
+                          //
+                          //       },
+                          //       child: Text("退出登录", style: PS.normalTextStyle(color: Colors.white)),
+                          //   ),
+                          //     SizedBox(width: 10,)
+                          // ],),
                           Center(child: Row(
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
@@ -196,7 +204,7 @@ class _SettingPageState extends State<SettingPage> {
                               ),
                               // Offstage(offstage: userInfo?.headimgurl == "", child: Material(child: Image.network(userInfo?.headimgurl ?? '', width: 50, height: 50,color: Colors.white,), borderRadius: BorderRadius.circular(25),)),
                               SizedBox(width: 10,),
-                              Text("${userInfo?.nickname ?? ""}", style: PS.normalTextStyle(color: Colors.white)),
+                              Text("${userInfo?.nickname ?? ""}", style: PS.normalTextStyle()),
 
                             ],
                           ),),
@@ -206,7 +214,7 @@ class _SettingPageState extends State<SettingPage> {
                 ],
               ),
             ),
-            Container(width: double.infinity, height: 10, color: Colors.grey.shade200,),
+            Container(width: double.infinity, height: 10),
             // GestureDetector(
             //   behavior: HitTestBehavior.opaque,
             //   onTap: () async {
@@ -248,6 +256,206 @@ class _SettingPageState extends State<SettingPage> {
             //   ),
             // ),
             // Divider(height: 1,),
+            // GestureDetector(
+            //   behavior: HitTestBehavior.opaque,
+            //   onTap: () async {
+            //     await MineAPI.instance.deleteLastRecord(context);
+            //     setState(() {});
+            //   },
+            //   child: Container(
+            //     color: Colors.white,
+            //     padding: EdgeInsets.all(16),
+            //     child: Row(
+            //       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            //       children: [
+            //         Text("删除最后一条记录", style: PS.normalTextStyle(),),
+            //         // Icon(Icons.chevron_right, color: Colors.grey,)
+            //       ],
+            //     ),
+            //   ),
+            // ),
+            // Divider(height: 1,),
+
+            GestureDetector(
+              behavior: HitTestBehavior.opaque,
+              onTap: () async {
+                await showDialog(context: context, builder: (BuildContext context){
+                  return AlertDialog(
+                    contentPadding: EdgeInsets.all(15),
+                    content: CycleDialogContent(),
+                  );
+                });
+                getCycle();
+              },
+              child: Container(
+                color: Colors.white,
+                padding: EdgeInsets.all(16),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text("周期设置", style: PS.normalTextStyle(),),
+                    Row(
+                      children: [
+                        Text("${doingVal}天, ${cycleVal}天", style: PS.smallTextStyle(color: Colors.grey),),
+                        // Icon(Icons.chevron_right, color: Colors.grey,)
+                      ],
+                    )
+                  ],
+                ),
+              ),
+            ),
+            // Divider(height: 1,),
+            // GestureDetector(
+            //   behavior: HitTestBehavior.opaque,
+            //   onTap: () async {
+            //     await CacheUtil.clear();
+            //     showToast("清除成功");
+            //     getCacheTotal();
+            //   },
+            //   child: Container(
+            //     color: Colors.white,
+            //     padding: EdgeInsets.all(16),
+            //     child: Row(
+            //       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            //       children: [
+            //         Text("清除缓存", style: PS.normalTextStyle(),),
+            //         Row(
+            //           children: [
+            //             Text("${cacheTotal}", style: PS.smallTextStyle(color: Colors.grey),),
+            //             // Icon(Icons.chevron_right, color: Colors.grey,)
+            //           ],
+            //         )
+            //       ],
+            //     ),
+            //   ),
+            // ),
+            Divider(height: 1,),
+            GestureDetector(
+              behavior: HitTestBehavior.opaque,
+              onTap: () async {
+                //查看经期记录TODO
+                  await Navigator.push(context, MaterialPageRoute(builder: (_) {
+                    return RecordPage();
+                  }));
+              },
+              child: Container(
+                color: Colors.white,
+                padding: EdgeInsets.all(16),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text("经期记录", style: PS.normalTextStyle(),),
+                    Icon(Icons.arrow_forward_ios_sharp, size: 15, color: PS.cb2b2b2,)
+                  ],
+                ),
+              ),
+            ),
+
+            Divider(height: 1,),
+            GestureDetector(
+              behavior: HitTestBehavior.opaque,
+              onTap: () async {
+                //查看经期记录TODO
+                await Navigator.push(context, MaterialPageRoute(builder: (_) {
+                  return TemperaturiesPage();
+                }));
+              },
+              child: Container(
+                color: Colors.white,
+                padding: EdgeInsets.all(16),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text("体温记录", style: PS.normalTextStyle(),),
+                    Icon(Icons.arrow_forward_ios_sharp, size: 15, color: PS.cb2b2b2,)
+                  ],
+                ),
+              ),
+            ),
+            Divider(height: 1,),
+            GestureDetector(
+              behavior: HitTestBehavior.opaque,
+              onTap: () async {
+                //查看经期记录TODO
+                await Navigator.push(context, MaterialPageRoute(builder: (_) {
+                  return WeightsPage();
+                }));
+              },
+              child: Container(
+                color: Colors.white,
+                padding: EdgeInsets.all(16),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text("体重记录", style: PS.normalTextStyle(),),
+                    Icon(Icons.arrow_forward_ios_sharp, size: 15, color: PS.cb2b2b2,)
+                  ],
+                ),
+              ),
+            ),
+            //日记
+            Divider(height: 1,),
+            GestureDetector(
+              behavior: HitTestBehavior.opaque,
+              onTap: () async {
+                //查看经期记录TODO
+                await Navigator.push(context, MaterialPageRoute(builder: (_) {
+                  return DiariesPage();
+                }));
+              },
+              child: Container(
+                color: Colors.white,
+                padding: EdgeInsets.all(16),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text("所有日记", style: PS.normalTextStyle(),),
+                    Icon(Icons.arrow_forward_ios_sharp, size: 15, color: PS.cb2b2b2,)
+                  ],
+                ),
+              ),
+            ),
+
+            // Divider(height: 1,),
+            //
+            // GestureDetector(
+            //   behavior: HitTestBehavior.opaque,
+            //   onTap: () async {
+            //     fetchVersionInfo();
+            //   },
+            //   child: Container(
+            //     padding: EdgeInsets.all(16),
+            //     child: Row(
+            //       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            //       children: [
+            //         Text("检查更新", style: PS.normalTextStyle(),),
+            //         // Icon(Icons.chevron_right, color: Colors.grey,)
+            //       ],
+            //     ),
+            //   ),
+            // ),
+            // Divider(height: 1,),
+            // GestureDetector(
+            //   behavior: HitTestBehavior.opaque,
+            //   onTap: () async {
+            //     Navigator.push(context, MaterialPageRoute(builder: (_) {
+            //       return AboutPage();
+            //     }));
+            //   },
+            //   child: Container(
+            //     color: Colors.white,
+            //     padding: EdgeInsets.all(16),
+            //     child: Row(
+            //       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            //       children: [
+            //         Text("关于", style: PS.normalTextStyle(),),
+            //         // Icon(Icons.chevron_right, color: Colors.grey,)
+            //       ],
+            //     ),
+            //   ),
+            // ),
+            // Divider(height: 1,),
+            Container(width: double.infinity, height: 10,),
             GestureDetector(
               behavior: HitTestBehavior.opaque,
               onTap: () async {
@@ -326,35 +534,15 @@ class _SettingPageState extends State<SettingPage> {
                 ),
               ),
             ),
-            Container(width: double.infinity, height: 10, color: Colors.grey.shade200,),
+
+            Container(width: double.infinity, height: 10,),
             GestureDetector(
               behavior: HitTestBehavior.opaque,
               onTap: () async {
-                await MineAPI.instance.deleteLastRecord(context);
-                setState(() {});
-              },
-              child: Container(
-                color: Colors.white,
-                padding: EdgeInsets.all(16),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text("删除最后一条记录", style: PS.normalTextStyle(),),
-                    // Icon(Icons.chevron_right, color: Colors.grey,)
-                  ],
-                ),
-              ),
-            ),
-            Divider(height: 1,),
-            GestureDetector(
-              behavior: HitTestBehavior.opaque,
-              onTap: () async {
-                await showDialog(context: context, builder: (BuildContext context){
-                  return AlertDialog(
-                    contentPadding: EdgeInsets.all(15),
-                    content: CycleDialogContent(),
-                  );
-                });
+                await Navigator.push(context, MaterialPageRoute(builder: (_) {
+                  return AboutPage();
+                }));
+                userInfo = MineAPI.instance.getAccount();
                 getCycle();
               },
               child: Container(
@@ -363,81 +551,12 @@ class _SettingPageState extends State<SettingPage> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text("周期设置", style: PS.normalTextStyle(),),
-                    Row(
-                      children: [
-                        Text("${doingVal}天, ${cycleVal}天", style: PS.smallTextStyle(color: Colors.grey),),
-                        // Icon(Icons.chevron_right, color: Colors.grey,)
-                      ],
-                    )
+                    Text("设置", style: PS.normalTextStyle(),),
+                    Icon(Icons.arrow_forward_ios_sharp, size: 15, color: PS.cb2b2b2,)
                   ],
                 ),
               ),
             ),
-            Divider(height: 1,),
-            GestureDetector(
-              behavior: HitTestBehavior.opaque,
-              onTap: () async {
-                await CacheUtil.clear();
-                showToast("清除成功");
-                getCacheTotal();
-              },
-              child: Container(
-                color: Colors.white,
-                padding: EdgeInsets.all(16),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text("清除缓存", style: PS.normalTextStyle(),),
-                    Row(
-                      children: [
-                        Text("${cacheTotal}", style: PS.smallTextStyle(color: Colors.grey),),
-                        // Icon(Icons.chevron_right, color: Colors.grey,)
-                      ],
-                    )
-                  ],
-                ),
-              ),
-            ),
-            // Divider(height: 1,),
-            //
-            // GestureDetector(
-            //   behavior: HitTestBehavior.opaque,
-            //   onTap: () async {
-            //     fetchVersionInfo();
-            //   },
-            //   child: Container(
-            //     padding: EdgeInsets.all(16),
-            //     child: Row(
-            //       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            //       children: [
-            //         Text("检查更新", style: PS.normalTextStyle(),),
-            //         // Icon(Icons.chevron_right, color: Colors.grey,)
-            //       ],
-            //     ),
-            //   ),
-            // ),
-            Divider(height: 1,),
-            GestureDetector(
-              behavior: HitTestBehavior.opaque,
-              onTap: () async {
-                Navigator.push(context, MaterialPageRoute(builder: (_) {
-                  return AboutPage();
-                }));
-              },
-              child: Container(
-                color: Colors.white,
-                padding: EdgeInsets.all(16),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text("关于", style: PS.normalTextStyle(),),
-                    // Icon(Icons.chevron_right, color: Colors.grey,)
-                  ],
-                ),
-              ),
-            ),
-            Divider(height: 1,),
             /*
             ListTile(
               onTap: () async {

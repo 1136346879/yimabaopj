@@ -18,7 +18,7 @@ abstract class MemberRecordDao {
   Future<MemberRecord?> findLastRecord();
   @Query('SELECT * FROM MemberRecord ORDER BY id DESC LIMIT 1')
   Future<MemberRecord?> findLastOne();
-  @Query('SELECT * FROM MemberRecord WHERE isDeleted = 1 AND isMerged = 1 ORDER BY id DESC LIMIT 1')
+  @Query('SELECT * FROM MemberRecord WHERE isDeleted = 1 AND isMerged = 1 ORDER BY id DESC LIMIT 2')
   Future<List<MemberRecord>?> findFirstDelRecord();
 
   @insert
