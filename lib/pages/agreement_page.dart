@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:yimareport/config/project_config.dart';
 import 'package:yimareport/config/project_style.dart';
+import 'package:yimareport/pages/loading_page.dart';
 import 'package:yimareport/pages/main_page.dart';
 
 import 'agreement_h5_page.dart';
@@ -76,10 +77,10 @@ class _AgreementPageState extends State<AgreementPage> {
                     ),
                   ),
                   Text("如您同意上述协议，请点击“同意”并开始接受我们的服务。", style: PS.normalTextStyle(),),
-                  // SizedBox(height: 20,),
-                  // Text("为了更好的提供服务，我们将在您同意《隐私协议》后，正常使用应用时申请获取以下权限：", style: PS.normalTextStyle(),),
-                  // Text("“读取手机信息”：获取设备的信息；", style: PS.normalTextStyle(),),
-                  // Text("“存储与读取”；存放并使用本应用产生的数据。", style: PS.normalTextStyle(),),
+                  SizedBox(height: 20,),
+                  Text("为了更好的提供服务，我们将在您同意《隐私协议》后，正常使用应用时申请获取以下权限：", style: PS.normalTextStyle(),),
+                  Text("“读取手机信息”：获取设备的信息，包含ip、设备型号等。", style: PS.normalTextStyle(),),
+                  Text("“存储与读取”；存放并使用本应用产生的数据。", style: PS.normalTextStyle(),),
                   // Text("“网络数据”；提供应用服务。", style: PS.normalTextStyle(),),
 
                 ],
@@ -109,7 +110,8 @@ class _AgreementPageState extends State<AgreementPage> {
                       SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
                       sharedPreferences.setBool(ProjectConfig.agreementKey, true);
                       Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) {
-                        return MainPage(isShowCircleDialog: true,);
+                        // return MainPage(isShowCircleDialog: true,);
+                        return LoadingPage(isIgnoreUnionad: true);
                       }));
                     },
                     child: Text("同意并继续使用")

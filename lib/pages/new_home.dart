@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:collection';
+import 'dart:io';
 
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flustars/flustars.dart';
@@ -471,6 +472,8 @@ class _NewHomeState extends State<NewHome> with WidgetsBindingObserver, Automati
                         headerMargin: EdgeInsets.only(bottom: 5),
                         leftChevronPadding: const EdgeInsets.all(8.0),
                         rightChevronPadding: const EdgeInsets.all(8.0),
+                        leftChevronIcon: const Icon(Icons.chevron_left, color: PS.c353535,),
+                        rightChevronIcon: const Icon(Icons.chevron_right, color: PS.c353535,),
                         decoration: BoxDecoration(
                             color: PS.backgroundColor
                         )
@@ -521,6 +524,7 @@ class _NewHomeState extends State<NewHome> with WidgetsBindingObserver, Automati
                         });
                         //今天标记
                         bool isToday = isSameDay(getNowDate(), day);
+                        double tagMargin = Platform.isIOS ? 3 : 7;
                         return Container(
                           decoration: BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(8)), color: isDoing ? Color(0xffFFCCDD) : null,),
                           margin: EdgeInsets.all(1),
@@ -555,15 +559,15 @@ class _NewHomeState extends State<NewHome> with WidgetsBindingObserver, Automati
                                 //体温
                                 Positioned(child: Center(
                                   child: Offstage(offstage: temperature == null, child: Text("T", style: PS.smallerTextStyle(color: PS.cb2b2b2),)),
-                                ), top: 7,left: 7,),
+                                ), top: tagMargin,left: tagMargin,),
                                 //体重
                                 Positioned(child: Center(
                                   child: Offstage(offstage: weight == null, child: Text("H", style: PS.smallerTextStyle(color: PS.cb2b2b2),)),
-                                ), top: 7,right: 7,),
+                                ), top: tagMargin,right: tagMargin,),
                                 //日记
                                 Positioned(child: Center(
                                   child: Offstage(offstage: diary == null, child: Text("D", style: PS.smallerTextStyle(color: PS.cb2b2b2),)),
-                                ),right: 7,),
+                                ),right: tagMargin,),
                                 Center(child: Container(width: 25, height: 20, decoration: isToday ? BoxDecoration(border: Border.all(color: Color(0xFF383838), width: 0.5),borderRadius: BorderRadius.all(Radius.circular(0))) : null, child: Center(child: Text(text, style: PS.normalTextStyle(color: isAfterToday ? Colors.black38 : Color.fromRGBO(35, 35, 35, 1.0)),))))
                               ]
                           ),
@@ -622,6 +626,7 @@ class _NewHomeState extends State<NewHome> with WidgetsBindingObserver, Automati
                         });
                         //今天标记
                         bool isToday = isSameDay(getNowDate(), day);
+                        double tagMargin = Platform.isIOS ? 3 : 7;
                         return Container(
                           margin: EdgeInsets.all(1),
                           decoration: BoxDecoration(
@@ -659,15 +664,15 @@ class _NewHomeState extends State<NewHome> with WidgetsBindingObserver, Automati
                                 //体温
                                 Positioned(child: Center(
                                   child: Offstage(offstage: temperature == null, child: Text("T", style: PS.smallerTextStyle(color: PS.cb2b2b2),)),
-                                ), top: 7,left: 7,),
+                                ), top: tagMargin,left: tagMargin,),
                                 //体重
                                 Positioned(child: Center(
                                   child: Offstage(offstage: weight == null, child: Text("H", style: PS.smallerTextStyle(color: PS.cb2b2b2),)),
-                                ), top: 7,right: 7,),
+                                ), top: tagMargin,right: tagMargin,),
                                 //日记
                                 Positioned(child: Center(
                                   child: Offstage(offstage: diary == null, child: Text("D", style: PS.smallerTextStyle(color: PS.cb2b2b2),)),
-                                ),right: 7,),
+                                ),right: tagMargin,),
                                 Center(child: Container(width: 25, height: 20, decoration: isToday ? BoxDecoration(border: Border.all(color: Color(0xFF383838), width: 0.5),borderRadius: BorderRadius.all(Radius.circular(0))) : null, child: Center(child: Text(text, style: PS.normalTextStyle(color: isAfterToday ? Colors.black38 : Color.fromRGBO(35, 35, 35, 1.0)),))))
                                 // Center(child: Text(text, style: PS.normalTextStyle(color: isAfterToday ? Colors.black38 : Color.fromRGBO(35, 35, 35, 1.0)),))
                               ]

@@ -21,6 +21,8 @@ import 'package:yimareport/request/mine_api.dart';
 import 'agreement_page.dart';
 
 class LoadingPage extends StatefulWidget {
+  final bool isIgnoreUnionad;
+  LoadingPage({Key? key, this.isIgnoreUnionad = false}): super(key: key);
   @override
   _LoadingPageState createState() => _LoadingPageState();
 }
@@ -45,6 +47,9 @@ class _LoadingPageState extends State<LoadingPage> with SingleTickerProviderStat
       SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
       ProjectConfig.yimaCycle = sharedPreferences.getInt(ProjectConfig.doingKey) ?? 7;
       ProjectConfig.yimaDuration = sharedPreferences.getInt(ProjectConfig.cycleKey) ?? 28;
+      if(widget.isIgnoreUnionad) {
+        goToNextPage();
+      }
     });
   }
   Future<void> initPlatformState() async {
