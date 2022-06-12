@@ -25,7 +25,10 @@ import 'package:yimareport/request/mark_api.dart';
 import 'package:yimareport/request/mine_api.dart';
 import 'package:yimareport/utils/event_bus_util.dart';
 import 'package:yimareport/utils/event_util.dart';
+import 'package:yimareport/utils/local_noti_util.dart';
 import 'package:yimareport/utils/show_data_util.dart';
+import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+
 
 import '../main.dart';
 import 'new_pages/add_diary_page.dart';
@@ -53,6 +56,7 @@ class _NewHomeState extends State<NewHome> with WidgetsBindingObserver, Automati
   StreamSubscription? _tabChangeSubscription;
   var lastPopTime;
   DateTime _now = DateTime.now();
+  int selectedRating = 0;//疼痛
   @override
   void initState() {
     super.initState();
@@ -72,6 +76,7 @@ class _NewHomeState extends State<NewHome> with WidgetsBindingObserver, Automati
       await MineAPI.instance.memberSyncData();
       await MarkAPI.instance.markSyncData();
       init();
+      // pushTest();
     });
     WidgetsBinding.instance?.addObserver(this);
     netSubscription = Connectivity().onConnectivityChanged.listen((ConnectivityResult result) async {
@@ -94,6 +99,47 @@ class _NewHomeState extends State<NewHome> with WidgetsBindingObserver, Automati
   //   await MarkAPI.instance.markSyncData();
   //   setState(() {});
   // }
+  //推送测试
+  pushTest() async {
+    // LocalNotiUtil.instance.resetNotiQueue();
+    // FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+// initialise the plugin. app_icon needs to be a added as a drawable resource to the Android head project
+//     const AndroidInitializationSettings initializationSettingsAndroid = AndroidInitializationSettings('ic_launcher');
+//     final IOSInitializationSettings initializationSettingsIOS = IOSInitializationSettings();
+//     final InitializationSettings initializationSettings = InitializationSettings(android: initializationSettingsAndroid, iOS: initializationSettingsIOS);
+//     await flutterLocalNotificationsPlugin.initialize(initializationSettings);
+//
+//
+//     await flutterLocalNotificationsPlugin.zonedSchedule(
+//         0,
+//         'scheduled title',
+//         'scheduled body',
+//         tz.TZDateTime.now(tz.local).add(const Duration(seconds: 5)),
+//         const NotificationDetails(
+//             android: AndroidNotificationDetails(
+//                 'your channel id', 'your channel name',
+//                 channelDescription: 'your channel description')),
+//         androidAllowWhileIdle: true,
+//         uiLocalNotificationDateInterpretation:
+//         UILocalNotificationDateInterpretation.absoluteTime);
+//     await flutterLocalNotificationsPlugin.cancelAll();
+    return;
+
+    // final AndroidNotificationDetails androidPlatformChannelSpecifics = AndroidNotificationDetails('your channel id', 'your channel name',
+    //     channelDescription: 'your channel description',
+    //     importance: Importance.max,
+    //     priority: Priority.high,
+    //     ticker: 'ticker',
+    //     timeoutAfter: 10000,
+    //     // when: DateTime.now().add(Duration(seconds: 10)).millisecond
+    // );
+    // final NotificationDetails platformChannelSpecifics =
+    // NotificationDetails(android: androidPlatformChannelSpecifics);
+    // await flutterLocalNotificationsPlugin.show(
+    //     0, 'plain title', 'plain body', platformChannelSpecifics,
+    //     payload: 'item x');
+
+  }
   init() async {
     await autoAddRecord();
     //所有的姨妈记录
@@ -169,7 +215,7 @@ class _NewHomeState extends State<NewHome> with WidgetsBindingObserver, Automati
               await MarkAPI.instance.updateMark(editItem);
             }
           }
-        } else {
+        } else if(label == '℃') {
           if(editItem == null) {
             Mark mark = Mark(null, "temperature", "${getNowDate().microsecondsSinceEpoch}", "${_selectedDay?.millisecondsSinceEpoch}", temperature: p);
             await MarkAPI.instance.insertMark(mark);
@@ -178,6 +224,18 @@ class _NewHomeState extends State<NewHome> with WidgetsBindingObserver, Automati
               await MarkAPI.instance.delete(editItem);
             } else {
               editItem.temperature = p;
+              await MarkAPI.instance.updateMark(editItem);
+            }
+          }
+        } else {//睡眠
+          if(editItem == null) {
+            Mark mark = Mark(null, "sleep", "${getNowDate().microsecondsSinceEpoch}", "${_selectedDay?.millisecondsSinceEpoch}", length: p);
+            await MarkAPI.instance.insertMark(mark);
+          } else {
+            if(p == '--') {
+              await MarkAPI.instance.delete(editItem);
+            } else {
+              editItem.length = p;
               await MarkAPI.instance.updateMark(editItem);
             }
           }
@@ -508,7 +566,7 @@ class _NewHomeState extends State<NewHome> with WidgetsBindingObserver, Automati
                         List<Mark>? marks = dataSource?[_convertDay]?.marks;
                         //love
                         List<Mark> loves = [];
-                        Mark? temperature, weight, diary;
+                        Mark? temperature, weight, diary, sleep, pain, flow;
                         marks?.forEach((element) {
                           if(element.opt == "love") {
                             // if(loves.length < 3) {
@@ -520,11 +578,17 @@ class _NewHomeState extends State<NewHome> with WidgetsBindingObserver, Automati
                             weight = element;
                           } else if(element.opt == "diary") {
                             diary = element;
+                          } else if(element.opt == "sleep") {
+                            sleep = element;
+                          } else if(element.opt == "period_pain") {
+                            pain = element;
+                          } else if(element.opt == "period_flow") {
+                            flow = element;
                           }
                         });
                         //今天标记
                         bool isToday = isSameDay(getNowDate(), day);
-                        double tagMargin = Platform.isIOS ? 3 : 7;
+                        double tagMargin = Platform.isIOS ? 3 : 3;
                         return Container(
                           decoration: BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(8)), color: isDoing ? Color(0xffFFCCDD) : null,),
                           margin: EdgeInsets.all(1),
@@ -566,8 +630,12 @@ class _NewHomeState extends State<NewHome> with WidgetsBindingObserver, Automati
                                 ), top: tagMargin,right: tagMargin,),
                                 //日记
                                 Positioned(child: Center(
-                                  child: Offstage(offstage: diary == null, child: Text("D", style: PS.smallerTextStyle(color: PS.cb2b2b2),)),
+                                  child: Offstage(offstage: !(diary != null || sleep != null), child: Text("D", style: PS.smallerTextStyle(color: PS.cb2b2b2),)),
                                 ),right: tagMargin,),
+                                //疼痛或流量
+                                Positioned(child: Center(
+                                  child: Offstage(offstage: !(pain != null || flow != null), child: Text("W", style: PS.smallerTextStyle(color: PS.cb2b2b2),)),
+                                ),top: tagMargin,),
                                 Center(child: Container(width: 25, height: 20, decoration: isToday ? BoxDecoration(border: Border.all(color: Color(0xFF383838), width: 0.5),borderRadius: BorderRadius.all(Radius.circular(0))) : null, child: Center(child: Text(text, style: PS.normalTextStyle(color: isAfterToday ? Colors.black38 : Color.fromRGBO(35, 35, 35, 1.0)),))))
                               ]
                           ),
@@ -610,7 +678,7 @@ class _NewHomeState extends State<NewHome> with WidgetsBindingObserver, Automati
                         List<Mark>? marks = dataSource?[_convertDay]?.marks;
                         //love
                         List<Mark> loves = [];
-                        Mark? temperature, weight, diary;
+                        Mark? temperature, weight, diary, sleep, pain, flow;
                         marks?.forEach((element) {
                           if(element.opt == "love") {
                             // if(loves.length < 3) {
@@ -622,11 +690,17 @@ class _NewHomeState extends State<NewHome> with WidgetsBindingObserver, Automati
                             weight = element;
                           } else if(element.opt == "diary") {
                             diary = element;
+                          } else if(element.opt == "sleep") {
+                            sleep = element;
+                          } else if(element.opt == "period_pain") {
+                            pain = element;
+                          } else if(element.opt == "period_flow") {
+                            flow = element;
                           }
                         });
                         //今天标记
                         bool isToday = isSameDay(getNowDate(), day);
-                        double tagMargin = Platform.isIOS ? 3 : 7;
+                        double tagMargin = Platform.isIOS ? 3 : 3;
                         return Container(
                           margin: EdgeInsets.all(1),
                           decoration: BoxDecoration(
@@ -671,8 +745,12 @@ class _NewHomeState extends State<NewHome> with WidgetsBindingObserver, Automati
                                 ), top: tagMargin,right: tagMargin,),
                                 //日记
                                 Positioned(child: Center(
-                                  child: Offstage(offstage: diary == null, child: Text("D", style: PS.smallerTextStyle(color: PS.cb2b2b2),)),
+                                  child: Offstage(offstage: !(diary != null || sleep != null), child: Text("D", style: PS.smallerTextStyle(color: PS.cb2b2b2),)),
                                 ),right: tagMargin,),
+                                //疼痛或流量
+                                Positioned(child: Center(
+                                  child: Offstage(offstage: !(pain != null || flow != null), child: Text("W", style: PS.smallerTextStyle(color: PS.cb2b2b2),)),
+                                ),top: tagMargin,),
                                 Center(child: Container(width: 25, height: 20, decoration: isToday ? BoxDecoration(border: Border.all(color: Color(0xFF383838), width: 0.5),borderRadius: BorderRadius.all(Radius.circular(0))) : null, child: Center(child: Text(text, style: PS.normalTextStyle(color: isAfterToday ? Colors.black38 : Color.fromRGBO(35, 35, 35, 1.0)),))))
                                 // Center(child: Text(text, style: PS.normalTextStyle(color: isAfterToday ? Colors.black38 : Color.fromRGBO(35, 35, 35, 1.0)),))
                               ]
@@ -825,6 +903,21 @@ class _NewHomeState extends State<NewHome> with WidgetsBindingObserver, Automati
                       //日记
                       List<Mark> diarys = value.marks?.where((element) => element.opt == "diary").toList() ?? [];
                       Mark? diary = diarys.length > 0 ? diarys.first : null;
+                      //疼痛记录
+                      List<Mark> pains = value.marks?.where((element) => element.opt == "period_pain").toList() ?? [];
+                      Mark? pain = pains.length > 0 ? pains.first : null;
+                      //流量记录
+                      List<Mark> flows = value.marks?.where((element) => element.opt == "period_flow").toList() ?? [];
+                      Mark? flow = flows.length > 0 ? flows.first : null;
+                      //是否在经期内, 是否允许标记疼痛记录 流量记录
+                      var isDoing = (_recordDateSections ?? []).where((element) {
+                        DateTime? start = DateUtil.getDateTime(DateUtil.formatDate(element[0], format: 'yyyy-MM-dd'));
+                        DateTime? end = DateUtil.getDateTime(DateUtil.formatDate(element[1], format: 'yyyy-MM-dd'));
+                        return (_selectedDay!.isAfter(start!) || isSameDay(start, _selectedDay!)) && (_selectedDay!.isBefore(end!) || isSameDay(end, _selectedDay!));
+                      }).toList().length > 0;
+                      //睡眠记录
+                      List<Mark> sleeps = value.marks?.where((element) => element.opt == "sleep").toList() ?? [];
+                      Mark? sleep = sleeps.length > 0 ? sleeps.first : null;
                       return Column(
                         // shrinkWrap: true,
                         children: [
@@ -860,6 +953,8 @@ class _NewHomeState extends State<NewHome> with WidgetsBindingObserver, Automati
                                       } else {
                                         await MineAPI.instance.newDeleteRecord(buildContext: context, id: _lastRecord['id']);
                                       }
+                                      //重置本地推送你
+                                      LocalNotiUtil.instance.resetNotiQueue();
                                       //刷数据
                                       init();
                                     },
@@ -909,6 +1004,8 @@ class _NewHomeState extends State<NewHome> with WidgetsBindingObserver, Automati
                                       } else {
                                         await MineAPI.instance.newDeleteRecord(buildContext: context, id: _lastRecord['id']);
                                       }
+                                      //重置本地推送你
+                                      LocalNotiUtil.instance.resetNotiQueue();
                                       //刷数据
                                       init();
                                     },
@@ -925,6 +1022,157 @@ class _NewHomeState extends State<NewHome> with WidgetsBindingObserver, Automati
                                   // },),
                                 ],
                               ),
+                            ),
+                          ),
+                          //疼痛
+                          Offstage(
+                            offstage: !isDoing,
+                            child: Container(
+                              margin: EdgeInsets.symmetric (vertical: 1),
+                              decoration: new BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.all(Radius.circular(12.0)),
+                              ),
+                              child: Column(
+                                children: [
+                                  Container(
+                                    height: 50,
+                                    padding: EdgeInsets.only(left: 20, right: PS.margin),
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                      crossAxisAlignment: CrossAxisAlignment.center,
+                                      children: [
+                                        Text("疼痛", style: PS.normalTextStyle(),),
+                                        Row(
+                                          children: [
+                                            Offstage(
+                                              offstage: pain == null,
+                                              child: RatingBar.builder(
+                                                initialRating: double.parse(pain?.level ?? "0"),
+                                                direction: Axis.horizontal,
+                                                allowHalfRating: false,
+                                                itemCount: 5,
+                                                itemSize: 22,
+                                                itemPadding: EdgeInsets.symmetric(horizontal: 4.0),
+                                                itemBuilder: (context, index) => Text("${index + 1}", style: TextStyle(color: Colors.red, fontWeight: int.parse(pain?.level ?? "0") > index ? FontWeight.bold : FontWeight.normal, fontSize: 16)),
+                                                onRatingUpdate: (rating) async {
+                                                  var selectedRating = rating.toInt();
+                                                  if(pain?.level == '${selectedRating}') {
+                                                    //删除
+                                                    await MarkAPI.instance.delete(pain!);
+                                                  } else {
+                                                    pain?.level = '${selectedRating}';
+                                                    await MarkAPI.instance.updateMark(pain);
+                                                  }
+                                                  init();
+                                                },
+                                              ),
+                                            ),
+                                            Offstage(
+                                              offstage: pain != null,
+                                              child: RatingBar.builder(
+                                                initialRating: double.parse(pain?.level ?? "0"),
+                                                direction: Axis.horizontal,
+                                                allowHalfRating: false,
+                                                itemCount: 5,
+                                                itemSize: 22,
+                                                itemPadding: EdgeInsets.symmetric(horizontal: 4.0),
+                                                itemBuilder: (context, index) => Text("${index + 1}", style: TextStyle(color: Colors.red, fontWeight: FontWeight.normal, fontSize: 16)),
+                                                onRatingUpdate: (rating) async {
+                                                  var selectedRating = rating.toInt();
+                                                  var painMark = Mark(null, "period_pain", "${getNowDate().microsecondsSinceEpoch}", "${_selectedDay!.millisecondsSinceEpoch}",)..level='${selectedRating}';
+                                                  await MarkAPI.instance.insertMark(painMark);
+                                                  init();
+                                                  print(rating);
+                                                },
+                                              ),
+                                            ),
+                                            SizedBox(width: 10,)
+                                          ],
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                          //流量
+                          Offstage(
+                            offstage: !isDoing,
+                            child: Column(
+                              children: [
+                                Container(
+                                  margin: EdgeInsets.symmetric (vertical: 1),
+                                  decoration: new BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.all(Radius.circular(12.0)),
+                                  ),
+                                  child: Column(
+                                    children: [
+                                      Container(
+                                        height: 50,
+                                        padding: EdgeInsets.only(left: 20, right: PS.margin),
+                                        child: Row(
+                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                          crossAxisAlignment: CrossAxisAlignment.center,
+                                          children: [
+                                            Text("流量", style: PS.normalTextStyle(),),
+                                            Row(
+                                              children: [
+                                                Offstage(
+                                                  offstage: flow == null,
+                                                  child: RatingBar.builder(
+                                                    initialRating: double.parse(flow?.level ?? "0"),
+                                                    direction: Axis.horizontal,
+                                                    allowHalfRating: false,
+                                                    itemCount: 5,
+                                                    itemSize: 22,
+                                                    itemPadding: EdgeInsets.symmetric(horizontal: 4.0),
+                                                    itemBuilder: (context, index) => Text("${index + 1}", style: TextStyle(color: Colors.red, fontWeight: int.parse(flow?.level ?? "0") > index ? FontWeight.bold : FontWeight.normal, fontSize: 16)),
+                                                    onRatingUpdate: (rating) async {
+                                                      var selectedRating = rating.toInt();
+                                                      if(flow?.level == '${selectedRating}') {
+                                                        //删除
+                                                        await MarkAPI.instance.delete(flow!);
+                                                      } else {
+                                                        flow?.level = '${selectedRating}';
+                                                        await MarkAPI.instance.updateMark(flow);
+                                                      }
+                                                      init();
+                                                    },
+                                                  ),
+                                                ),
+                                                Offstage(
+                                                  offstage: flow != null,
+                                                  child: RatingBar.builder(
+                                                    initialRating: double.parse(flow?.level ?? "0"),
+                                                    direction: Axis.horizontal,
+                                                    allowHalfRating: false,
+                                                    itemCount: 5,
+                                                    itemSize: 22,
+                                                    itemPadding: EdgeInsets.symmetric(horizontal: 4.0),
+                                                    itemBuilder: (context, index) => Text("${index + 1}", style: TextStyle(color: Colors.red, fontWeight: FontWeight.normal, fontSize: 16)),
+                                                    onRatingUpdate: (rating) async {
+                                                      var selectedRating = rating.toInt();
+                                                      var painMark = Mark(null, "period_flow", "${getNowDate().microsecondsSinceEpoch}", "${_selectedDay!.millisecondsSinceEpoch}",)..level='${selectedRating}';
+                                                      await MarkAPI.instance.insertMark(painMark);
+                                                      init();
+                                                      print(rating);
+                                                    },
+                                                  ),
+                                                ),
+                                                SizedBox(width: 10,)
+                                              ],
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                SizedBox(height: 5,)
+                              ],
                             ),
                           ),
                           //爱爱
@@ -1113,6 +1361,47 @@ class _NewHomeState extends State<NewHome> with WidgetsBindingObserver, Automati
                               ],
                             ),
                           ),
+                          //睡眠
+                          Container(
+                            margin: EdgeInsets.symmetric (vertical: 1),
+                            height: 50,
+                            padding: EdgeInsets.only(left: 20, right: PS.margin),
+                            decoration: new BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.all(Radius.circular(12.0)),
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text("睡眠", style: PS.normalTextStyle(),),
+                                Row(
+                                  children: [
+                                    Offstage(offstage: sleep != null, child: IconButton(onPressed: () {
+                                      var data = List.generate(49, (index) => (0 + index * .5).toString());
+                                      if(sleep != null) {
+                                        data.insert(0, '--');
+                                      }
+                                      _onClickItem(data, sleep?.length ?? "8.0", label: 'H', editItem: sleep);
+                                    }
+                                        , icon: Icon(Icons.add, color: Color(0xffA6A6A6),))),
+                                    Offstage(offstage: sleep == null, child: Row(
+                                      children: [
+                                        GestureDetector(child: Text("${sleep?.length ?? ""} H", style: PS.smallTextStyle(),), onTap: () {
+                                          var data = List.generate(49, (index) => (0 + index * .5).toString());
+                                          if(sleep != null) {
+                                            data.insert(0, '--');
+                                          }
+                                          _onClickItem(data, sleep?.length ?? "8.0", label: "H", editItem: sleep);
+                                        },),
+                                        SizedBox(width: 17,)
+                                      ],
+                                    ))
+                                  ],
+                                )
+
+                              ],
+                            ),
+                          ),
                           //日记
                           Container(
                             margin: EdgeInsets.symmetric (vertical: 1),
@@ -1176,7 +1465,7 @@ class _NewHomeState extends State<NewHome> with WidgetsBindingObserver, Automati
                               ],
                             ),
                           ),
-                          SizedBox(height: 20,)
+                          SizedBox(height: 20,),
                         ],
                       );
                     },

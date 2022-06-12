@@ -17,6 +17,8 @@ import 'package:yimareport/db/entities/record.dart';
 import 'package:yimareport/pages/home_page.dart';
 import 'package:yimareport/pages/main_page.dart';
 import 'package:yimareport/request/mine_api.dart';
+import 'package:yimareport/utils/local_noti_util.dart';
+
 
 import 'agreement_page.dart';
 
@@ -34,6 +36,13 @@ class _LoadingPageState extends State<LoadingPage> with SingleTickerProviderStat
   @override
   void initState() {
     super.initState();
+    // JPush jpush = new JPush();
+    // jpush.setup(
+    //   appKey: "06cd8173691fac83e795e819",
+    //   channel: "theChannel",
+    //   production: false,
+    //   debug: false, // 设置是否打印 debug 日志
+    // );
     SystemChrome.setEnabledSystemUIOverlays([]);
     // _requestPermission();
     WidgetsBinding.instance?.addPostFrameCallback((_) async {
@@ -41,6 +50,7 @@ class _LoadingPageState extends State<LoadingPage> with SingleTickerProviderStat
       _privacy();
       _initRegister();
       await DBAPI.load();
+      await LocalNotiUtil.instance.load();
       MineAPI();
       // await Future.delayed(const Duration(milliseconds: 1000));
       await dbMigration();

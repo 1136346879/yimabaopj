@@ -20,15 +20,18 @@ import 'package:yimareport/entities/login_entity.dart';
 import 'package:yimareport/entities/version_entity.dart';
 import 'package:yimareport/generated/json/base/json_convert_content.dart';
 import 'package:yimareport/pages/about_page.dart';
+import 'package:yimareport/pages/new_pages/sleeps_page.dart';
 import 'package:yimareport/request/mark_api.dart';
 import 'package:yimareport/request/mine_api.dart';
 import 'package:yimareport/utils/cache_util.dart';
 import 'package:yimareport/utils/dialog.dart';
+import 'package:yimareport/utils/local_noti_util.dart';
 import 'package:yimareport/utils/toast_util.dart';
 import 'package:yimareport/utils/version_update_util.dart';
 
 import 'member_page.dart';
 import 'new_pages/diaries_page.dart';
+import 'new_pages/noti_page.dart';
 import 'new_pages/temperaturies_page.dart';
 import 'new_pages/weights_page.dart';
 import 'record_page.dart';
@@ -117,6 +120,7 @@ class _SettingPageState extends State<SettingPage> {
     ProjectConfig.yimaCycle = cycleVal;
     ProjectConfig.yimaDuration = doingVal;
     setState(() {});
+    LocalNotiUtil.instance.resetNotiQueue();
   }
   fetchVersionInfo() async {
       VersionUpdateUtil().checkVersion(context);
@@ -350,8 +354,27 @@ class _SettingPageState extends State<SettingPage> {
                 ),
               ),
             ),
-
             Divider(height: 1,),
+            GestureDetector(
+              behavior: HitTestBehavior.opaque,
+              onTap: () async {
+                await Navigator.push(context, MaterialPageRoute(builder: (_) {
+                  return NotiPage();
+                }));
+              },
+              child: Container(
+                color: Colors.white,
+                padding: EdgeInsets.all(16),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text("通知与提醒", style: PS.normalTextStyle(),),
+                    Icon(Icons.arrow_forward_ios_sharp, size: 15, color: PS.cb2b2b2,)
+                  ],
+                ),
+              ),
+            ),
+            Container(width: double.infinity, height: 10,),
             GestureDetector(
               behavior: HitTestBehavior.opaque,
               onTap: () async {
@@ -388,6 +411,27 @@ class _SettingPageState extends State<SettingPage> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text("体重记录", style: PS.normalTextStyle(),),
+                    Icon(Icons.arrow_forward_ios_sharp, size: 15, color: PS.cb2b2b2,)
+                  ],
+                ),
+              ),
+            ),
+            Divider(height: 1,),
+            //睡眠记录
+            GestureDetector(
+              behavior: HitTestBehavior.opaque,
+              onTap: () async {
+                await Navigator.push(context, MaterialPageRoute(builder: (_) {
+                  return SleepsPage();
+                }));
+              },
+              child: Container(
+                color: Colors.white,
+                padding: EdgeInsets.all(16),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text("睡眠记录", style: PS.normalTextStyle(),),
                     Icon(Icons.arrow_forward_ios_sharp, size: 15, color: PS.cb2b2b2,)
                   ],
                 ),

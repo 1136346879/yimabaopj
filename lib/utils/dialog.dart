@@ -11,6 +11,8 @@ import 'package:yimareport/request/mine_api.dart';
 import 'package:yimareport/utils/my_router.dart';
 import 'package:yimareport/view/custom_button.dart';
 
+import 'local_noti_util.dart';
+
 typedef DialogBtnAction = void Function();
 
 class MyDialog {
@@ -302,6 +304,7 @@ class _CycleDialogContentState extends State<CycleDialogContent> {
       sharedPreferences.setInt(ProjectConfig.localDoingKey, doing);
       sharedPreferences.setInt(ProjectConfig.localCycleKey, cycle);
     }
+    LocalNotiUtil.instance.resetNotiQueue();
     await MineAPI.instance.memberSyncCircle();
 
   }

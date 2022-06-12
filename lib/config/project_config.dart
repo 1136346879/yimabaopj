@@ -14,6 +14,7 @@ class ProjectConfig{
   static const cycleNeedSyncKey = "CYCLENEEDSYNCKEY";
   static const localDoingKey = "LOCALDOINGKEY";
   static const localCycleKey = "LOCALCYCLEKEY";
+  static const localNotiKey = "LOCALNOTIKEY";
   static const String adAndroidAppId = "5191472";
   static const String adAndroidId = "887507780";
   static const String adIosAppId = "5240487";

@@ -50,6 +50,9 @@ class _AddDiaryPageState extends State<AddDiaryPage> {
             }
             //保存或者插入
             // MarkAPI.instance.insertOrUpdateMark(diary);
+          } else {
+            //删除
+            await MarkAPI.instance.delete(widget.editItem!);
           }
           return Future.value(true);
         },

@@ -133,6 +133,11 @@ class MarkAPI {
         List<Mark> weights = delItemArr.where((element) => element.opt == "weight").toList();
         List<Mark> temperaturies = delItemArr.where((element) => element.opt == "temperature").toList();
         List<Mark> diaries = delItemArr.where((element) => element.opt == "diary").toList();
+        //新增的3个标签
+        List<Mark> sleeps = delItemArr.where((element) => element.opt == "sleep").toList();
+        List<Mark> pains = delItemArr.where((element) => element.opt == "period_pain").toList();
+        List<Mark> flows = delItemArr.where((element) => element.opt == "period_flow").toList();
+
         if(loves.length > 0) {
           var delMaps = loves.map((e) => e.toMap()).toList();
           var params = {
@@ -177,6 +182,40 @@ class MarkAPI {
           await delMark(params, buildContext: buildContext);
           await DBAPI.sharedInstance.markDao.deleteMarks(diaries);
         }
+        if(sleeps.length > 0) {
+          var delMaps = sleeps.map((e) => e.toMap()).toList();
+          var params = {
+            "user_id": userId,
+            "uuid": await MineAPI.instance.getUUID(),
+            "opt": "sleep",
+            "data": delMaps
+          };
+          await delMark(params, buildContext: buildContext);
+          await DBAPI.sharedInstance.markDao.deleteMarks(diaries);
+        }
+        if(pains.length > 0) {
+          var delMaps = pains.map((e) => e.toMap()).toList();
+          var params = {
+            "user_id": userId,
+            "uuid": await MineAPI.instance.getUUID(),
+            "opt": "period_pain",
+            "data": delMaps
+          };
+          await delMark(params, buildContext: buildContext);
+          await DBAPI.sharedInstance.markDao.deleteMarks(diaries);
+        }
+        if(flows.length > 0) {
+          var delMaps = flows.map((e) => e.toMap()).toList();
+          var params = {
+            "user_id": userId,
+            "uuid": await MineAPI.instance.getUUID(),
+            "opt": "period_flow",
+            "data": delMaps
+          };
+          await delMark(params, buildContext: buildContext);
+          await DBAPI.sharedInstance.markDao.deleteMarks(diaries);
+        }
+
       }
       //需要同步的数据
       List<Mark> _filterData = _dataSource.where((element) => element.isDeleted == 0 && element.isMerged == 0).toList();
@@ -185,6 +224,11 @@ class MarkAPI {
         List<Mark> weights = _filterData.where((element) => element.opt == "weight").toList();
         List<Mark> temperaturies = _filterData.where((element) => element.opt == "temperature").toList();
         List<Mark> diaries = _filterData.where((element) => element.opt == "diary").toList();
+        //新增的3个标签
+        List<Mark> sleeps = _filterData.where((element) => element.opt == "sleep").toList();
+        List<Mark> pains = _filterData.where((element) => element.opt == "period_pain").toList();
+        List<Mark> flows = _filterData.where((element) => element.opt == "period_flow").toList();
+
         if(loves.length > 0) {
           var maps = loves.map((e) => e.toMap()).toList();
           var params = {
@@ -233,6 +277,42 @@ class MarkAPI {
           diaries.forEach((element) {element.isMerged = 1;});
           await DBAPI.sharedInstance.markDao.updateMarks(diaries);
         }
+        if(sleeps.length > 0) {
+          var maps = sleeps.map((e) => e.toMap()).toList();
+          var params = {
+            "user_id": userId,
+            "uuid": await MineAPI.instance.getUUID(),
+            "opt": "sleep",
+            "data": maps
+          };
+          await _addMark(params, buildContext: buildContext);
+          sleeps.forEach((element) {element.isMerged = 1;});
+          await DBAPI.sharedInstance.markDao.updateMarks(sleeps);
+        }
+        if(pains.length > 0) {
+          var maps = pains.map((e) => e.toMap()).toList();
+          var params = {
+            "user_id": userId,
+            "uuid": await MineAPI.instance.getUUID(),
+            "opt": "period_pain",
+            "data": maps
+          };
+          await _addMark(params, buildContext: buildContext);
+          pains.forEach((element) {element.isMerged = 1;});
+          await DBAPI.sharedInstance.markDao.updateMarks(pains);
+        }
+        if(flows.length > 0) {
+          var maps = flows.map((e) => e.toMap()).toList();
+          var params = {
+            "user_id": userId,
+            "uuid": await MineAPI.instance.getUUID(),
+            "opt": "period_flow",
+            "data": maps
+          };
+          await _addMark(params, buildContext: buildContext);
+          flows.forEach((element) {element.isMerged = 1;});
+          await DBAPI.sharedInstance.markDao.updateMarks(flows);
+        }
       }
       if(isOnlyPush) return;
       var downloadParams = {
@@ -260,12 +340,34 @@ class MarkAPI {
       List<Mark> serveDiariesMark = serveDiaries.data.map((element) {
         return Mark(null, "diary", element.createAt, element.dayAt, diary: element.diary, isMerged: 1, isLocal: 0);
       }).toList();
+      //新增3个标签
+      downloadParams["opt"] = "sleep";
+      MarkSyncEntity serveSleeps = await loadMarks(downloadParams, buildContext: buildContext);
+      List<Mark> serveSleepsMark = serveSleeps.data.map((element) {
+        return Mark(null, "sleep", element.createAt, element.dayAt, length: element.length, isMerged: 1, isLocal: 0);
+      }).toList();
+
+      downloadParams["opt"] = "period_pain";
+      MarkSyncEntity servePains = await loadMarks(downloadParams, buildContext: buildContext);
+      List<Mark> servePainsMark = servePains.data.map((element) {
+        return Mark(null, "period_pain", element.createAt, element.dayAt, level: element.level, isMerged: 1, isLocal: 0);
+      }).toList();
+
+      downloadParams["opt"] = "period_flow";
+      MarkSyncEntity serveflows = await loadMarks(downloadParams, buildContext: buildContext);
+      List<Mark> serveFlowsMark = serveflows.data.map((element) {
+        return Mark(null, "period_flow", element.createAt, element.dayAt, level: element.level, isMerged: 1, isLocal: 0);
+      }).toList();
       //替换数据库
       await DBAPI.sharedInstance.markDao.deleteAllMemberMarks();
       await DBAPI.sharedInstance.markDao.batchInsertMarks(serveLovesMark);
       await DBAPI.sharedInstance.markDao.batchInsertMarks(serveWeightsMark);
       await DBAPI.sharedInstance.markDao.batchInsertMarks(serveTemperaturiesMark);
       await DBAPI.sharedInstance.markDao.batchInsertMarks(serveDiariesMark);
+
+      await DBAPI.sharedInstance.markDao.batchInsertMarks(serveSleepsMark);
+      await DBAPI.sharedInstance.markDao.batchInsertMarks(servePainsMark);
+      await DBAPI.sharedInstance.markDao.batchInsertMarks(serveFlowsMark);
     } else {
       //无网不做处理
     }
@@ -282,6 +384,10 @@ class MarkAPI {
       List<Mark> weights = _filterData.where((element) => element.opt == "weight").toList();
       List<Mark> temperaturies = _filterData.where((element) => element.opt == "temperature").toList();
       List<Mark> diaries = _filterData.where((element) => element.opt == "diary").toList();
+      //
+      List<Mark> sleeps = _filterData.where((element) => element.opt == "sleep").toList();
+      List<Mark> pains = _filterData.where((element) => element.opt == "period_pain").toList();
+      List<Mark> flows = _filterData.where((element) => element.opt == "period_flow").toList();
       if(loves.length > 0) {
         var maps = loves.map((e) => e.toMap()).toList();
         var params = {
@@ -322,6 +428,37 @@ class MarkAPI {
         };
         await _addMark(params, buildContext: buildContext);
       }
+      //新增的3个标签
+      if(sleeps.length > 0) {
+        var maps = sleeps.map((e) => e.toMap()).toList();
+        var params = {
+          "user_id": MineAPI.instance.getAccount()?.user_id!,
+          "uuid": await MineAPI.instance.getUUID(),
+          "opt": "sleep",
+          "data": maps
+        };
+        await _addMark(params, buildContext: buildContext);
+      }
+      if(pains.length > 0) {
+        var maps = pains.map((e) => e.toMap()).toList();
+        var params = {
+          "user_id": MineAPI.instance.getAccount()?.user_id!,
+          "uuid": await MineAPI.instance.getUUID(),
+          "opt": "period_pain",
+          "data": maps
+        };
+        await _addMark(params, buildContext: buildContext);
+      }
+      if(flows.length > 0) {
+        var maps = sleeps.map((e) => e.toMap()).toList();
+        var params = {
+          "user_id": MineAPI.instance.getAccount()?.user_id!,
+          "uuid": await MineAPI.instance.getUUID(),
+          "opt": "period_flow",
+          "data": maps
+        };
+        await _addMark(params, buildContext: buildContext);
+      }
     }
   }
   // //会员退出登录  有网 同步数据 清会员表， 显示脏数据表 无网 写入退出操作到会员表，切换显示脏数据表
@@ -357,7 +494,8 @@ class MarkAPI {
           "opt": markBean.opt
         };
         await _addMark(params, buildContext: buildContext);
-        DBAPI.sharedInstance.markDao.updateMark(markBean..isMerged=1);
+        markBean.isMerged = 1;
+        await DBAPI.sharedInstance.markDao.updateMark(markBean);
         // //再同步
         // await markSyncData();
       }

@@ -24,7 +24,11 @@ abstract class MarkDao {
   @Query('SELECT * FROM Mark WHERE isDeleted = 1')
   Future<List<Mark>> findMarksNeedDelete();
   @Insert()
-  Future<void> insertMark(Mark mark);
+  Future<int> insert(Mark mark);
+
+  Future<void> insertMark(Mark mark) async{
+    mark.id = await insert(mark);
+  }
   @Insert()
   Future<void> batchInsertMarks(List<Mark> marks);
 

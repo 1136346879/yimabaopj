@@ -5,7 +5,7 @@ import 'package:floor/floor.dart';
 @entity
 class Mark {
   @PrimaryKey(autoGenerate: true)
-  final int? id;
+  int? id;
   final String opt;//类型
   String createAt;//添加时间
   final String dayAt;//标记的日期
@@ -20,6 +20,8 @@ class Mark {
   String? diary;//日记
   int? isLocal;//本地脏数据
 
+  String? level;//疼痛流量等级
+
 
   Mark(this.id, this.opt, this.createAt, this.dayAt,
         { this.isMerged = 0,
@@ -30,7 +32,8 @@ class Mark {
           this.measure = null,
           this.hour = null,
           this.diary = null,
-          this.isLocal = 1
+          this.isLocal = 1,
+          this.level = null,
         }
       );
 
@@ -49,7 +52,14 @@ class Mark {
       result["measure"] = this.measure!;
     } else if (this.opt == "temperature") {
       result["temperature"] = this.temperature!;
+    } else if (this.opt == "period_pain") {
+      result["level"] = this.level!;
+    } else if (this.opt == "period_flow") {
+      result["level"] = this.level!;
+    } else if (this.opt == "sleep") {
+      result["length"] = this.length!;
     }
+
     return result;
   }
 }

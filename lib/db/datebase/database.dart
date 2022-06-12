@@ -15,7 +15,7 @@ import 'package:yimareport/db/entities/record.dart';
 
 part 'database.g.dart'; // the generated code will be there
 
-@Database(version: 3, entities: [Record, LocalRecord, MemberRecord, Mark])
+@Database(version: 4, entities: [Record, LocalRecord, MemberRecord, Mark])
 abstract class AppDatabase extends FloorDatabase {
   RecordDao get recordDao;
   LocalRecordDao get localRecordDao;

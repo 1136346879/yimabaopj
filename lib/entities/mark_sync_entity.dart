@@ -16,5 +16,6 @@ class MarkSyncData with JsonConvert<MarkSyncData> {
 	late String temperature;
 	late String diary;
 	late String opt;
+	late String level;
 	int isMerged = 1;
 }
