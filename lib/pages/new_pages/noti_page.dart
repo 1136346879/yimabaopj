@@ -4,6 +4,7 @@ import 'package:yimareport/config/project_config.dart';
 import 'package:yimareport/config/project_style.dart';
 import 'package:yimareport/pages/new_pages/noti_test.dart';
 import 'package:yimareport/utils/local_noti_util.dart';
+import 'package:yimareport/utils/toast_util.dart';
 
 class NotiPage extends StatefulWidget {
   @override
@@ -18,7 +19,7 @@ class _NotiPageState extends State<NotiPage> {
     super.initState();
     WidgetsBinding.instance?.addPostFrameCallback((_) async {
       SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-      isShowLocalNoti = sharedPreferences.getBool(ProjectConfig.localNotiKey) ?? false;
+      isShowLocalNoti = sharedPreferences.getBool(ProjectConfig.localNotiKey) ?? true;
       setState(() {
 
       });
@@ -69,7 +70,7 @@ class _NotiPageState extends State<NotiPage> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text("距离经期5天", style: PS.smallTextStyle(color: PS.c888888),),
-                      Text("上午8:00", style: PS.smallTextStyle(color: PS.c888888),),
+                      // Text("上午8:00", style: PS.smallTextStyle(color: PS.c888888),),
                     ],
                   ),
                 ),
@@ -80,7 +81,7 @@ class _NotiPageState extends State<NotiPage> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text("距离经期3天", style: PS.smallTextStyle(color: PS.c888888),),
-                      Text("上午8:00", style: PS.smallTextStyle(color: PS.c888888),),
+                      // Text("上午8:00", style: PS.smallTextStyle(color: PS.c888888),),
                     ],
                   ),
                 ),
@@ -91,7 +92,7 @@ class _NotiPageState extends State<NotiPage> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text("距离经期1天", style: PS.smallTextStyle(color: PS.c888888),),
-                      Text("上午8:00", style: PS.smallTextStyle(color: PS.c888888),),
+                      // Text("上午8:00", style: PS.smallTextStyle(color: PS.c888888),),
                     ],
                   ),
                 ),
@@ -102,7 +103,7 @@ class _NotiPageState extends State<NotiPage> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text("经期开始日", style: PS.smallTextStyle(color: PS.c888888),),
-                      Text("上午8:00", style: PS.smallTextStyle(color: PS.c888888),),
+                      // Text("上午8:00", style: PS.smallTextStyle(color: PS.c888888),),
                     ],
                   ),
                 ),
@@ -113,20 +114,27 @@ class _NotiPageState extends State<NotiPage> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text("经期结束日", style: PS.smallTextStyle(color: PS.c888888),),
-                      Text("上午8:00", style: PS.smallTextStyle(color: PS.c888888),),
+                      // Text("上午8:00", style: PS.smallTextStyle(color: PS.c888888),),
                     ],
                   ),
                 ),
               ],
             ),
-            GestureDetector(
-              onTap: () {
-                Navigator.push(context, MaterialPageRoute(builder: (_) {
-                  return NotiTest();
-                }));
-              },
-              child: Container( padding: EdgeInsets.all(20), child: Center(child: Text("测试--点击查看本地通知数据"),)),
-            )
+            // GestureDetector(
+            //   onTap: () {
+            //     Navigator.push(context, MaterialPageRoute(builder: (_) {
+            //       return NotiTest();
+            //     }));
+            //   },
+            //   child: Container( padding: EdgeInsets.all(20), child: Center(child: Text("测试--点击查看本地通知数据"),)),
+            // ),
+            // GestureDetector(
+            //   onTap: () {
+            //     LocalNotiUtil.instance.test();
+            //     showToast("测试通知已生成");
+            //   },
+            //   child: Container( padding: EdgeInsets.all(20), child: Center(child: Text("测试--1分钟，2分钟，3分钟， 5分钟，10分钟，30分钟，1小时，3小时，5小时 后发提醒"),)),
+            // ),
           ],
         ),
       ),

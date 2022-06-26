@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:package_info/package_info.dart';
 import 'package:yimareport/config/project_style.dart';
+import 'package:yimareport/pages/new_pages/contact_page.dart';
 import 'package:yimareport/request/mine_api.dart';
 import 'package:yimareport/utils/cache_util.dart';
 import 'package:yimareport/utils/dialog.dart';
+import 'package:yimareport/utils/local_noti_util.dart';
 import 'package:yimareport/utils/toast_util.dart';
 import 'package:yimareport/utils/version_update_util.dart';
 
@@ -81,7 +83,7 @@ class _AboutPageState extends State<AboutPage> {
               behavior: HitTestBehavior.opaque,
               onTap: () async {
                 Navigator.push(context, MaterialPageRoute(builder: (_) {
-                  return AgreementH5Page(index: 1,);
+                  return AgreementH5Page(index: 1, isShowBackout: true,);
                 }));
               },
               child: Container(
@@ -90,7 +92,7 @@ class _AboutPageState extends State<AboutPage> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text("隐私协议", style: PS.normalTextStyle(),),
+                    Text("隐私政策", style: PS.normalTextStyle(),),
                     Icon(Icons.chevron_right, color: Colors.grey,)
                   ],
                 ),
@@ -137,6 +139,11 @@ class _AboutPageState extends State<AboutPage> {
             GestureDetector(
               behavior: HitTestBehavior.opaque,
               onTap: () async {
+                await Navigator.push(context, MaterialPageRoute(builder: (_) {
+                  return ContactPage();
+                }));
+                userInfo = MineAPI.instance.getAccount();
+                setState(() {});
               },
               child: Container(
                 color: Colors.white,
@@ -144,13 +151,35 @@ class _AboutPageState extends State<AboutPage> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text("联系我们", style: PS.normalTextStyle(),),
-                    Text("QQ:1350799918", style: PS.smallTextStyle(color: Colors.grey),),
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Text("联系我们", style: PS.normalTextStyle(),),
+                        // SizedBox(width: 10,),
+                        // Text("（注销账号）", style: PS.normalTextStyle(color: Colors.red),),
+                      ],
+                    ),
+                    Icon(Icons.chevron_right, color: Colors.grey,)
                   ],
                 ),
               ),
             ),
-            // Divider(height: 1,)
+            // Divider(height: 1,),
+            // GestureDetector(
+            //   behavior: HitTestBehavior.opaque,
+            //   onTap: () async {
+            //   },
+            //   child: Container(
+            //     color: Colors.white,
+            //     padding: EdgeInsets.all(16),
+            //     child: Row(
+            //       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            //       children: [
+            //         Text("注销账户", style: PS.normalTextStyle(),),
+            //       ],
+            //     ),
+            //   ),
+            // ),
 
             Container(width: double.infinity, height: 10,),
             GestureDetector(
@@ -187,6 +216,7 @@ class _AboutPageState extends State<AboutPage> {
                   MyDialog.showAlertDialog(context, () async{
                     await MineAPI.instance.memberLogout(context);
                     userInfo = MineAPI.instance.getAccount();
+                    LocalNotiUtil.instance.resetNotiQueue();
                     setState(() {
 
                     });

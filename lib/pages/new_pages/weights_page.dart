@@ -79,10 +79,10 @@ class _WeightsPageState extends State<WeightsPage> {
                     ),
                   ),
                   SizedBox(width: 10,),
-                  Row(children: [
-                    Text("${DateUtil.formatDateMs(int.parse(item.dayAt), format: "yyyy年MM月dd日")}", style: PS.normalTextStyle(),),
-                    SizedBox(width: 5,),
-                    Text("${item.weight ?? ""} KG", style: PS.normalTextStyle(),),
+                  Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
+                    Text("${DateUtil.formatDateMs(int.parse(item.dayAt), format: "yyyy年MM月dd日")}   ${item.weight ?? ""} KG", style: PS.normalTextStyle(),),
+                    // SizedBox(width: 5,),
+                    // Text("${item.weight ?? ""} KG", style: PS.normalTextStyle(),),
                   ],)
                 ],
               ),

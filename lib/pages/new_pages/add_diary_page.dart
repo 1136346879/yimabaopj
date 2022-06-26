@@ -52,7 +52,9 @@ class _AddDiaryPageState extends State<AddDiaryPage> {
             // MarkAPI.instance.insertOrUpdateMark(diary);
           } else {
             //删除
-            await MarkAPI.instance.delete(widget.editItem!);
+            if(widget.editItem != null) { {
+              await MarkAPI.instance.delete(widget.editItem!);
+            }}
           }
           return Future.value(true);
         },

@@ -4,6 +4,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/date_symbol_data_local.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 // import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:yimareport/pages/agreement_page.dart';
@@ -18,32 +19,32 @@ Future<void> main() async {
   // initializeDateFormatting().then((_) => runApp(MyApp()));
   WidgetsFlutterBinding.ensureInitialized();
   await EasyLocalization.ensureInitialized();
-  // await SentryFlutter.init(
-  //       (options) {
-  //     options.dsn = 'https://a02ddcca9b6a463b9b9d212847d9b4af@o1254437.ingest.sentry.io/6422337';
-  //     // Set tracesSampleRate to 1.0 to capture 100% of transactions for performance monitoring.
-  //     // We recommend adjusting this value in production.
-  //     options.tracesSampleRate = 1.0;
-  //   },
-  //   appRunner: () => runApp(
-  //     EasyLocalization(
-  //         supportedLocales: [Locale('zh')],
-  //         path: 'assets/translations', // <-- change the path of the translation files
-  //         fallbackLocale: Locale('zh'),
-  //         child: MyApp()
-  //     ),
-  //   ),
-  // );
   SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
   bool hasAgree = sharedPreferences.getBool(ProjectConfig.agreementKey) ?? false;
-  runApp(
-    EasyLocalization(
-        supportedLocales: [Locale('zh')],
-        path: 'assets/translations', // <-- change the path of the translation files
-        fallbackLocale: Locale('zh'),
+  await SentryFlutter.init(
+        (options) {
+      options.dsn = 'https://a02ddcca9b6a463b9b9d212847d9b4af@o1254437.ingest.sentry.io/6422337';
+      // Set tracesSampleRate to 1.0 to capture 100% of transactions for performance monitoring.
+      // We recommend adjusting this value in production.
+      options.tracesSampleRate = 1.0;
+    },
+    appRunner: () => runApp(
+      EasyLocalization(
+          supportedLocales: [Locale('zh')],
+          path: 'assets/translations', // <-- change the path of the translation files
+          fallbackLocale: Locale('zh'),
           child: MyApp(isAgree: hasAgree)
+      ),
     ),
   );
+  // runApp(
+  //   EasyLocalization(
+  //       supportedLocales: [Locale('zh')],
+  //       path: 'assets/translations', // <-- change the path of the translation files
+  //       fallbackLocale: Locale('zh'),
+  //         child: MyApp(isAgree: hasAgree)
+  //   ),
+  // );
 
   // if(Platform.isAndroid){ // 设置状态栏背景及颜色
   //   SystemUiOverlayStyle systemUiOverlayStyle = SystemUiOverlayStyle(statusBarColor: Colors.transparent);
@@ -99,7 +100,7 @@ class MyApp extends StatelessWidget {
       localizationsDelegates: context.localizationDelegates,
       supportedLocales: context.supportedLocales,
       locale: context.locale,
-      home: isAgree ? LoadingPage() : AgreementPage(),
+      home:  LoadingPage(isOnlyUnionad: !isAgree,),
       // home: NewHome(),
       navigatorObservers: [routeObserver],
     );

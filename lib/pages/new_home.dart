@@ -162,10 +162,15 @@ class _NewHomeState extends State<NewHome> with WidgetsBindingObserver, Automati
       print('APP进入后台');
     } else  if (state == AppLifecycleState.resumed) {
       print('APP进入前台');
-      if(MineAPI.instance.getAccount() == null) return;
+      if(MineAPI.instance.getAccount() == null) {
+        init();
+        return;
+      };
       await getCycle();
       await MineAPI.instance.memberSyncData();
       await MarkAPI.instance.markSyncData();
+      init();
+
     } else  if (state == AppLifecycleState.inactive) {
       print('APP进入xx');
     }
@@ -260,7 +265,7 @@ class _NewHomeState extends State<NewHome> with WidgetsBindingObserver, Automati
     );
   }
   getNowDate() {
-    String ymd = DateUtil.formatDate(_now, format: "yyyy-MM-dd");
+    String ymd = DateUtil.formatDate(DateTime.now(), format: "yyyy-MM-dd");
     String hms = DateUtil.formatDate(DateTime.now(), format: "HH:mm:ss");
     DateTime? time = DateUtil.getDateTime("${ymd} ${hms}");
     // DateTime.now() = date.month;
@@ -305,6 +310,7 @@ class _NewHomeState extends State<NewHome> with WidgetsBindingObserver, Automati
   }
   //自动标记姨妈来了 走了。
   autoAddRecord() async {
+    tip = "";
     var lastRecord = await MineAPI.instance.getLastRecord();
     //如果经期 > 设定值+2 自动标记经期结束, 日期为标定日期
     if(lastRecord != null) {
@@ -528,8 +534,8 @@ class _NewHomeState extends State<NewHome> with WidgetsBindingObserver, Automati
                         formatButtonVisible: false,
                         headerPadding: EdgeInsets.only(top: 0, bottom: 0, left: 8, right: 8),
                         headerMargin: EdgeInsets.only(bottom: 5),
-                        leftChevronPadding: const EdgeInsets.all(8.0),
-                        rightChevronPadding: const EdgeInsets.all(8.0),
+                        leftChevronPadding: const EdgeInsets.all(3.0),
+                        rightChevronPadding: const EdgeInsets.all(3.0),
                         leftChevronIcon: const Icon(Icons.chevron_left, color: PS.c353535,),
                         rightChevronIcon: const Icon(Icons.chevron_right, color: PS.c353535,),
                         decoration: BoxDecoration(
@@ -807,11 +813,11 @@ class _NewHomeState extends State<NewHome> with WidgetsBindingObserver, Automati
                     },
                   ),
                 ),
-                const SizedBox(height: 8.0),
+                const SizedBox(height: 3.0),
                 Offstage(
                   offstage: tip == "",
                   child: Container(
-                    padding: EdgeInsets.symmetric(horizontal: PS.marginLarge, vertical: PS.margin),
+                    padding: EdgeInsets.symmetric(horizontal: PS.marginLarge, vertical: 5),
                     width: double.infinity,
                     color: PS.backgroundColor,
                     child: Text(tip, style: PS.normalTextStyle(color: Color(0xffE8A7AD)),),
@@ -1052,9 +1058,9 @@ class _NewHomeState extends State<NewHome> with WidgetsBindingObserver, Automati
                                                 direction: Axis.horizontal,
                                                 allowHalfRating: false,
                                                 itemCount: 5,
-                                                itemSize: 22,
+                                                itemSize: 26,
                                                 itemPadding: EdgeInsets.symmetric(horizontal: 4.0),
-                                                itemBuilder: (context, index) => Text("${index + 1}", style: TextStyle(color: Colors.red, fontWeight: int.parse(pain?.level ?? "0") > index ? FontWeight.bold : FontWeight.normal, fontSize: 16)),
+                                                itemBuilder: (context, index) => Text("${index + 1}", style: TextStyle(color: Colors.red, fontWeight: int.parse(pain?.level ?? "0") > index ? FontWeight.w700 : FontWeight.w500, fontSize: 16)),
                                                 onRatingUpdate: (rating) async {
                                                   var selectedRating = rating.toInt();
                                                   if(pain?.level == '${selectedRating}') {
@@ -1075,9 +1081,9 @@ class _NewHomeState extends State<NewHome> with WidgetsBindingObserver, Automati
                                                 direction: Axis.horizontal,
                                                 allowHalfRating: false,
                                                 itemCount: 5,
-                                                itemSize: 22,
+                                                itemSize: 26,
                                                 itemPadding: EdgeInsets.symmetric(horizontal: 4.0),
-                                                itemBuilder: (context, index) => Text("${index + 1}", style: TextStyle(color: Colors.red, fontWeight: FontWeight.normal, fontSize: 16)),
+                                                itemBuilder: (context, index) => Text("${index + 1}", style: TextStyle(color: Colors.red, fontWeight: FontWeight.w500, fontSize: 16)),
                                                 onRatingUpdate: (rating) async {
                                                   var selectedRating = rating.toInt();
                                                   var painMark = Mark(null, "period_pain", "${getNowDate().microsecondsSinceEpoch}", "${_selectedDay!.millisecondsSinceEpoch}",)..level='${selectedRating}';
@@ -1127,9 +1133,9 @@ class _NewHomeState extends State<NewHome> with WidgetsBindingObserver, Automati
                                                     direction: Axis.horizontal,
                                                     allowHalfRating: false,
                                                     itemCount: 5,
-                                                    itemSize: 22,
+                                                    itemSize: 26,
                                                     itemPadding: EdgeInsets.symmetric(horizontal: 4.0),
-                                                    itemBuilder: (context, index) => Text("${index + 1}", style: TextStyle(color: Colors.red, fontWeight: int.parse(flow?.level ?? "0") > index ? FontWeight.bold : FontWeight.normal, fontSize: 16)),
+                                                    itemBuilder: (context, index) => Text("${index + 1}", style: TextStyle(color: Colors.red, fontWeight: int.parse(flow?.level ?? "0") > index ? FontWeight.w700 : FontWeight.w500, fontSize: 16)),
                                                     onRatingUpdate: (rating) async {
                                                       var selectedRating = rating.toInt();
                                                       if(flow?.level == '${selectedRating}') {
@@ -1150,9 +1156,9 @@ class _NewHomeState extends State<NewHome> with WidgetsBindingObserver, Automati
                                                     direction: Axis.horizontal,
                                                     allowHalfRating: false,
                                                     itemCount: 5,
-                                                    itemSize: 22,
+                                                    itemSize: 26,
                                                     itemPadding: EdgeInsets.symmetric(horizontal: 4.0),
-                                                    itemBuilder: (context, index) => Text("${index + 1}", style: TextStyle(color: Colors.red, fontWeight: FontWeight.normal, fontSize: 16)),
+                                                    itemBuilder: (context, index) => Text("${index + 1}", style: TextStyle(color: Colors.red, fontWeight: FontWeight.w500, fontSize: 16)),
                                                     onRatingUpdate: (rating) async {
                                                       var selectedRating = rating.toInt();
                                                       var painMark = Mark(null, "period_flow", "${getNowDate().microsecondsSinceEpoch}", "${_selectedDay!.millisecondsSinceEpoch}",)..level='${selectedRating}';

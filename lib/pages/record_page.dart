@@ -218,7 +218,7 @@ class _RecordPageState extends State<RecordPage> with WidgetsBindingObserver {
                           ],),
                           // SizedBox(width: 10,),
                           Row(children: [
-                            Text("， ", style: PS.normalTextStyle(color: PS.cb2b2b2),),
+                            Text(", ", style: PS.normalTextStyle(color: PS.cb2b2b2),),
                             // SizedBox(width: 5,),
                             Text(dataSource[index].length == 2 ?  "${(DateUtil.getDateTimeByMs(int.parse(dataSource[index].last["markAt"]) ).difference(DateUtil.getDateTimeByMs(int.parse(dataSource[index].first["markAt"]))).inDays + 1)}天" : "", style: PS.normalTextStyle(color: PS.cb2b2b2),),
                           ],),

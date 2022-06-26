@@ -100,6 +100,13 @@ class MineAPI {
     return entity;
   }
 
+  // 注销账号
+  final DESTROY = "/destroy";
+  Future<LoginEntity> destroy(Map<String, dynamic> params,{BuildContext? buildContext}) async {
+    LoginEntity entity = await HttpManager.instance.request<LoginEntity>(Method.GET, DESTROY, params: params, buildContext: buildContext, contentType: HttpContentType.json);
+    return entity;
+  }
+
  _recordToMap(record) {
     if(record == null) return null;
     return {

@@ -79,10 +79,10 @@ class _SleepsPageState extends State<SleepsPage> {
                     ),
                   ),
                   SizedBox(width: 10,),
-                  Row(children: [
-                    Text("${DateUtil.formatDateMs(int.parse(item.dayAt), format: "yyyy年MM月dd日")}", style: PS.normalTextStyle(),),
-                    SizedBox(width: 5,),
-                    Text("${item.length ?? ""} H", style: PS.normalTextStyle(),),
+                  Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
+                    Text("${DateUtil.formatDateMs(int.parse(item.dayAt), format: "yyyy年MM月dd日")}   ${item.length ?? ""} H", style: PS.normalTextStyle(),),
+                    // SizedBox(width: 5,),
+                    // Text("${item.length ?? ""} H", style: PS.normalTextStyle(),),
                   ],)
                 ],
               ),

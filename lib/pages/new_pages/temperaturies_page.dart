@@ -80,9 +80,9 @@ class _TemperaturiesPageState extends State<TemperaturiesPage> {
                   ),
                   SizedBox(width: 10,),
                   Row(children: [
-                    Text("${DateUtil.formatDateMs(int.parse(item.dayAt), format: "yyyy年MM月dd日")}", style: PS.normalTextStyle(),),
-                    SizedBox(width: 5,),
-                    Text("${item.temperature ?? ""} ℃", style: PS.normalTextStyle(),),
+                    Text("${DateUtil.formatDateMs(int.parse(item.dayAt), format: "yyyy年MM月dd日")}   ${item.temperature ?? ""} ℃", style: PS.normalTextStyle(),),
+                    // SizedBox(width: 5,),
+                    // Text("${item.temperature ?? ""} ℃", style: PS.normalTextStyle(),),
                   ],)
                 ],
               ),

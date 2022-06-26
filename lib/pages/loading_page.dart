@@ -23,8 +23,10 @@ import 'package:yimareport/utils/local_noti_util.dart';
 import 'agreement_page.dart';
 
 class LoadingPage extends StatefulWidget {
-  final bool isIgnoreUnionad;
-  LoadingPage({Key? key, this.isIgnoreUnionad = false}): super(key: key);
+  // final bool isIgnoreUnionad;
+  final bool isOnlyUnionad;//仅加载广告
+  // LoadingPage({Key? key, this.isIgnoreUnionad = false, this.isOnlyUnionad = false}): super(key: key);
+  LoadingPage({Key? key, this.isOnlyUnionad = false}): super(key: key);
   @override
   _LoadingPageState createState() => _LoadingPageState();
 }
@@ -46,7 +48,11 @@ class _LoadingPageState extends State<LoadingPage> with SingleTickerProviderStat
     SystemChrome.setEnabledSystemUIOverlays([]);
     // _requestPermission();
     WidgetsBinding.instance?.addPostFrameCallback((_) async {
-      registerWxApi(appId: "wxfa505eddadc31630",universalLink: "https://www.yimabao.cn/apple-app-site-association");
+      if(!widget.isOnlyUnionad) {
+        //初始化微信
+        print("初始化微信");
+        registerWxApi(appId: "wxfa505eddadc31630",universalLink: "https://www.yimabao.cn/apple-app-site-association");
+      }
       _privacy();
       _initRegister();
       await DBAPI.load();
@@ -57,9 +63,9 @@ class _LoadingPageState extends State<LoadingPage> with SingleTickerProviderStat
       SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
       ProjectConfig.yimaCycle = sharedPreferences.getInt(ProjectConfig.doingKey) ?? 7;
       ProjectConfig.yimaDuration = sharedPreferences.getInt(ProjectConfig.cycleKey) ?? 28;
-      if(widget.isIgnoreUnionad) {
-        goToNextPage();
-      }
+      // if(widget.isIgnoreUnionad) {
+      //   goToNextPage();
+      // }
     });
   }
   Future<void> initPlatformState() async {
