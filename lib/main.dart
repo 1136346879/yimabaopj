@@ -75,13 +75,10 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: '姨妈宝',
       navigatorKey: MyRouter.navigatorKey,
+      debugShowCheckedModeBanner: false,
       theme: ThemeData(
         primarySwatch: Colors.blue,
         primaryColor: Colors.redAccent,
-        // appBarTheme: AppBarTheme(
-        //   backgroundColor: Colors.white,
-        //     titleTextStyle: TextStyle(color: PS.c353535)
-        // )
       ),
       builder: (context, child) {
         return ScrollConfiguration(
