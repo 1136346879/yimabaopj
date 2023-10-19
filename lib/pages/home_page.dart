@@ -8,14 +8,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:yimareport/api/db_api.dart';
-import 'package:yimareport/config/project_config.dart';
-import 'package:yimareport/config/project_style.dart';
-import 'package:yimareport/db/entities/local_record.dart';
-import 'package:yimareport/db/entities/member_record.dart';
-import 'package:yimareport/request/mine_api.dart';
-import 'package:yimareport/utils/dialog.dart';
-import 'package:yimareport/utils/event_bus_util.dart';
+import 'package:yimabao/api/db_api.dart';
+import 'package:yimabao/config/project_config.dart';
+import 'package:yimabao/config/project_style.dart';
+import 'package:yimabao/db/entities/local_record.dart';
+import 'package:yimabao/db/entities/member_record.dart';
+import 'package:yimabao/request/mine_api.dart';
+import 'package:yimabao/utils/dialog.dart';
+import 'package:yimabao/utils/event_bus_util.dart';
 
 import '../main.dart';
 import 'record_page.dart';
@@ -230,8 +230,8 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver, Automa
     return r;
   }
   showAddRecordDialog() async {
-    var hasCheck = await showAddRecordDateDialog();
-    if(hasCheck == null) return;
+    // var hasCheck = await showAddRecordDateDialog();
+    // if(hasCheck == null) return;
     String title = "姨妈来了吗?";
     String title2 = "";
     var recordDateType;

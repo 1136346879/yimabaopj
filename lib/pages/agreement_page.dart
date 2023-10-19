@@ -5,10 +5,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluwx_no_pay/fluwx_no_pay.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:yimareport/config/project_config.dart';
-import 'package:yimareport/config/project_style.dart';
-import 'package:yimareport/pages/loading_page.dart';
-import 'package:yimareport/pages/main_page.dart';
+import 'package:yimabao/config/project_config.dart';
+import 'package:yimabao/config/project_style.dart';
+import 'package:yimabao/pages/loading_page.dart';
+import 'package:yimabao/pages/main_page.dart';
 
 import 'agreement_h5_page.dart';
 import 'home_page.dart';

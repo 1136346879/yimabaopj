@@ -5,8 +5,8 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
-import 'package:yimareport/config/project_config.dart';
-import 'package:yimareport/request/mine_api.dart';
+import 'package:yimabao/config/project_config.dart';
+import 'package:yimabao/request/mine_api.dart';
 
 
 class LocalNotiUtil {
@@ -26,8 +26,9 @@ class LocalNotiUtil {
 
   load() async {
     const AndroidInitializationSettings initializationSettingsAndroid = AndroidInitializationSettings('ic_launcher');
-    final IOSInitializationSettings initializationSettingsIOS = IOSInitializationSettings();
-    final InitializationSettings initializationSettings = InitializationSettings(android: initializationSettingsAndroid, iOS: initializationSettingsIOS);
+    // final IOSInitializationSettings initializationSettingsIOS = IOSInitializationSettings();
+    // final InitializationSettings initializationSettings = InitializationSettings(android: initializationSettingsAndroid, iOS: initializationSettingsIOS);
+    final InitializationSettings initializationSettings = InitializationSettings(android: initializationSettingsAndroid);
     await flutterLocalNotificationsPlugin.initialize(initializationSettings);
   }
 

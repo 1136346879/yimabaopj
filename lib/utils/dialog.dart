@@ -5,11 +5,11 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:yimareport/config/project_config.dart';
-import 'package:yimareport/config/project_style.dart';
-import 'package:yimareport/request/mine_api.dart';
-import 'package:yimareport/utils/my_router.dart';
-import 'package:yimareport/view/custom_button.dart';
+import 'package:yimabao/config/project_config.dart';
+import 'package:yimabao/config/project_style.dart';
+import 'package:yimabao/request/mine_api.dart';
+import 'package:yimabao/utils/my_router.dart';
+import 'package:yimabao/view/custom_button.dart';
 
 import 'local_noti_util.dart';
 

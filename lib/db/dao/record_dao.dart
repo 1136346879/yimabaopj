@@ -1,6 +1,6 @@
 
 import 'package:floor/floor.dart';
-import 'package:yimareport/db/entities/record.dart';
+import 'package:yimabao/db/entities/record.dart';
 
 @dao
 abstract class RecordDao {

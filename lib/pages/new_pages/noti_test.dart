@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:yimareport/config/project_style.dart';
+import 'package:yimabao/config/project_style.dart';
 
 class NotiTest extends StatefulWidget {
   @override

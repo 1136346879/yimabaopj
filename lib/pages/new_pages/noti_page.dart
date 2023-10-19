@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:yimareport/config/project_config.dart';
-import 'package:yimareport/config/project_style.dart';
-import 'package:yimareport/pages/new_pages/noti_test.dart';
-import 'package:yimareport/utils/local_noti_util.dart';
-import 'package:yimareport/utils/toast_util.dart';
+import 'package:yimabao/config/project_config.dart';
+import 'package:yimabao/config/project_style.dart';
+import 'package:yimabao/pages/new_pages/noti_test.dart';
+import 'package:yimabao/utils/local_noti_util.dart';
+import 'package:yimabao/utils/toast_util.dart';
 
 class NotiPage extends StatefulWidget {
   @override

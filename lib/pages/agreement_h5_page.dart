@@ -5,11 +5,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:webview_flutter/webview_flutter.dart';
-import 'package:yimareport/api/db_api.dart';
-import 'package:yimareport/config/project_config.dart';
-import 'package:yimareport/config/project_style.dart';
-import 'package:yimareport/request/mine_api.dart';
-import 'package:yimareport/utils/dialog.dart';
+import 'package:yimabao/api/db_api.dart';
+import 'package:yimabao/config/project_config.dart';
+import 'package:yimabao/config/project_style.dart';
+import 'package:yimabao/request/mine_api.dart';
+import 'package:yimabao/utils/dialog.dart';
 
 class AgreementH5Page extends StatefulWidget {
   final int index;

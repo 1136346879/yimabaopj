@@ -7,11 +7,11 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:yimareport/config/project_config.dart';
-import 'package:yimareport/generated/json/base/json_convert_content.dart';
-import 'package:yimareport/utils/dialog.dart';
-import 'package:yimareport/utils/my_router.dart';
-import 'package:yimareport/utils/toast_util.dart';
+import 'package:yimabao/config/project_config.dart';
+import 'package:yimabao/generated/json/base/json_convert_content.dart';
+import 'package:yimabao/utils/dialog.dart';
+import 'package:yimabao/utils/my_router.dart';
+import 'package:yimabao/utils/toast_util.dart';
 
 class CacheDomain {
   CacheDomain({required this.httpPrefix, required this.url});

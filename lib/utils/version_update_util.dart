@@ -8,13 +8,13 @@ import 'package:flutter/widgets.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:package_info/package_info.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:yimareport/config/project_config.dart';
-import 'package:yimareport/entities/apple_info_entity.dart';
-import 'package:yimareport/entities/version_entity.dart';
-import 'package:yimareport/generated/json/base/json_convert_content.dart';
-import 'package:yimareport/request/http_manager.dart';
-import 'package:yimareport/request/mine_api.dart';
-import 'package:yimareport/utils/toast_util.dart';
+import 'package:yimabao/config/project_config.dart';
+import 'package:yimabao/entities/apple_info_entity.dart';
+import 'package:yimabao/entities/version_entity.dart';
+import 'package:yimabao/generated/json/base/json_convert_content.dart';
+import 'package:yimabao/request/http_manager.dart';
+import 'package:yimabao/request/mine_api.dart';
+import 'package:yimabao/utils/toast_util.dart';
 import 'dialog.dart';
 
 class VersionUpdateConfig {

@@ -1,6 +1,6 @@
 
 import 'package:floor/floor.dart';
-import 'package:yimareport/db/entities/local_record.dart';
+import 'package:yimabao/db/entities/local_record.dart';
 
 @dao
 abstract class LocalRecordDao {

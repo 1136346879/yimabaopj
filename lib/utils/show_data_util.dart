@@ -20,7 +20,7 @@
 //   );
 // }
 
-import 'package:yimareport/db/entities/mark.dart';
+import 'package:yimabao/db/entities/mark.dart';
 
 class ShowDataEntry {
   bool? isYMbegin;//是否标记姨妈来了

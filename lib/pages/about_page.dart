@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:package_info/package_info.dart';
-import 'package:yimareport/config/project_style.dart';
-import 'package:yimareport/pages/new_pages/contact_page.dart';
-import 'package:yimareport/request/mine_api.dart';
-import 'package:yimareport/utils/cache_util.dart';
-import 'package:yimareport/utils/dialog.dart';
-import 'package:yimareport/utils/local_noti_util.dart';
-import 'package:yimareport/utils/toast_util.dart';
-import 'package:yimareport/utils/version_update_util.dart';
+import 'package:yimabao/config/project_style.dart';
+import 'package:yimabao/pages/new_pages/contact_page.dart';
+import 'package:yimabao/request/mine_api.dart';
+import 'package:yimabao/utils/cache_util.dart';
+import 'package:yimabao/utils/dialog.dart';
+import 'package:yimabao/utils/local_noti_util.dart';
+import 'package:yimabao/utils/toast_util.dart';
+import 'package:yimabao/utils/version_update_util.dart';
 
 import 'agreement_h5_page.dart';
 

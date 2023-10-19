@@ -1,5 +1,5 @@
 
-import 'package:yimareport/generated/json/base/json_convert_content.dart';
+import 'package:yimabao/generated/json/base/json_convert_content.dart';
 
 class AppleInfoEntity with JsonConvert<AppleInfoEntity> {
 	int? resultCount;

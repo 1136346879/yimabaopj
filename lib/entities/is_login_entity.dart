@@ -1,4 +1,4 @@
-import 'package:yimareport/generated/json/base/json_convert_content.dart';
+import 'package:yimabao/generated/json/base/json_convert_content.dart';
 
 class IsLoginEntity with JsonConvert<IsLoginEntity> {
 	late String status;

@@ -66,10 +66,12 @@ class _$AppDatabase extends AppDatabase {
 
   MemberRecordDao? _memberRecordDaoInstance;
 
+  MarkDao? _markDaoInstance;
+
   Future<sqflite.Database> open(String path, List<Migration> migrations,
       [Callback? callback]) async {
     final databaseOptions = sqflite.OpenDatabaseOptions(
-      version: 2,
+      version: 4,
       onConfigure: (database) async {
         await database.execute('PRAGMA foreign_keys = ON');
         await callback?.onConfigure?.call(database);
@@ -90,6 +92,8 @@ class _$AppDatabase extends AppDatabase {
             'CREATE TABLE IF NOT EXISTS `LocalRecord` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `markAt` TEXT NOT NULL, `createAt` TEXT NOT NULL, `type` INTEGER NOT NULL, `isDeleted` INTEGER NOT NULL)');
         await database.execute(
             'CREATE TABLE IF NOT EXISTS `MemberRecord` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `markAt` TEXT NOT NULL, `createAt` TEXT NOT NULL, `type` INTEGER NOT NULL, `isDeleted` INTEGER NOT NULL, `isMerged` INTEGER NOT NULL, `isLogout` INTEGER NOT NULL, `memberID` TEXT NOT NULL)');
+        await database.execute(
+            'CREATE TABLE IF NOT EXISTS `Mark` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `opt` TEXT NOT NULL, `createAt` TEXT NOT NULL, `dayAt` TEXT NOT NULL, `isMerged` INTEGER NOT NULL, `isDeleted` INTEGER NOT NULL, `weight` TEXT, `temperature` TEXT, `length` TEXT, `measure` TEXT, `hour` TEXT, `diary` TEXT, `isLocal` INTEGER, `level` TEXT)');
 
         await callback?.onCreate?.call(database, version);
       },
@@ -112,6 +116,11 @@ class _$AppDatabase extends AppDatabase {
   MemberRecordDao get memberRecordDao {
     return _memberRecordDaoInstance ??=
         _$MemberRecordDao(database, changeListener);
+  }
+
+  @override
+  MarkDao get markDao {
+    return _markDaoInstance ??= _$MarkDao(database, changeListener);
   }
 }
 
@@ -477,7 +486,7 @@ class _$MemberRecordDao extends MemberRecordDao {
   @override
   Future<List<MemberRecord>?> findFirstDelRecord() async {
     return _queryAdapter.queryList(
-        'SELECT * FROM MemberRecord WHERE isDeleted = 1 AND isMerged = 1 ORDER BY id DESC LIMIT 1',
+        'SELECT * FROM MemberRecord WHERE isDeleted = 1 AND isMerged = 1 ORDER BY id DESC LIMIT 2',
         mapper: (Map<String, Object?> row) => MemberRecord(
             row['id'] as int?,
             row['markAt'] as String,
@@ -515,5 +524,249 @@ class _$MemberRecordDao extends MemberRecordDao {
   @override
   Future<void> updateRecord(MemberRecord record) async {
     await _memberRecordUpdateAdapter.update(record, OnConflictStrategy.abort);
+  }
+}
+
+class _$MarkDao extends MarkDao {
+  _$MarkDao(this.database, this.changeListener)
+      : _queryAdapter = QueryAdapter(database),
+        _markInsertionAdapter = InsertionAdapter(
+            database,
+            'Mark',
+            (Mark item) => <String, Object?>{
+                  'id': item.id,
+                  'opt': item.opt,
+                  'createAt': item.createAt,
+                  'dayAt': item.dayAt,
+                  'isMerged': item.isMerged,
+                  'isDeleted': item.isDeleted,
+                  'weight': item.weight,
+                  'temperature': item.temperature,
+                  'length': item.length,
+                  'measure': item.measure,
+                  'hour': item.hour,
+                  'diary': item.diary,
+                  'isLocal': item.isLocal,
+                  'level': item.level
+                }),
+        _markUpdateAdapter = UpdateAdapter(
+            database,
+            'Mark',
+            ['id'],
+            (Mark item) => <String, Object?>{
+                  'id': item.id,
+                  'opt': item.opt,
+                  'createAt': item.createAt,
+                  'dayAt': item.dayAt,
+                  'isMerged': item.isMerged,
+                  'isDeleted': item.isDeleted,
+                  'weight': item.weight,
+                  'temperature': item.temperature,
+                  'length': item.length,
+                  'measure': item.measure,
+                  'hour': item.hour,
+                  'diary': item.diary,
+                  'isLocal': item.isLocal,
+                  'level': item.level
+                }),
+        _markDeletionAdapter = DeletionAdapter(
+            database,
+            'Mark',
+            ['id'],
+            (Mark item) => <String, Object?>{
+                  'id': item.id,
+                  'opt': item.opt,
+                  'createAt': item.createAt,
+                  'dayAt': item.dayAt,
+                  'isMerged': item.isMerged,
+                  'isDeleted': item.isDeleted,
+                  'weight': item.weight,
+                  'temperature': item.temperature,
+                  'length': item.length,
+                  'measure': item.measure,
+                  'hour': item.hour,
+                  'diary': item.diary,
+                  'isLocal': item.isLocal,
+                  'level': item.level
+                });
+
+  final sqflite.DatabaseExecutor database;
+
+  final StreamController<String> changeListener;
+
+  final QueryAdapter _queryAdapter;
+
+  final InsertionAdapter<Mark> _markInsertionAdapter;
+
+  final UpdateAdapter<Mark> _markUpdateAdapter;
+
+  final DeletionAdapter<Mark> _markDeletionAdapter;
+
+  @override
+  Future<List<Mark>> findAllMemberMarks() async {
+    return _queryAdapter.queryList(
+        'SELECT * FROM Mark WHERE isLocal = 0 ORDER BY dayAt ASC',
+        mapper: (Map<String, Object?> row) => Mark(
+            row['id'] as int?,
+            row['opt'] as String,
+            row['createAt'] as String,
+            row['dayAt'] as String,
+            isMerged: row['isMerged'] as int,
+            isDeleted: row['isDeleted'] as int,
+            weight: row['weight'] as String?,
+            temperature: row['temperature'] as String?,
+            length: row['length'] as String?,
+            measure: row['measure'] as String?,
+            hour: row['hour'] as String?,
+            diary: row['diary'] as String?,
+            isLocal: row['isLocal'] as int?,
+            level: row['level'] as String?));
+  }
+
+  @override
+  Future<List<Mark>> findAllLocalMarks() async {
+    return _queryAdapter.queryList(
+        'SELECT * FROM Mark WHERE isLocal = 1 ORDER BY dayAt ASC',
+        mapper: (Map<String, Object?> row) => Mark(
+            row['id'] as int?,
+            row['opt'] as String,
+            row['createAt'] as String,
+            row['dayAt'] as String,
+            isMerged: row['isMerged'] as int,
+            isDeleted: row['isDeleted'] as int,
+            weight: row['weight'] as String?,
+            temperature: row['temperature'] as String?,
+            length: row['length'] as String?,
+            measure: row['measure'] as String?,
+            hour: row['hour'] as String?,
+            diary: row['diary'] as String?,
+            isLocal: row['isLocal'] as int?,
+            level: row['level'] as String?));
+  }
+
+  @override
+  Future<List<Mark>> findAllDiaryMarks() async {
+    return _queryAdapter.queryList('SELECT * FROM Mark WHERE opt == diary',
+        mapper: (Map<String, Object?> row) => Mark(
+            row['id'] as int?,
+            row['opt'] as String,
+            row['createAt'] as String,
+            row['dayAt'] as String,
+            isMerged: row['isMerged'] as int,
+            isDeleted: row['isDeleted'] as int,
+            weight: row['weight'] as String?,
+            temperature: row['temperature'] as String?,
+            length: row['length'] as String?,
+            measure: row['measure'] as String?,
+            hour: row['hour'] as String?,
+            diary: row['diary'] as String?,
+            isLocal: row['isLocal'] as int?,
+            level: row['level'] as String?));
+  }
+
+  @override
+  Future<List<Mark>> findMemberMarksByOpt(String opt) async {
+    return _queryAdapter.queryList(
+        'SELECT * FROM Mark WHERE isLocal = 0 AND opt = ?1 ORDER BY dayAt desc',
+        mapper: (Map<String, Object?> row) => Mark(
+            row['id'] as int?,
+            row['opt'] as String,
+            row['createAt'] as String,
+            row['dayAt'] as String,
+            isMerged: row['isMerged'] as int,
+            isDeleted: row['isDeleted'] as int,
+            weight: row['weight'] as String?,
+            temperature: row['temperature'] as String?,
+            length: row['length'] as String?,
+            measure: row['measure'] as String?,
+            hour: row['hour'] as String?,
+            diary: row['diary'] as String?,
+            isLocal: row['isLocal'] as int?,
+            level: row['level'] as String?),
+        arguments: [opt]);
+  }
+
+  @override
+  Future<List<Mark>> findLocalMarksByOpt(String opt) async {
+    return _queryAdapter.queryList(
+        'SELECT * FROM Mark WHERE isLocal = 1 AND opt = ?1 ORDER BY dayAt desc',
+        mapper: (Map<String, Object?> row) => Mark(
+            row['id'] as int?,
+            row['opt'] as String,
+            row['createAt'] as String,
+            row['dayAt'] as String,
+            isMerged: row['isMerged'] as int,
+            isDeleted: row['isDeleted'] as int,
+            weight: row['weight'] as String?,
+            temperature: row['temperature'] as String?,
+            length: row['length'] as String?,
+            measure: row['measure'] as String?,
+            hour: row['hour'] as String?,
+            diary: row['diary'] as String?,
+            isLocal: row['isLocal'] as int?,
+            level: row['level'] as String?),
+        arguments: [opt]);
+  }
+
+  @override
+  Future<List<Mark>> findMarksNeedDelete() async {
+    return _queryAdapter.queryList('SELECT * FROM Mark WHERE isDeleted = 1',
+        mapper: (Map<String, Object?> row) => Mark(
+            row['id'] as int?,
+            row['opt'] as String,
+            row['createAt'] as String,
+            row['dayAt'] as String,
+            isMerged: row['isMerged'] as int,
+            isDeleted: row['isDeleted'] as int,
+            weight: row['weight'] as String?,
+            temperature: row['temperature'] as String?,
+            length: row['length'] as String?,
+            measure: row['measure'] as String?,
+            hour: row['hour'] as String?,
+            diary: row['diary'] as String?,
+            isLocal: row['isLocal'] as int?,
+            level: row['level'] as String?));
+  }
+
+  @override
+  Future<void> deleteAllMemberMarks() async {
+    await _queryAdapter.queryNoReturn('DELETE FROM Mark WHERE isLocal = 0');
+  }
+
+  @override
+  Future<void> deleteAllLocalMarks() async {
+    await _queryAdapter.queryNoReturn('DELETE FROM Mark WHERE isLocal = 1');
+  }
+
+  @override
+  Future<void> deleteById(int id) async {
+    await _queryAdapter
+        .queryNoReturn('DELETE FROM Mark where id = ?1', arguments: [id]);
+  }
+
+  @override
+  Future<int> insert(Mark mark) {
+    return _markInsertionAdapter.insertAndReturnId(
+        mark, OnConflictStrategy.abort);
+  }
+
+  @override
+  Future<void> batchInsertMarks(List<Mark> marks) async {
+    await _markInsertionAdapter.insertList(marks, OnConflictStrategy.abort);
+  }
+
+  @override
+  Future<void> updateMark(Mark mark) async {
+    await _markUpdateAdapter.update(mark, OnConflictStrategy.abort);
+  }
+
+  @override
+  Future<void> updateMarks(List<Mark> marks) async {
+    await _markUpdateAdapter.updateList(marks, OnConflictStrategy.abort);
+  }
+
+  @override
+  Future<void> deleteMarks(List<Mark> marks) async {
+    await _markDeletionAdapter.deleteList(marks);
   }
 }

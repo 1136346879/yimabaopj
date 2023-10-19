@@ -1,5 +1,5 @@
 import 'package:floor/floor.dart';
-import 'package:yimareport/db/datebase/database.dart';
+import 'package:yimabao/db/datebase/database.dart';
 
 class DBAPI {
   DBAPI._();

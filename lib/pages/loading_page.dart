@@ -10,14 +10,14 @@ import 'package:fluwx_no_pay/fluwx_no_pay.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 // import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:yimareport/api/db_api.dart';
-import 'package:yimareport/config/project_config.dart';
-import 'package:yimareport/db/entities/local_record.dart';
-import 'package:yimareport/db/entities/record.dart';
-import 'package:yimareport/pages/home_page.dart';
-import 'package:yimareport/pages/main_page.dart';
-import 'package:yimareport/request/mine_api.dart';
-import 'package:yimareport/utils/local_noti_util.dart';
+import 'package:yimabao/api/db_api.dart';
+import 'package:yimabao/config/project_config.dart';
+import 'package:yimabao/db/entities/local_record.dart';
+import 'package:yimabao/db/entities/record.dart';
+import 'package:yimabao/pages/home_page.dart';
+import 'package:yimabao/pages/main_page.dart';
+import 'package:yimabao/request/mine_api.dart';
+import 'package:yimabao/utils/local_noti_util.dart';
 
 
 import 'agreement_page.dart';
@@ -38,6 +38,7 @@ class _LoadingPageState extends State<LoadingPage> with SingleTickerProviderStat
   @override
   void initState() {
     super.initState();
+    print("进入loading——page");
     // JPush jpush = new JPush();
     // jpush.setup(
     //   appKey: "06cd8173691fac83e795e819",
@@ -234,11 +235,24 @@ class _LoadingPageState extends State<LoadingPage> with SingleTickerProviderStat
                 ),
               ),
             ),
-            Expanded(child: Container(color: Colors.black, child: Image.asset("images/cp_sp.png", width: double.infinity, height: MediaQuery.of(context).size.height, fit: BoxFit.fill,)))
+            Expanded(child:
+            Container(color: Colors.black, child: InkWell(
+              onTap: (){
+                goToNextPage();
+              },
+              child: Image.asset("images/cp_sp.png",
+                width: double.infinity, height: MediaQuery.of(context).size.height, fit: BoxFit.fill,
+              ),
+            )))
           ],
         );
       } else {
-        return Container(color: Colors.black, child: Image.asset("images/cp_sp.png", width: double.infinity, height: MediaQuery.of(context).size.height, fit: BoxFit.fill,));
+        return Container(color: Colors.red, child: InkWell(
+            onTap: (){
+              print("点击屏幕");
+              goToNextPage();
+            },
+            child: Image.asset("images/cp_sp.png", width: double.infinity, height: MediaQuery.of(context).size.height, fit: BoxFit.fill,)));
       }
     }
     return Scaffold(

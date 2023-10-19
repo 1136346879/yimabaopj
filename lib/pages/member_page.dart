@@ -11,7 +11,7 @@ import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:webview_flutter/webview_flutter.dart';
-import 'package:yimareport/config/project_style.dart';
+import 'package:yimabao/config/project_style.dart';
 
 class MemberPage extends StatefulWidget {
   @override

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:yimareport/config/project_style.dart';
-import 'package:yimareport/pages/new_home.dart';
-import 'package:yimareport/utils/dialog.dart';
-import 'package:yimareport/utils/event_bus_util.dart';
+import 'package:yimabao/config/project_style.dart';
+import 'package:yimabao/pages/new_home.dart';
+import 'package:yimabao/utils/dialog.dart';
+import 'package:yimabao/utils/event_bus_util.dart';
 
 import 'home_page.dart';
 import 'setting_page.dart';

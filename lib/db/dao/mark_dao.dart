@@ -1,6 +1,6 @@
 
 import 'package:floor/floor.dart';
-import 'package:yimareport/db/entities/mark.dart';
+import 'package:yimabao/db/entities/mark.dart';
 
 @dao
 abstract class MarkDao {
