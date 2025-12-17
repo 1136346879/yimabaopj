@@ -1,0 +1,83 @@
+//plugins {
+//    id "com.android.application"
+//    id "org.jetbrains.kotlin.android"
+//    // The Flutter Gradle Plugin must be applied after the Android and Kotlin Gradle plugins.
+//    id "dev.flutter.flutter-gradle-plugin"
+//}
+//
+//def localProperties = new Properties()
+//def localPropertiesFile = rootProject.file('local.properties')
+//if (localPropertiesFile.exists()) {
+//    localPropertiesFile.withReader('UTF-8') { reader ->
+//        localProperties.load(reader)
+//    }
+//}
+//
+//def flutterVersionCode = localProperties.getProperty('flutter.versionCode')
+//if (flutterVersionCode == null) {
+//    flutterVersionCode = '1'
+//}
+//
+//def flutterVersionName = localProperties.getProperty('flutter.versionName')
+//if (flutterVersionName == null) {
+//    flutterVersionName = '1.0'
+//}
+//
+//android {
+//    namespace "com.yimabao"
+//    compileSdkVersion 36
+//
+//    compileOptions {
+//        sourceCompatibility JavaVersion.VERSION_1_8
+//        targetCompatibility JavaVersion.VERSION_1_8
+//    }
+//
+//    kotlinOptions {
+//        jvmTarget = JavaVersion.VERSION_1_8.toString()
+//    }
+//
+//    sourceSets {
+//        main.java.srcDirs += 'src/main/kotlin'
+//    }
+//
+//    defaultConfig {
+//        applicationId "com.yimabao"
+//        minSdkVersion 21
+//        targetSdkVersion 36
+//        versionCode flutterVersionCode.toInteger()
+//        versionName flutterVersionName
+////        multiDexEnabled true
+//    }
+//
+//    signingConfigs {
+//        release {
+//            storeFile rootProject.file('key/ymb.jsk')
+//            storePassword '123456'
+//            keyAlias 'ymb'
+//            keyPassword '123456'
+//        }
+//        debug {
+//            storeFile rootProject.file('key/ymb.jsk')
+//            storePassword '123456'
+//            keyAlias 'ymb'
+//            keyPassword '123456'
+//        }
+//    }
+//
+//    buildTypes {
+//        release {
+//            signingConfig signingConfigs.release
+//        }
+//    }
+//}
+//
+//flutter {
+//    source '../..'
+//}
+//
+//dependencies {
+//    implementation "com.android.tools.build:gradle:8.1.2"
+//    implementation "org.jetbrains.kotlin:kotlin-gradle-plugin:1.9.20"
+////    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:2.2.0"
+////    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.0.2'
+//}
