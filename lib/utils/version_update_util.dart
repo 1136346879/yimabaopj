@@ -4,9 +4,10 @@ import 'dart:io';
 import 'package:app_installer/app_installer.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+
 import 'package:flutter/widgets.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:package_info/package_info.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:yimabao/config/project_config.dart';
 import 'package:yimabao/entities/apple_info_entity.dart';
@@ -281,7 +282,7 @@ class _DownloadLoadingWidgetState extends State<DownloadLoadingWidget> {
               children: <Widget>[
                 Text(
                   "正在更新",
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
+                  style: TextStyle(fontSize: 18),
                 )
               ],
             ),

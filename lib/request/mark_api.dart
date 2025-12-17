@@ -3,7 +3,6 @@ import 'dart:ffi';
 import 'dart:io';
 
 import 'package:connectivity_plus/connectivity_plus.dart';
-import 'package:device_info/device_info.dart';
 import 'package:dio/dio.dart';
 import 'package:flustars/flustars.dart';
 import 'package:flutter/material.dart';
@@ -191,7 +190,7 @@ class MarkAPI {
             "data": delMaps
           };
           await delMark(params, buildContext: buildContext);
-          await DBAPI.sharedInstance.markDao.deleteMarks(diaries);
+          await DBAPI.sharedInstance.markDao.deleteMarks(sleeps);
         }
         if(pains.length > 0) {
           var delMaps = pains.map((e) => e.toMap()).toList();
@@ -202,7 +201,7 @@ class MarkAPI {
             "data": delMaps
           };
           await delMark(params, buildContext: buildContext);
-          await DBAPI.sharedInstance.markDao.deleteMarks(diaries);
+          await DBAPI.sharedInstance.markDao.deleteMarks(pains);
         }
         if(flows.length > 0) {
           var delMaps = flows.map((e) => e.toMap()).toList();
@@ -213,7 +212,7 @@ class MarkAPI {
             "data": delMaps
           };
           await delMark(params, buildContext: buildContext);
-          await DBAPI.sharedInstance.markDao.deleteMarks(diaries);
+          await DBAPI.sharedInstance.markDao.deleteMarks(flows);
         }
 
       }

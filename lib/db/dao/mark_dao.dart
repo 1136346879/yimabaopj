@@ -11,7 +11,7 @@ abstract class MarkDao {
   @Query('SELECT * FROM Mark WHERE isLocal = 1 ORDER BY dayAt ASC')
   Future<List<Mark>> findAllLocalMarks();
 
-  @Query('SELECT * FROM Mark WHERE opt == diary')
+  @Query("SELECT * FROM Mark WHERE opt = 'diary'")
   Future<List<Mark>> findAllDiaryMarks();
   // @Query('SELECT * FROM Mark WHERE opt = :opt ORDER BY dayAt desc')
   // Future<List<Mark>> findMarksByOpt(String opt);

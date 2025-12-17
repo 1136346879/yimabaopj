@@ -1,15 +1,14 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class CustomButton extends StatelessWidget {
   final Widget? child;
-  final VoidCallback? onPress;
+  final Function()? onPress;
   final double? width;
   final double? height;
   final EdgeInsets padding;
   final BorderSide? borderSide;
   final double borderRadiusValue;
-  final Color? color;
+  final MaterialColor? color;
   CustomButton({
     Key? key,
     required  this.onPress,

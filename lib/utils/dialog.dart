@@ -90,7 +90,7 @@ class MyDialog {
                             Text(
                               title,
                               style: PS.titleTextStyle(
-                                  fontWeight: FontWeight.bold),
+                                  ),
                             ),
                             SizedBox(
                               height: 15,
@@ -129,7 +129,7 @@ class MyDialog {
                                       color: sureBtnTitleColor),
                                 ),
                                 height: 50,
-                                color: Colors.transparent,
+                                // color: Colors.transparent,
                                 borderRadiusValue: 0,
                                 onPress: () async {
                                   if(tapSureBtnCloseDialog) Navigator.of(context).removeRoute(ModalRoute.of(context) as RawDialogRoute);
@@ -151,7 +151,7 @@ class MyDialog {
                                             color: cancelBtnTitleColor),
                                       ),
                                       height: 50,
-                                      color: Colors.transparent,
+                                      // color: Colors.transparent,
                                       borderRadiusValue: 0,
                                       onPress: () async {
                                         Navigator.of(context).removeRoute(ModalRoute.of(context) as RawDialogRoute);
@@ -178,7 +178,7 @@ class MyDialog {
                                         color: sureBtnTitleColor),
                                   ),
                                   height: 50,
-                                  color: Colors.transparent,
+                                  // color: Colors.transparent,
                                   borderRadiusValue: 0,
                                   onPress: () async {
                                     if(tapSureBtnCloseDialog) Navigator.of(context).removeRoute(ModalRoute.of(context) as RawDialogRoute);
@@ -319,7 +319,7 @@ class _CycleDialogContentState extends State<CycleDialogContent> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
                 GestureDetector(behavior: HitTestBehavior.opaque, onTap: (){Navigator.of(context).pop();}, child: Icon(Icons.close_outlined)),
-                Text("周期设置", style: TextStyle(fontWeight: FontWeight.w600),),
+                Text("周期设置", style: PS.titleTextStyle(),),
                 GestureDetector(
                     behavior: HitTestBehavior.opaque,
                     child: Icon(Icons.check),
@@ -431,7 +431,7 @@ class __CycleSubDialogContentState extends State<_CycleSubDialogContent> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               GestureDetector(behavior: HitTestBehavior.opaque, onTap: (){Navigator.of(context).pop();}, child: Icon(Icons.close_outlined)),
-              Text("${widget.title}", style: TextStyle(fontWeight: FontWeight.w600),),
+              Text("${widget.title}", style: PS.titleTextStyle(),),
               GestureDetector(
                 behavior: HitTestBehavior.opaque,
                 child: Icon(Icons.check),

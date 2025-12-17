@@ -22,7 +22,7 @@ import 'package:yimabao/generated/json/apple_info_entity_helper.dart';
 import 'package:yimabao/entities/login_sync_entity.dart';
 import 'package:yimabao/generated/json/login_sync_entity_helper.dart';
 
-class JsonConvert<T> {
+mixin JsonConvert<T> {
 	T fromJson(Map<String, dynamic> json) {
 		return _getFromJson<T>(runtimeType, this, json);
 	}

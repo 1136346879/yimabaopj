@@ -248,7 +248,7 @@ class _RecordPageState extends State<RecordPage> with WidgetsBindingObserver {
     return Scaffold(
       appBar: AppBar(
         title: Text("经期记录"),
-        brightness: Brightness.dark,
+        // brightness: Brightness.dark,
         elevation: 0,
         backgroundColor: Colors.white,
         foregroundColor: PS.c353535

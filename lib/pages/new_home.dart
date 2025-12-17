@@ -79,7 +79,14 @@ class _NewHomeState extends State<NewHome> with WidgetsBindingObserver, Automati
       // pushTest();
     });
     WidgetsBinding.instance?.addObserver(this);
-    netSubscription = Connectivity().onConnectivityChanged.listen((ConnectivityResult result) async {
+// 正确写法
+netSubscription = Connectivity().onConnectivityChanged.listen(_updateConnectionStatus);
+
+    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.dark);
+  }
+
+  Future<void> _updateConnectionStatus(List<ConnectivityResult> result) async {
+    // 处理网络状态变化逻辑
       if(result == ConnectivityResult.mobile || result == ConnectivityResult.wifi) {
         if(isFirstLoad) {
           isFirstLoad = false;
@@ -90,8 +97,6 @@ class _NewHomeState extends State<NewHome> with WidgetsBindingObserver, Automati
         await MineAPI.instance.memberSyncData();
         init();
       }
-    });
-    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.dark);
   }
   //同步数据
   // firstLoad() async {
@@ -180,7 +185,7 @@ class _NewHomeState extends State<NewHome> with WidgetsBindingObserver, Automati
   void dispose() {
     WidgetsBinding.instance?.removeObserver(this);
     netSubscription.cancel();
-    routeObserver.unsubscribe(this);
+    // routeObserver.unsubscribe(this);
     _tabChangeSubscription?.cancel();
     super.dispose();
   }
@@ -467,7 +472,7 @@ class _NewHomeState extends State<NewHome> with WidgetsBindingObserver, Automati
         child: AppBar(
           systemOverlayStyle: SystemUiOverlayStyle(statusBarColor: Colors.transparent),
           leadingWidth: 170,
-          brightness: Brightness.dark,
+          // brightness: Brightness.dark,
           elevation: 0,
           backgroundColor: PS.backgroundColor,
           leading: GestureDetector(onTap: _selectDate, child: Center(child: Row(

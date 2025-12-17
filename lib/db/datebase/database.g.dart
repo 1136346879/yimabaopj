@@ -6,20 +6,32 @@ part of 'database.dart';
 // FloorGenerator
 // **************************************************************************
 
+abstract class $AppDatabaseBuilderContract {
+  /// Adds migrations to the builder.
+  $AppDatabaseBuilderContract addMigrations(List<Migration> migrations);
+
+  /// Adds a database [Callback] to the builder.
+  $AppDatabaseBuilderContract addCallback(Callback callback);
+
+  /// Creates the database and initializes it.
+  Future<AppDatabase> build();
+}
+
+// ignore: avoid_classes_with_only_static_members
 class $FloorAppDatabase {
   /// Creates a database builder for a persistent database.
   /// Once a database is built, you should keep a reference to it and re-use it.
-  static _$AppDatabaseBuilder databaseBuilder(String name) =>
+  static $AppDatabaseBuilderContract databaseBuilder(String name) =>
       _$AppDatabaseBuilder(name);
 
   /// Creates a database builder for an in memory database.
   /// Information stored in an in memory database disappears when the process is killed.
   /// Once a database is built, you should keep a reference to it and re-use it.
-  static _$AppDatabaseBuilder inMemoryDatabaseBuilder() =>
+  static $AppDatabaseBuilderContract inMemoryDatabaseBuilder() =>
       _$AppDatabaseBuilder(null);
 }
 
-class _$AppDatabaseBuilder {
+class _$AppDatabaseBuilder implements $AppDatabaseBuilderContract {
   _$AppDatabaseBuilder(this.name);
 
   final String? name;
@@ -28,19 +40,19 @@ class _$AppDatabaseBuilder {
 
   Callback? _callback;
 
-  /// Adds migrations to the builder.
-  _$AppDatabaseBuilder addMigrations(List<Migration> migrations) {
+  @override
+  $AppDatabaseBuilderContract addMigrations(List<Migration> migrations) {
     _migrations.addAll(migrations);
     return this;
   }
 
-  /// Adds a database [Callback] to the builder.
-  _$AppDatabaseBuilder addCallback(Callback callback) {
+  @override
+  $AppDatabaseBuilderContract addCallback(Callback callback) {
     _callback = callback;
     return this;
   }
 
-  /// Creates the database and initializes it.
+  @override
   Future<AppDatabase> build() async {
     final path = name != null
         ? await sqfliteDatabaseFactory.getDatabasePath(name!)
@@ -68,8 +80,11 @@ class _$AppDatabase extends AppDatabase {
 
   MarkDao? _markDaoInstance;
 
-  Future<sqflite.Database> open(String path, List<Migration> migrations,
-      [Callback? callback]) async {
+  Future<sqflite.Database> open(
+    String path,
+    List<Migration> migrations, [
+    Callback? callback,
+  ]) async {
     final databaseOptions = sqflite.OpenDatabaseOptions(
       version: 4,
       onConfigure: (database) async {
@@ -125,8 +140,10 @@ class _$AppDatabase extends AppDatabase {
 }
 
 class _$RecordDao extends RecordDao {
-  _$RecordDao(this.database, this.changeListener)
-      : _queryAdapter = QueryAdapter(database),
+  _$RecordDao(
+    this.database,
+    this.changeListener,
+  )   : _queryAdapter = QueryAdapter(database),
         _recordInsertionAdapter = InsertionAdapter(
             database,
             'Record',
@@ -228,8 +245,10 @@ class _$RecordDao extends RecordDao {
 }
 
 class _$LocalRecordDao extends LocalRecordDao {
-  _$LocalRecordDao(this.database, this.changeListener)
-      : _queryAdapter = QueryAdapter(database),
+  _$LocalRecordDao(
+    this.database,
+    this.changeListener,
+  )   : _queryAdapter = QueryAdapter(database),
         _localRecordInsertionAdapter = InsertionAdapter(
             database,
             'LocalRecord',
@@ -338,8 +357,10 @@ class _$LocalRecordDao extends LocalRecordDao {
 }
 
 class _$MemberRecordDao extends MemberRecordDao {
-  _$MemberRecordDao(this.database, this.changeListener)
-      : _queryAdapter = QueryAdapter(database),
+  _$MemberRecordDao(
+    this.database,
+    this.changeListener,
+  )   : _queryAdapter = QueryAdapter(database),
         _memberRecordInsertionAdapter = InsertionAdapter(
             database,
             'MemberRecord',
@@ -528,8 +549,10 @@ class _$MemberRecordDao extends MemberRecordDao {
 }
 
 class _$MarkDao extends MarkDao {
-  _$MarkDao(this.database, this.changeListener)
-      : _queryAdapter = QueryAdapter(database),
+  _$MarkDao(
+    this.database,
+    this.changeListener,
+  )   : _queryAdapter = QueryAdapter(database),
         _markInsertionAdapter = InsertionAdapter(
             database,
             'Mark',
@@ -646,7 +669,7 @@ class _$MarkDao extends MarkDao {
 
   @override
   Future<List<Mark>> findAllDiaryMarks() async {
-    return _queryAdapter.queryList('SELECT * FROM Mark WHERE opt == diary',
+    return _queryAdapter.queryList('SELECT * FROM Mark WHERE opt = \'diary\'',
         mapper: (Map<String, Object?> row) => Mark(
             row['id'] as int?,
             row['opt'] as String,

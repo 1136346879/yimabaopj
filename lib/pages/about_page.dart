@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:package_info/package_info.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:yimabao/config/project_style.dart';
 import 'package:yimabao/pages/new_pages/contact_page.dart';
 import 'package:yimabao/request/mine_api.dart';
@@ -48,7 +48,7 @@ class _AboutPageState extends State<AboutPage> {
       appBar: AppBar(
         title: Text("设置"),
         // leadingWidth: 150,
-        brightness: Brightness.dark,
+        // brightness: Brightness.dark,
         elevation: 0,
         backgroundColor: Colors.white,
         foregroundColor: PS.c353535

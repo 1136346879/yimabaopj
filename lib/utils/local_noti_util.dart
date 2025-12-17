@@ -128,56 +128,55 @@ class LocalNotiUtil {
       var val = element.value;
       var detroit = tz.getLocation('Asia/Shanghai');
       String tipStr = '${val.keys.first}';
-      await flutterLocalNotificationsPlugin.zonedSchedule(
-          index,
-          '经期提醒',
-          '${val.keys.first}',
-          // tz.TZDateTime.now(tz.local).add(const Duration(seconds: 30)),
-          tz.TZDateTime.from(val.values.first, detroit),
-          const NotificationDetails(
-              android: AndroidNotificationDetails(
-                'your channel id', '提醒',
-                channelDescription: '', ticker: '经期提醒', priority: Priority.max, importance: Importance.high)),
-          androidAllowWhileIdle: true,
-
-          uiLocalNotificationDateInterpretation: UILocalNotificationDateInterpretation.absoluteTime);
+      //   await flutterLocalNotificationsPlugin.zonedSchedule(
+      //       index,
+      //       '经期提醒',
+      //       '${val.keys.first}',
+      //       // tz.TZDateTime.now(tz.local).add(const Duration(seconds: 30)),
+      //       tz.TZDateTime.from(val.values.first, detroit),
+      //       const NotificationDetails(
+      //           android: AndroidNotificationDetails(
+      //             'your channel id', '提醒',
+      //             channelDescription: '', ticker: '经期提醒', priority: Priority.max, importance: Importance.high)),
+      //         androidAllowWhileIdle: true,
+      //
+      //         uiLocalNotificationDateInterpretation: UILocalNotificationDateInterpretation.absoluteTime);
+      // });
     });
-
-
-  }
-  test() async {
-    await flutterLocalNotificationsPlugin.cancelAll();
-    List<Map<String, DateTime>> arr = [
-      { "1分钟": DateTime.now().add(Duration(minutes: 1))},
-      { "2分钟": DateTime.now().add(Duration(minutes: 2))},
-      { "3分钟": DateTime.now().add(Duration(minutes: 3))},
-      { "5分钟": DateTime.now().add(Duration(minutes: 5))},
-      { "10分钟": DateTime.now().add(Duration(minutes: 10))},
-      { "30分钟": DateTime.now().add(Duration(minutes: 30))},
-      { "1小时": DateTime.now().add(Duration(minutes: 60))},
-      { "3小时": DateTime.now().add(Duration(minutes: 180))},
-      { "5小时": DateTime.now().add(Duration(minutes: 300))},
-    ];
-
-    arr.asMap().entries.forEach((element) async {
-      var index = element .key;
-      var val = element.value;
-      var detroit = tz.getLocation('Asia/Shanghai');
-      await flutterLocalNotificationsPlugin.zonedSchedule(
-          index + 100,
-          '姨妈宝测试提醒',
-          '${val.keys.first}',
-          // tz.TZDateTime.now(tz.local).add(const Duration(seconds: 30)),
-          tz.TZDateTime.from(val.values.first, detroit),
-          const NotificationDetails(
-              android: AndroidNotificationDetails(
-                'your channel id', '提醒',
-                channelDescription: '', ticker: '经期提醒', priority: Priority.max, importance: Importance.high)),
-          androidAllowWhileIdle: true,
-
-          uiLocalNotificationDateInterpretation: UILocalNotificationDateInterpretation.absoluteTime);
-    });
-  }
+    }
+  // test() async {
+  //   await flutterLocalNotificationsPlugin.cancelAll();
+  //   List<Map<String, DateTime>> arr = [
+  //     { "1分钟": DateTime.now().add(Duration(minutes: 1))},
+  //     { "2分钟": DateTime.now().add(Duration(minutes: 2))},
+  //     { "3分钟": DateTime.now().add(Duration(minutes: 3))},
+  //     { "5分钟": DateTime.now().add(Duration(minutes: 5))},
+  //     { "10分钟": DateTime.now().add(Duration(minutes: 10))},
+  //     { "30分钟": DateTime.now().add(Duration(minutes: 30))},
+  //     { "1小时": DateTime.now().add(Duration(minutes: 60))},
+  //     { "3小时": DateTime.now().add(Duration(minutes: 180))},
+  //     { "5小时": DateTime.now().add(Duration(minutes: 300))},
+  //   ];
+  //
+  //   arr.asMap().entries.forEach((element) async {
+  //     var index = element .key;
+  //     var val = element.value;
+  //     var detroit = tz.getLocation('Asia/Shanghai');
+  //     await flutterLocalNotificationsPlugin.zonedSchedule(
+  //         index + 100,
+  //         '姨妈宝测试提醒',
+  //         '${val.keys.first}',
+  //         // tz.TZDateTime.now(tz.local).add(const Duration(seconds: 30)),
+  //         tz.TZDateTime.from(val.values.first, detroit),
+  //         const NotificationDetails(
+  //             android: AndroidNotificationDetails(
+  //               'your channel id', '提醒',
+  //               channelDescription: '', ticker: '经期提醒', priority: Priority.max, importance: Importance.high)),
+  //           androidAllowWhileIdle: true,
+  //
+  //           uiLocalNotificationDateInterpretation: UILocalNotificationDateInterpretation.absoluteTime);
+  //   });
+  // }
   // test2() async {
   //   await flutterLocalNotificationsPlugin.cancelAll();
   //   List<Map<String, DateTime>> arr = [
@@ -216,4 +215,5 @@ class LocalNotiUtil {
   dateTimeToYMD(DateTime date) {
     return DateUtil.getDateTime(DateUtil.formatDate(date, format: 'yyyy-MM-dd'));
   }
+
 }

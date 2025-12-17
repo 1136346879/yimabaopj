@@ -107,7 +107,7 @@ class _MemberPageState extends State<MemberPage> {
     Widget content() {
       if(hasNet) {
         return InAppWebView(
-          initialUrlRequest: URLRequest(url: Uri.parse(filePath)),
+          initialUrlRequest: URLRequest(url: WebUri(filePath)),
           onWebViewCreated: (InAppWebViewController controller) {
             _webViewController = controller;
           },
@@ -124,7 +124,7 @@ class _MemberPageState extends State<MemberPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text("会员"),
-        brightness: Brightness.dark,
+        // brightness: Brightness.dark,
         elevation: 0,
         backgroundColor: PS.backgroundColor,
       ),
@@ -134,4 +134,3 @@ class _MemberPageState extends State<MemberPage> {
     );
   }
 }
-

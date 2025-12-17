@@ -53,19 +53,19 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver, Automa
       await refreshRecord();
     });
     WidgetsBinding.instance?.addObserver(this);
-    netSubscription = Connectivity().onConnectivityChanged.listen((ConnectivityResult result) async {
-      if(result == ConnectivityResult.mobile || result == ConnectivityResult.wifi) {
-        if(isFirstLoad) {
-          isFirstLoad = false;
-          return;
-        }
-        //监听网络变化
-        await MineAPI.instance.memberSyncData();
-        await MineAPI.instance.memberSyncCircle();
-        await refreshRecord();
-        await getCycle();
-      }
-    });
+    // netSubscription = Connectivity().onConnectivityChanged.listen((ConnectivityResult result) async {
+    //   if(result == ConnectivityResult.mobile || result == ConnectivityResult.wifi) {
+    //     if(isFirstLoad) {
+    //       isFirstLoad = false;
+    //       return;
+    //     }
+    //     //监听网络变化
+    //     await MineAPI.instance.memberSyncData();
+    //     await MineAPI.instance.memberSyncCircle();
+    //     await refreshRecord();
+    //     await getCycle();
+    //   }
+    // });
   }
   @override
   Future<void> didChangeAppLifecycleState(AppLifecycleState state) async {
@@ -86,7 +86,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver, Automa
 
   @override
   void didChangeDependencies() {
-    routeObserver.subscribe(this, ModalRoute.of(context) as PageRoute);
+    // routeObserver.subscribe(this, ModalRoute.of(context) as PageRoute);
     super.didChangeDependencies();
   }
 
@@ -96,7 +96,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver, Automa
   void dispose() {
     WidgetsBinding.instance?.removeObserver(this);
     netSubscription.cancel();
-    routeObserver.unsubscribe(this);
+    // routeObserver.unsubscribe(this);
     _tabChangeSubscription?.cancel();
     super.dispose();
   }
@@ -644,8 +644,8 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver, Automa
         preferredSize: Size.fromHeight(100),
         child: AppBar(
           leadingWidth: 170,
-          brightness: Brightness.light,
-          elevation: 0,
+          // brightness: Brightness.light,
+          // elevation: 0,
           backgroundColor: PS.backgroundColor,
           leading: GestureDetector(onTap: _selectDate, child: Center(child: Row(
             children: [

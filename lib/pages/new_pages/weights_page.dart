@@ -39,7 +39,7 @@ class _WeightsPageState extends State<WeightsPage> {
     return Scaffold(
       appBar: AppBar(
           title: Text("体重记录"),
-          brightness: Brightness.dark,
+          // brightness: Brightness.dark,
           elevation: 0,
           backgroundColor: Colors.white,
           foregroundColor: PS.c353535

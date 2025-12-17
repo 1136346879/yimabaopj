@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:fluwx_no_pay/fluwx_no_pay.dart';
+import 'package:fluwx/fluwx.dart' as fluwx;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:yimabao/config/project_config.dart';
 import 'package:yimabao/config/project_style.dart';
@@ -22,18 +22,18 @@ class _AgreementPageState extends State<AgreementPage> {
   @override
   void initState() {
     super.initState();
-    SystemChrome.setEnabledSystemUIOverlays([]);
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: []);
   }
   @override
   void dispose() {
     super.dispose();
-    SystemChrome.setEnabledSystemUIOverlays(SystemUiOverlay.values);
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: SystemUiOverlay.values);
   }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-        margin: EdgeInsets.only(top: 150),
+        margin: EdgeInsets.only(top: 50),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.center,
@@ -61,18 +61,18 @@ class _AgreementPageState extends State<AgreementPage> {
                       children: [
                         TextSpan(text: "您可以查看"),
                         TextSpan(text: "《用户协议》", style: PS.normalTextStyle(color: PS.secondaryColor), recognizer: TapGestureRecognizer()..onTap = () async {
-                          SystemChrome.setEnabledSystemUIOverlays(SystemUiOverlay.values);
+                          SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: SystemUiOverlay.values);
                           await Navigator.push(context, MaterialPageRoute(builder: (_) {
                             return AgreementH5Page(index: 0,);
                           }));
-                          SystemChrome.setEnabledSystemUIOverlays([]);
+                          SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: []);
                         }),
                         TextSpan(text: "《隐私政策》", style: PS.normalTextStyle(color: PS.secondaryColor), recognizer: TapGestureRecognizer()..onTap = () async {
-                          SystemChrome.setEnabledSystemUIOverlays(SystemUiOverlay.values);
+                          SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: SystemUiOverlay.values);
                           await Navigator.push(context, MaterialPageRoute(builder: (_) {
                             return AgreementH5Page(index: 1,);
                           }));
-                          SystemChrome.setEnabledSystemUIOverlays([]);
+                          SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: []);
                         }),
                       ]
                     ),
@@ -108,7 +108,7 @@ class _AgreementPageState extends State<AgreementPage> {
                         ),//圆角弧度
                     ),
                     onPressed: () async {
-                      registerWxApi(appId: "wxfa505eddadc31630",universalLink: "https://www.yimabao.cn/apple-app-site-association");
+                      // fluwx.registerWxApi(appId: "wxfa505eddadc31630",universalLink: "https://www.yimabao.cn/apple-app-site-association");
                       SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
                       sharedPreferences.setBool(ProjectConfig.agreementKey, true);
                       Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) {
@@ -128,11 +128,10 @@ class _AgreementPageState extends State<AgreementPage> {
                   child: Text("不同意并退出",)
               ),
             ),
-            SizedBox(height: 150,)
+            SizedBox(height: 50,)
           ],
         ),
       ),
     );
   }
 }
-

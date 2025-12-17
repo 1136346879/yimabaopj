@@ -39,7 +39,7 @@ class _SleepsPageState extends State<SleepsPage> {
     return Scaffold(
       appBar: AppBar(
           title: Text("睡眠记录"),
-          brightness: Brightness.dark,
+          // brightness: Brightness.dark,
           elevation: 0,
           backgroundColor: Colors.white,
           foregroundColor: PS.c353535

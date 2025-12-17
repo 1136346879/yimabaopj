@@ -3,13 +3,13 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:device_info/device_info.dart';
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flustars/flustars.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:fluwx_no_pay/fluwx_no_pay.dart';
+import 'package:fluwx/fluwx.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
-import 'package:package_info/package_info.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 // import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:yimabao/api/db_api.dart';
@@ -48,6 +48,8 @@ class _SettingPageState extends State<SettingPage> {
   String shareLink = "https://yimabao.cn/site/activity";
   LoginData? userInfo;
   StreamSubscription? stream;
+  Fluwx fluwx = Fluwx();
+
   @override
   void initState() {
     super.initState();
@@ -59,18 +61,30 @@ class _SettingPageState extends State<SettingPage> {
       getCycle();
       getCacheTotal();
     });
-    stream = weChatResponseEventHandler.distinct((a, b) => a == b).listen((res) {
-      if (res is WeChatAuthResponse) {
-        print("weChatResponseEventHandler");
-        print(res.toString());
-        login(res.code);
+    fluwx.addSubscriber((response) {
+      if (response is WeChatAuthResponse) {
+        print(response.toString());
+        login(response.code);
         // setState(() {
-        //   var _result = "state :${res.state} \n code:${res.code}";
-        //   print(_result);
+        //   _result = 'state :${response.state} \n code:${response.code}';
         // });
-        // MyDialog.showCustomDialog(context: context, customBody: SelectableText("${res.code}"));
       }
     });
+
+    // stream = weChatResponseEventHandler
+    //     .distinct((a, b) => a == b)
+    //     .listen((res) {
+    //   if (res is WeChatAuthResponse) {
+    //     print("weChatResponseEventHandler");
+    //     print(res.toString());
+    //     login(res.code);
+    //     // setState(() {
+    //     //   var _result = "state :${res.state} \n code:${res.code}";
+    //     //   print(_result);
+    //     // });
+    //     // MyDialog.showCustomDialog(context: context, customBody: SelectableText("${res.code}"));
+    //   }
+    // });
   }
   @override
   void dispose() {
@@ -82,11 +96,11 @@ class _SettingPageState extends State<SettingPage> {
     DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
     if(Platform.isAndroid) {
       AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
-      uuid = androidInfo.androidId;
+      uuid = "${androidInfo.id}-${androidInfo.model}";
       dev_info = androidInfo.model;
     } else {
       IosDeviceInfo iosInfo = await deviceInfo.iosInfo;
-      uuid = iosInfo.identifierForVendor;
+      uuid = iosInfo.identifierForVendor!;
       dev_info = iosInfo.name;
     }
 
@@ -134,7 +148,7 @@ class _SettingPageState extends State<SettingPage> {
           title: Text(""),
           systemOverlayStyle: SystemUiOverlayStyle(statusBarColor: Colors.white),
           // leadingWidth: 150,
-          brightness: Brightness.dark,
+          // brightness: Brightness.dark,
           elevation: 0,
           backgroundColor: PS.backgroundColor,
         ),
@@ -159,7 +173,13 @@ class _SettingPageState extends State<SettingPage> {
                         children: [
                           GestureDetector(onTap: () {
                             print("点击登录");
-                            sendWeChatAuth(scope: "snsapi_userinfo", state: "wechat_sdk_yimabao");
+                            fluwx.authBy(
+                            which: NormalAuth(
+                            scope: 'snsapi_userinfo',
+                            state: 'wechat_sdk_yimabao',
+                            ))
+                                .then((data) {});
+                            // fluwx.sendWeChatAuth(scope: "snsapi_userinfo", state: "wechat_sdk_yimabao");
                           }, child: Image.asset("images/wechat.png", width: 50, height: 50,)),
                           SizedBox(height: 10,),
                           Text("登录", style: PS.normalTextStyle())
@@ -171,22 +191,22 @@ class _SettingPageState extends State<SettingPage> {
                       offstage: userInfo == null,
                       child: Column(
                         children: [
-                          // Row(
-                          //   mainAxisAlignment: MainAxisAlignment.end,
-                          //   children: [
-                          //   GestureDetector(
-                          //       onTap: () {
-                          //         MyDialog.showAlertDialog(context, () async{
-                          //           await MineAPI.instance.memberLogout(context);
-                          //           userInfo = null;
-                          //           getCycle();
-                          //         }, title: "提示", message: "确认退出登录？", isOnlySureBtn: false, sureBtnTitle: "退出", sureBtnTitleColor: Colors.red);
-                          //
-                          //       },
-                          //       child: Text("退出登录", style: PS.normalTextStyle(color: Colors.white)),
-                          //   ),
-                          //     SizedBox(width: 10,)
-                          // ],),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                            GestureDetector(
+                                onTap: () {
+                                  MyDialog.showAlertDialog(context, () async{
+                                    await MineAPI.instance.memberLogout(context);
+                                    userInfo = null;
+                                    getCycle();
+                                  }, title: "提示", message: "确认退出登录？", isOnlySureBtn: false, sureBtnTitle: "退出", sureBtnTitleColor: Colors.red);
+
+                                },
+                                child: Text("退出登录", style: PS.normalTextStyle(color: Colors.white)),
+                            ),
+                              SizedBox(width: 10,)
+                          ],),
                           Center(child: Row(
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
@@ -518,7 +538,7 @@ class _SettingPageState extends State<SettingPage> {
                             children: [
                               GestureDetector(
                                 onTap: () {
-                                  shareToWeChat(WeChatShareWebPageModel(shareLink, title: "姨妈宝", description: "一款简洁干净的经期记录APP！", scene: WeChatScene.SESSION, thumbnail: WeChatImage.asset("images/flutterads_logo.png")));
+                                  // shareToWeChat(WeChatShareWebPageModel(shareLink, title: "姨妈宝", description: "一款简洁干净的经期记录APP！", scene: WeChatScene.SESSION, thumbnail: WeChatImage.asset("images/flutterads_logo.png")));
                                 },
                                 child: Container(
                                   margin: EdgeInsets.all(PS.marginLarge),
@@ -532,7 +552,7 @@ class _SettingPageState extends State<SettingPage> {
                               ),
                               GestureDetector(
                                 onTap: () {
-                                  shareToWeChat(WeChatShareWebPageModel(shareLink, title: "姨妈宝", description: "姨妈宝是一款简洁干净的经期记录软件。省去庞杂功能的烦恼。", scene: WeChatScene.TIMELINE, thumbnail: WeChatImage.asset("images/flutterads_logo.png")));
+                                  // shareToWeChat(WeChatShareWebPageModel(shareLink, title: "姨妈宝", description: "姨妈宝是一款简洁干净的经期记录软件。省去庞杂功能的烦恼。", scene: WeChatScene.TIMELINE, thumbnail: WeChatImage.asset("images/flutterads_logo.png")));
                                 },
                                 child: Container(
                                   margin: EdgeInsets.all(PS.marginLarge),

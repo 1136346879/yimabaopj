@@ -20,17 +20,20 @@ class AgreementH5Page extends StatefulWidget {
 }
 
 class _AgreementH5PageState extends State<AgreementH5Page> {
-  late WebViewController _webViewController;
+  late WebViewController _controller;
   late String filePath;
 
   @override
   void initState() {
     super.initState();
     filePath = widget.index == 0 ? 'https://yimabao.cn/readtemplate/user-agreement' : 'https://yimabao.cn/readtemplate/privacy-policy';
+    _initController();
   }
 
-  _loadHtmlFromAssets() async {
-    _webViewController.loadUrl(filePath);
+  _initController() {
+    _controller = WebViewController()
+      ..setJavaScriptMode(JavaScriptMode.unrestricted)
+      ..loadRequest(Uri.parse(filePath));
   }
   @override
   void dispose() {
@@ -41,7 +44,7 @@ class _AgreementH5PageState extends State<AgreementH5Page> {
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.index == 0 ? "用户协议" : "隐私政策"),
-        brightness: Brightness.dark,
+        // brightness: Brightness.dark,
         elevation: 0,
         backgroundColor: Colors.white,
         foregroundColor: PS.c353535,
@@ -70,15 +73,8 @@ class _AgreementH5PageState extends State<AgreementH5Page> {
         ],
       ),
       body: Container(
-        child: WebView(
-          javascriptMode: JavascriptMode.unrestricted,
-          onWebViewCreated: (WebViewController webViewController) {
-            _webViewController = webViewController;
-            _loadHtmlFromAssets();
-          },
-        ),
+        child: WebViewWidget(controller: _controller),
       ),
     );
   }
 }
-

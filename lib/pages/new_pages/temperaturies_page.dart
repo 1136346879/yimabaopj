@@ -38,7 +38,7 @@ class _TemperaturiesPageState extends State<TemperaturiesPage> {
     return Scaffold(
       appBar: AppBar(
           title: Text("体温记录"),
-          brightness: Brightness.dark,
+          // brightness: Brightness.dark,
           elevation: 0,
           backgroundColor: Colors.white,
           foregroundColor: PS.c353535

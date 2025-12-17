@@ -30,7 +30,7 @@ class _ContactPageState extends State<ContactPage> {
       appBar: AppBar(
           title: Text("联系我们"),
           // leadingWidth: 150,
-          brightness: Brightness.dark,
+          // brightness: Brightness.dark,
           elevation: 0,
           backgroundColor: Colors.white,
           foregroundColor: PS.c353535

@@ -1,13 +1,12 @@
 import 'dart:io';
 
-import 'package:device_info/device_info.dart';
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flustars/flustars.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_unionad/flutter_unionad.dart';
-import 'package:fluwx_no_pay/fluwx_no_pay.dart';
-import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
+import 'package:fluwx/fluwx.dart';
 // import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:yimabao/api/db_api.dart';
@@ -46,13 +45,19 @@ class _LoadingPageState extends State<LoadingPage> with SingleTickerProviderStat
     //   production: false,
     //   debug: false, // 设置是否打印 debug 日志
     // );
-    SystemChrome.setEnabledSystemUIOverlays([]);
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: []);
     // _requestPermission();
     WidgetsBinding.instance?.addPostFrameCallback((_) async {
       if(!widget.isOnlyUnionad) {
         //初始化微信
         print("初始化微信");
-        registerWxApi(appId: "wxfa505eddadc31630",universalLink: "https://www.yimabao.cn/apple-app-site-association");
+        Fluwx fluwx = Fluwx();
+        fluwx.registerApi(appId: "wxfa505eddadc31630",
+            doOnAndroid: true,
+            universalLink: "https://www.yimabao.cn/apple-app-site-association");
+        var result = await fluwx.isWeChatInstalled;
+        debugPrint('is installed $result');
+        // registerWxApi(appId: "wxfa505eddadc31630",universalLink: "https://www.yimabao.cn/apple-app-site-association");
       }
       _privacy();
       _initRegister();
@@ -79,7 +84,7 @@ class _LoadingPageState extends State<LoadingPage> with SingleTickerProviderStat
     print('Running on ${androidInfo.model}');  // e.g. "Moto G (4)"
   }
   goToNextPage() async {
-    SystemChrome.setEnabledSystemUIOverlays(SystemUiOverlay.values);
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: SystemUiOverlay.values);
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     bool hasAgree = sharedPreferences.getBool(ProjectConfig.agreementKey) ?? false;
     // if(Platform.isAndroid) {
@@ -124,14 +129,31 @@ class _LoadingPageState extends State<LoadingPage> with SingleTickerProviderStat
         androidAppId: "${ProjectConfig.adAndroidAppId}",
         //穿山甲广告 Android appid 必填
         iosAppId: "${ProjectConfig.adIosAppId}",
+        androidPrivacy: AndroidPrivacy(
+          isCanUseLocation: false,
+          //是否允许SDK主动使用地理位置信息 true可以获取，false禁止获取。默认为true
+          lat: 1.0,
+          //当isCanUseLocation=false时，可传入地理位置信息，穿山甲sdk使用您传入的地理位置信息lat
+          lon: 1.0,
+          //当isCanUseLocation=false时，可传入地理位置信息，穿山甲sdk使用您传入的地理位置信息lon
+          isCanUsePhoneState: false,
+          //是否允许SDK主动使用手机硬件参数，如：imei
+          imei: "123",
+          //当isCanUsePhoneState=false时，可传入imei信息，穿山甲sdk使用您传入的imei信息
+          isCanUseWifiState: false,
+          //是否允许SDK主动使用ACCESS_WIFI_STATE权限
+          isCanUseWriteExternal: false,
+          //是否允许SDK主动使用WRITE_EXTERNAL_STORAGE权限
+          oaid: "111", //开发者可以传入oaid
+        ),
         //穿山甲广告 ios appid 必填
         useTextureView: true,
         //使用TextureView控件播放视频,默认为SurfaceView,当有SurfaceView冲突的场景，可以使用TextureView 选填
         appName: "unionad_test",
         //appname 必填
         allowShowNotify: true,
-        //是否允许sdk展示通知栏提示 选填
-        allowShowPageWhenScreenLock: true,
+        // //是否允许sdk展示通知栏提示 选填
+        // allowShowPageWhenScreenLock: true,
         //是否在锁屏场景支持展示广告落地页 选填
         debug: false,
         //是否显示debug日志
@@ -159,23 +181,23 @@ class _LoadingPageState extends State<LoadingPage> with SingleTickerProviderStat
   //隐私权限
   void _privacy() async {
     if (Platform.isAndroid) {
-      await FlutterUnionad.andridPrivacy(
-        isCanUseLocation: false,
-        //是否允许SDK主动使用地理位置信息 true可以获取，false禁止获取。默认为true
-        lat: 1.0,
-        //当isCanUseLocation=false时，可传入地理位置信息，穿山甲sdk使用您传入的地理位置信息lat
-        lon: 1.0,
-        //当isCanUseLocation=false时，可传入地理位置信息，穿山甲sdk使用您传入的地理位置信息lon
-        isCanUsePhoneState: false,
-        //是否允许SDK主动使用手机硬件参数，如：imei
-        imei: "123",
-        //当isCanUsePhoneState=false时，可传入imei信息，穿山甲sdk使用您传入的imei信息
-        isCanUseWifiState: false,
-        //是否允许SDK主动使用ACCESS_WIFI_STATE权限
-        isCanUseWriteExternal: false,
-        //是否允许SDK主动使用WRITE_EXTERNAL_STORAGE权限
-        oaid: "111", //开发者可以传入oaid
-      );
+    //   await FlutterUnionad.androidPrivacy(
+    //     isCanUseLocation: false,
+    //     //是否允许SDK主动使用地理位置信息 true可以获取，false禁止获取。默认为true
+    //     lat: 1.0,
+    //     //当isCanUseLocation=false时，可传入地理位置信息，穿山甲sdk使用您传入的地理位置信息lat
+    //     lon: 1.0,
+    //     //当isCanUseLocation=false时，可传入地理位置信息，穿山甲sdk使用您传入的地理位置信息lon
+    //     isCanUsePhoneState: false,
+    //     //是否允许SDK主动使用手机硬件参数，如：imei
+    //     imei: "123",
+    //     //当isCanUsePhoneState=false时，可传入imei信息，穿山甲sdk使用您传入的imei信息
+    //     isCanUseWifiState: false,
+    //     //是否允许SDK主动使用ACCESS_WIFI_STATE权限
+    //     isCanUseWriteExternal: false,
+    //     //是否允许SDK主动使用WRITE_EXTERNAL_STORAGE权限
+    //     oaid: "111", //开发者可以传入oaid
+    //   );
     }
   }
 
@@ -263,3 +285,4 @@ class _LoadingPageState extends State<LoadingPage> with SingleTickerProviderStat
     );
   }
 }
+

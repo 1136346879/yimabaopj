@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'dart:developer' as Logger;
 
-import 'package:dio/adapter.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -50,7 +49,7 @@ class HttpManager {
     dio.options.headers = {
       'X-Requested-With': 'XMLHttpRequest',
     };
-    dio.options.connectTimeout = 15000;
+    dio.options.connectTimeout = Duration(milliseconds: 15000);
     dio.options.validateStatus =  (int? status) {
       return status == 200 || status == 201;
     };
@@ -213,10 +212,15 @@ class _CookieInterceptor extends Interceptor {
   @override
   void onResponse(Response response, ResponseInterceptorHandler handler) {
     //接口code判断全拦截？
-    if(response?.statusCode == 200 && response?.data["status"] != 'success') {
-      var exceptionMsg = "${response?.data["message"] ?? ""}";
-      print("code: ${response?.data["status"] ?? ""} message: ${exceptionMsg}");
-      var serverException = DioError(requestOptions: response.requestOptions, response: response, error: exceptionMsg);
+    if (response.statusCode == 200 && response.data["status"] != 'success') {
+      var exceptionMsg = "${response.data["message"] ?? ""}";
+      print("code: ${response.data["status"] ?? ""} message: ${exceptionMsg}");
+      var serverException = DioException(
+        requestOptions: response.requestOptions,
+        response: response,
+        message: exceptionMsg,
+        type: DioExceptionType.badResponse,
+      );
       handler.reject(serverException);
       return;
     }
@@ -236,12 +240,16 @@ class _CookieInterceptor extends Interceptor {
   }
 
   @override
-  void onError(DioError err, ErrorInterceptorHandler handler) async {
+  void onError(DioException err, ErrorInterceptorHandler handler) async {
     super.onError(err, handler);
     if (err.response?.statusCode == 401) {
-      err.error = "会话超时，请重新登录";
-      // MineAPI.instance.clearAccount();
-      // await MyRouter.navigatorKey.currentState.pushAndRemoveUntil(MaterialPageRoute(builder: (ctx) {return Login();}), (route) => route == null);
+      handler.reject(DioException(
+        requestOptions: err.requestOptions,
+        response: err.response,
+        message: "会话超时，请重新登录",
+        type: err.type,
+      ));
+      return;
     }
   }
 }

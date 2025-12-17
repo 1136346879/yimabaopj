@@ -3,7 +3,7 @@ import 'dart:ffi';
 import 'dart:io';
 
 import 'package:connectivity_plus/connectivity_plus.dart';
-import 'package:device_info/device_info.dart';
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:dio/dio.dart';
 import 'package:flustars/flustars.dart';
 import 'package:flutter/material.dart';
@@ -126,17 +126,17 @@ class MineAPI {
   }
  getUUID() async {
     // return "36a6a32e32ce65de";
-   String uuid, dev_info;
-   DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
-   if(Platform.isAndroid) {
-     AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
-     uuid = androidInfo.androidId;
-     dev_info = androidInfo.model;
-   } else {
-     IosDeviceInfo iosInfo = await deviceInfo.iosInfo;
-     uuid = iosInfo.identifierForVendor;
-     dev_info = iosInfo.name;
-   }
+  String uuid, dev_info;
+  DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
+  if(Platform.isAndroid) {
+    AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
+    uuid = "${androidInfo.id}-${androidInfo.model}";
+    dev_info = androidInfo.model;
+  } else {
+    IosDeviceInfo iosInfo = await deviceInfo.iosInfo;
+    uuid = iosInfo.identifierForVendor!;
+    dev_info = iosInfo.name;
+  }
    return uuid;
  }
  //登录校验 如果没登录则返回true
