@@ -11,6 +11,7 @@ android {
     compileSdk = 36
 //    ndkVersion = flutter.ndkVersion
     ndkVersion = "26.3.11579264"
+//    ndkVersion = "27.0.12077973"
 
     compileOptions {
         // 1. 必须开启核心库脱糖以兼容低版本Android
@@ -31,8 +32,8 @@ android {
 //        minSdk = flutter.minSdkVersion
         minSdk = 24
         targetSdk = flutter.targetSdkVersion
-        versionCode = flutter.versionCode
-        versionName = flutter.versionName
+        versionCode = 5
+        versionName = "2.0.3" as String?
     }
 
     signingConfigs {

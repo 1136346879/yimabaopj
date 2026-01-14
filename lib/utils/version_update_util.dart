@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
-import 'package:app_installer/app_installer.dart';
+// import 'package:app_installer/app_installer.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 
@@ -55,7 +55,7 @@ class VersionUpdateUtil {
         }
       }
     }
-    _checkVersion();
+    // _checkVersion();
   }
 
   _compareVersion(String thisVersion, String serverVersion) {
@@ -131,7 +131,7 @@ class VersionUpdateUtil {
             message:
             "检测到有新版本可以更新，是否立即更新?",
             sureBtnAction: () {
-              AppInstaller.goStore("", "${ProjectConfig.IOS_APP_ID}", review: true);
+              // AppInstaller.goStore("", "${ProjectConfig.IOS_APP_ID}", review: true);
               // InstallPlugin.gotoAppStore(
               //     "https://itunes.apple.com/cn/app/id${ProjectConfig.IOS_APP_ID}");
             });
@@ -189,7 +189,7 @@ class VersionUpdateUtil {
     String packageName = packageInfo.packageName;
     // _locatPath + "/$_apkName/" + (_androidDownloadPath.split("/").last ?? ""), packageName)
     print("intall path： ${_locatPath! + "/$_apkName/" + (_androidDownloadPath.split("/")?.last ?? "")}");
-    await AppInstaller.installApk(_locatPath! + "/$_apkName/" + (_androidDownloadPath.split("/")?.last ?? ""));
+    // await AppInstaller.installApk(_locatPath! + "/$_apkName/" + (_androidDownloadPath.split("/")?.last ?? ""));
     // Directory(_locatPath!).deleteSync(recursive: true);
     // InstallPlugin.installApk(
     //     // _locatPath + "/app_release.apk", packageName)

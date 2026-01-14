@@ -22,14 +22,6 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "6.11.0"
-  app_installer:
-    dependency: "direct main"
-    description:
-      name: app_installer
-      sha256: "4c3a9268b53ead9a915ef79cd3988e28c72719fb78143867f9fed4bd4d8c1cfd"
-      url: "https://pub.flutter-io.cn"
-    source: hosted
-    version: "1.3.1"
   archive:
     dependency: transitive
     description:
@@ -573,14 +565,6 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
-  flutter_unionad:
-    dependency: "direct main"
-    description:
-      name: flutter_unionad
-      sha256: "5497339690742599786a8e4e291fe2b57ac5d658496c4df81fa8103b17c5ac5b"
-      url: "https://pub.flutter-io.cn"
-    source: hosted
-    version: "2.2.2"
   flutter_web_plugins:
     dependency: transitive
     description: flutter

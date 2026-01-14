@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:device_info_plus/device_info_plus.dart';
@@ -5,7 +6,7 @@ import 'package:flustars/flustars.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_unionad/flutter_unionad.dart';
+// import 'package:flutter_unionad/flutter_unionad.dart';
 import 'package:fluwx/fluwx.dart';
 // import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -60,7 +61,7 @@ class _LoadingPageState extends State<LoadingPage> with SingleTickerProviderStat
         // registerWxApi(appId: "wxfa505eddadc31630",universalLink: "https://www.yimabao.cn/apple-app-site-association");
       }
       _privacy();
-      _initRegister();
+      // _initRegister();
       await DBAPI.load();
       await LocalNotiUtil.instance.load();
       MineAPI();
@@ -72,6 +73,9 @@ class _LoadingPageState extends State<LoadingPage> with SingleTickerProviderStat
       // if(widget.isIgnoreUnionad) {
       //   goToNextPage();
       // }
+      Timer(Duration(seconds: 2), () {
+        goToNextPage();
+      });
     });
   }
   Future<void> initPlatformState() async {
@@ -124,52 +128,52 @@ class _LoadingPageState extends State<LoadingPage> with SingleTickerProviderStat
   }
 
   //注册
-  void _initRegister() async {
-    _init = await FlutterUnionad.register(
-        androidAppId: "${ProjectConfig.adAndroidAppId}",
-        //穿山甲广告 Android appid 必填
-        iosAppId: "${ProjectConfig.adIosAppId}",
-        androidPrivacy: AndroidPrivacy(
-          isCanUseLocation: false,
-          //是否允许SDK主动使用地理位置信息 true可以获取，false禁止获取。默认为true
-          lat: 1.0,
-          //当isCanUseLocation=false时，可传入地理位置信息，穿山甲sdk使用您传入的地理位置信息lat
-          lon: 1.0,
-          //当isCanUseLocation=false时，可传入地理位置信息，穿山甲sdk使用您传入的地理位置信息lon
-          isCanUsePhoneState: false,
-          //是否允许SDK主动使用手机硬件参数，如：imei
-          imei: "123",
-          //当isCanUsePhoneState=false时，可传入imei信息，穿山甲sdk使用您传入的imei信息
-          isCanUseWifiState: false,
-          //是否允许SDK主动使用ACCESS_WIFI_STATE权限
-          isCanUseWriteExternal: false,
-          //是否允许SDK主动使用WRITE_EXTERNAL_STORAGE权限
-          oaid: "111", //开发者可以传入oaid
-        ),
-        //穿山甲广告 ios appid 必填
-        useTextureView: true,
-        //使用TextureView控件播放视频,默认为SurfaceView,当有SurfaceView冲突的场景，可以使用TextureView 选填
-        appName: "unionad_test",
-        //appname 必填
-        allowShowNotify: true,
-        // //是否允许sdk展示通知栏提示 选填
-        // allowShowPageWhenScreenLock: true,
-        //是否在锁屏场景支持展示广告落地页 选填
-        debug: false,
-        //是否显示debug日志
-        supportMultiProcess: false,
-        //是否支持多进程，true支持 选填
-        directDownloadNetworkType: [
-          FlutterUnionadNetCode.NETWORK_STATE_2G,
-          FlutterUnionadNetCode.NETWORK_STATE_3G,
-          FlutterUnionadNetCode.NETWORK_STATE_4G,
-          FlutterUnionadNetCode.NETWORK_STATE_WIFI
-        ]); //允许直接下载的网络状态集合 选填
-    print("sdk初始化 $_init");
-    await FlutterUnionad.getSDKVersion();
-
-    setState(() {});
-  }
+  // void _initRegister() async {
+  //   _init = await FlutterUnionad.register(
+  //       androidAppId: "${ProjectConfig.adAndroidAppId}",
+  //       //穿山甲广告 Android appid 必填
+  //       iosAppId: "${ProjectConfig.adIosAppId}",
+  //       androidPrivacy: AndroidPrivacy(
+  //         isCanUseLocation: false,
+  //         //是否允许SDK主动使用地理位置信息 true可以获取，false禁止获取。默认为true
+  //         lat: 1.0,
+  //         //当isCanUseLocation=false时，可传入地理位置信息，穿山甲sdk使用您传入的地理位置信息lat
+  //         lon: 1.0,
+  //         //当isCanUseLocation=false时，可传入地理位置信息，穿山甲sdk使用您传入的地理位置信息lon
+  //         isCanUsePhoneState: false,
+  //         //是否允许SDK主动使用手机硬件参数，如：imei
+  //         imei: "123",
+  //         //当isCanUsePhoneState=false时，可传入imei信息，穿山甲sdk使用您传入的imei信息
+  //         isCanUseWifiState: false,
+  //         //是否允许SDK主动使用ACCESS_WIFI_STATE权限
+  //         isCanUseWriteExternal: false,
+  //         //是否允许SDK主动使用WRITE_EXTERNAL_STORAGE权限
+  //         oaid: "111", //开发者可以传入oaid
+  //       ),
+  //       //穿山甲广告 ios appid 必填
+  //       useTextureView: true,
+  //       //使用TextureView控件播放视频,默认为SurfaceView,当有SurfaceView冲突的场景，可以使用TextureView 选填
+  //       appName: "unionad_test",
+  //       //appname 必填
+  //       allowShowNotify: true,
+  //       // //是否允许sdk展示通知栏提示 选填
+  //       // allowShowPageWhenScreenLock: true,
+  //       //是否在锁屏场景支持展示广告落地页 选填
+  //       debug: false,
+  //       //是否显示debug日志
+  //       supportMultiProcess: false,
+  //       //是否支持多进程，true支持 选填
+  //       directDownloadNetworkType: [
+  //         FlutterUnionadNetCode.NETWORK_STATE_2G,
+  //         FlutterUnionadNetCode.NETWORK_STATE_3G,
+  //         FlutterUnionadNetCode.NETWORK_STATE_4G,
+  //         FlutterUnionadNetCode.NETWORK_STATE_WIFI
+  //       ]); //允许直接下载的网络状态集合 选填
+  //   print("sdk初始化 $_init");
+  //   await FlutterUnionad.getSDKVersion();
+  //
+  //   setState(() {});
+  // }
 
   // void _requestPermission() async {
   //   await [Permission.storage, Permission.requestInstallPackages].request();
@@ -208,55 +212,55 @@ class _LoadingPageState extends State<LoadingPage> with SingleTickerProviderStat
       if(_init) {
         return Column(
           children: [
-            Offstage(
-              offstage: !isAdShowed,
-              child: FlutterUnionad.splashAdView(
-                //是否使用个性化模版  设定widget宽高
-                mIsExpress: true,
-                //android 开屏广告广告id 必填
-                androidCodeId: "${ProjectConfig.adAndroidId}",
-                //ios 开屏广告广告id 必填
-                iosCodeId: "${ProjectConfig.adIosId}",
-                //是否支持 DeepLink 选填
-                supportDeepLink: true,
-                // 期望view 宽度 dp 选填 mIsExpress=true必填
-                expressViewWidth: MediaQuery.of(context).size.width,
-                //期望view高度 dp 选填 mIsExpress=true必填
-                expressViewHeight: MediaQuery.of(context).size.height,
-                callBack: FlutterUnionadSplashCallBack(
-                  onShow: () {
-                    print("开屏广告显示");
-                    isAdShowed = true;
-                    setState((){});
-                  },
-                  onClick: () {
-                    print("开屏广告点击");
-                    if(Platform.isIOS){ // 设置状态栏背景及颜色
-                      goToNextPage();
-                    }
-
-                    // Navigator.pop(context);
-                  },
-                  onFail: (error) async {
-                    print("开屏广告fail: ${error.toString()}");
-                    await Future.delayed(const Duration(milliseconds: 1000));
-                    goToNextPage();
-                  },
-                  onFinish: () {
-                    print("开屏广告倒计时结束");
-                    goToNextPage();
-                  },
-                  onSkip: () {
-                    print("开屏广告跳过");
-                    goToNextPage();
-                  },
-                  onTimeOut: () {
-                    print("开屏超时");
-                    goToNextPage();
-                  },
-                ),
-              ),
-            ),
+            // Offstage(
+            //   offstage: !isAdShowed,
+            //   child: FlutterUnionad.splashAdView(
+            //     //是否使用个性化模版  设定widget宽高
+            //     mIsExpress: true,
+            //     //android 开屏广告广告id 必填
+            //     androidCodeId: "${ProjectConfig.adAndroidId}",
+            //     //ios 开屏广告广告id 必填
+            //     iosCodeId: "${ProjectConfig.adIosId}",
+            //     //是否支持 DeepLink 选填
+            //     supportDeepLink: true,
+            //     // 期望view 宽度 dp 选填 mIsExpress=true必填
+            //     expressViewWidth: MediaQuery.of(context).size.width,
+            //     //期望view高度 dp 选填 mIsExpress=true必填
+            //     expressViewHeight: MediaQuery.of(context).size.height,
+            //     callBack: FlutterUnionadSplashCallBack(
+            //       onShow: () {
+            //         print("开屏广告显示");
+            //         isAdShowed = true;
+            //         setState((){});
+            //       },
+            //       onClick: () {
+            //         print("开屏广告点击");
+            //         if(Platform.isIOS){ // 设置状态栏背景及颜色
+            //           goToNextPage();
+            //         }
+            //
+            //         // Navigator.pop(context);
+            //       },
+            //       onFail: (error) async {
+            //         print("开屏广告fail: ${error.toString()}");
+            //         await Future.delayed(const Duration(milliseconds: 1000));
+            //         goToNextPage();
+            //       },
+            //       onFinish: () {
+            //         print("开屏广告倒计时结束");
+            //         goToNextPage();
+            //       },
+            //       onSkip: () {
+            //         print("开屏广告跳过");
+            //         goToNextPage();
+            //       },
+            //       onTimeOut: () {
+            //         print("开屏超时");
+            //         goToNextPage();
+            //       },
+            //     ),
+            //   ),
+            // ),
             Expanded(child:
             Container(color: Colors.black, child: InkWell(
               onTap: (){
