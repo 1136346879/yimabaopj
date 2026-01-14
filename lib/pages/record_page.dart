@@ -2,6 +2,7 @@ import 'dart:io';
 import 'dart:math';
 
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flustars/flustars.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -157,12 +158,12 @@ class _RecordPageState extends State<RecordPage> with WidgetsBindingObserver {
           // } else
           if(duration < circle) {
             //
-            tip = "${circle - duration}天后结束";
+            tip = tr("end_in_days", args: [(circle - duration).toString()]);
           } else if (duration == circle) {
-            tip = "今天结束";
+            tip = tr("end_today");
           }
           else if (duration > circle) {
-            tip = "多了${duration - circle}天";
+            tip = tr("overdue_days", args: [(duration - circle).toString()]);
           }
         } else {
           // if(duration < circle && circle - duration == 1) {
@@ -170,18 +171,18 @@ class _RecordPageState extends State<RecordPage> with WidgetsBindingObserver {
           // } else
           if(duration < circle) {
             //
-            tip = "${circle - duration}天后来";
+            tip = tr("come_in_days", args: [(circle - duration).toString()]);
           }
           else if (duration == circle) {
             // tip = "预计今天来";
-            tip = "今天来";
+            tip = tr("come_today");
           }
           else if (duration > circle && duration <= circle * 2) {
             // tip = "姨妈迷路了";
-            tip = "晚了${duration - circle}天";
+            tip = tr("late_days", args: [(duration - circle).toString()]);
           }
           else if (duration > circle * 2) {
-            tip = "建议就医";
+            tip = tr("see_doctor");
           }
         }
         return Column(
@@ -212,15 +213,15 @@ class _RecordPageState extends State<RecordPage> with WidgetsBindingObserver {
                           Row(children: [
                             // Text("开始：", style: PS.normalTextStyle(color: Colors.white),),
                             // SizedBox(width: 5,),
-                            Text("${DateUtil.formatDateMs(int.parse(dataSource[index].first["markAt"]), format: "yyyy年M月d日")}", style: PS.normalTextStyle(color: PS.cb2b2b2),),
-                            Text(" ~ ", style: PS.normalTextStyle(color: PS.cb2b2b2),),
-                            Offstage(offstage: dataSource[index].length != 2, child: Text("${DateUtil.formatDateMs(int.parse(dataSource[index].last["markAt"]), format: "yyyy年M月d日")}", style: PS.normalTextStyle(color: PS.cb2b2b2),)),
+                            Text("${DateUtil.formatDateMs(int.parse(dataSource[index].first["markAt"]), format: "yyyy.M.d")}", style: PS.normalTextStyle(color: PS.cb2b2b2),),
+                            Text(" - ", style: PS.normalTextStyle(color: PS.cb2b2b2),),
+                            Offstage(offstage: dataSource[index].length != 2, child: Text("${DateUtil.formatDateMs(int.parse(dataSource[index].last["markAt"]), format: "yyyy.M.d")}", style: PS.normalTextStyle(color: PS.cb2b2b2),)),
                           ],),
                           // SizedBox(width: 10,),
                           Row(children: [
                             Text(", ", style: PS.normalTextStyle(color: PS.cb2b2b2),),
                             // SizedBox(width: 5,),
-                            Text(dataSource[index].length == 2 ?  "${(DateUtil.getDateTimeByMs(int.parse(dataSource[index].last["markAt"]) ).difference(DateUtil.getDateTimeByMs(int.parse(dataSource[index].first["markAt"]))).inDays + 1)}天" : "", style: PS.normalTextStyle(color: PS.cb2b2b2),),
+                            Text(dataSource[index].length == 2 ?  "${(DateUtil.getDateTimeByMs(int.parse(dataSource[index].last["markAt"]) ).difference(DateUtil.getDateTimeByMs(int.parse(dataSource[index].first["markAt"]))).inDays + 1)}${tr('days')}" : "", style: PS.normalTextStyle(color: PS.cb2b2b2),),
                           ],),
                         ],
                       )
@@ -247,7 +248,7 @@ class _RecordPageState extends State<RecordPage> with WidgetsBindingObserver {
     }
     return Scaffold(
       appBar: AppBar(
-        title: Text("经期记录"),
+        title: Text(tr("period_records")),
         // brightness: Brightness.dark,
         elevation: 0,
         backgroundColor: Colors.white,

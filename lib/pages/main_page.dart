@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:yimabao/config/project_style.dart';
 import 'package:yimabao/pages/new_home.dart';
@@ -71,7 +72,7 @@ class _MainPageState extends State<MainPage> {
           children: [
             Expanded(
               child: Container(
-                child: _bottomNavPages.length == 0 ? Center(child: Text('正在加载..',),) : PageView(physics: NeverScrollableScrollPhysics(), children: _bottomNavPages, controller: _pageController,),
+                child: _bottomNavPages.length == 0 ? Center(child: Text(tr("loading"),),) : PageView(physics: NeverScrollableScrollPhysics(), children: _bottomNavPages, controller: _pageController,),
               ),
             ),
             // Container(height: 0.5, color: Colors.grey.shade50,)
@@ -91,7 +92,7 @@ class _MainPageState extends State<MainPage> {
                 },
                 child: Center(child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 15),
-                  child: Text("记录", style: PS.titleTextStyle(color: _selectedIndex == 0 ? Color(0xff808080) : Color.fromRGBO(173, 173, 173, 1), fontWeight: FontWeight.normal),),
+                  child: Text(tr("record"), style: PS.titleTextStyle(color: _selectedIndex == 0 ? Color(0xff808080) : Color.fromRGBO(173, 173, 173, 1), fontWeight: FontWeight.normal),),
                 )),
               )),
               Expanded(child: GestureDetector(
@@ -101,7 +102,7 @@ class _MainPageState extends State<MainPage> {
                 },
                 child: Center(child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 15),
-                  child: Text("我", style: PS.titleTextStyle(color: _selectedIndex == 1 ? Color(0xff808080) : Color.fromRGBO(173, 173, 173, 1), fontWeight: FontWeight.normal),),
+                  child: Text(tr("me"), style: PS.titleTextStyle(color: _selectedIndex == 1 ? Color(0xff808080) : Color.fromRGBO(173, 173, 173, 1), fontWeight: FontWeight.normal),),
                 )),
               )),
             ],

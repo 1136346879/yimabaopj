@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:yimabao/config/project_style.dart';
@@ -46,7 +47,7 @@ class _AboutPageState extends State<AboutPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("设置"),
+        title: Text(tr("settings")),
         // leadingWidth: 150,
         // brightness: Brightness.dark,
         elevation: 0,
@@ -72,7 +73,7 @@ class _AboutPageState extends State<AboutPage> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text("用户协议", style: PS.normalTextStyle(),),
+                    Text(tr("user_agreement"), style: PS.normalTextStyle(),),
                     Icon(Icons.chevron_right, color: Colors.grey,)
                   ],
                 ),
@@ -92,7 +93,7 @@ class _AboutPageState extends State<AboutPage> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text("隐私政策", style: PS.normalTextStyle(),),
+                    Text(tr("privacy_policy"), style: PS.normalTextStyle(),),
                     Icon(Icons.chevron_right, color: Colors.grey,)
                   ],
                 ),
@@ -105,7 +106,7 @@ class _AboutPageState extends State<AboutPage> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text("版本", style: PS.normalTextStyle(),),
+                  Text(tr("version"), style: PS.normalTextStyle(),),
                   Row(
                     children: [
                       Text("v${_localVersion}", style: PS.smallTextStyle(color: Colors.grey),),
@@ -128,7 +129,7 @@ class _AboutPageState extends State<AboutPage> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text("检查更新", style: PS.normalTextStyle(),),
+                    Text(tr("check_update"), style: PS.normalTextStyle(),),
                     // Icon(Icons.chevron_right, color: Colors.grey,)
                   ],
                 ),
@@ -154,7 +155,7 @@ class _AboutPageState extends State<AboutPage> {
                     Row(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        Text("联系我们", style: PS.normalTextStyle(),),
+                        Text(tr("contact_us"), style: PS.normalTextStyle(),),
                         // SizedBox(width: 10,),
                         // Text("（注销账号）", style: PS.normalTextStyle(color: Colors.red),),
                       ],
@@ -186,7 +187,7 @@ class _AboutPageState extends State<AboutPage> {
               behavior: HitTestBehavior.opaque,
               onTap: () async {
                 await CacheUtil.clear();
-                showToast("清除成功");
+                showToast(tr("clear_success"));
                 getCacheTotal();
               },
               child: Container(
@@ -195,7 +196,7 @@ class _AboutPageState extends State<AboutPage> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text("清除缓存", style: PS.normalTextStyle(),),
+                    Text(tr("clear_cache"), style: PS.normalTextStyle(),),
                     Row(
                       children: [
                         Text("${cacheTotal}", style: PS.smallTextStyle(color: Colors.grey),),
@@ -220,7 +221,7 @@ class _AboutPageState extends State<AboutPage> {
                     setState(() {
 
                     });
-                  }, title: "提示", message: "确认退出登录？", isOnlySureBtn: false, sureBtnTitle: "退出", sureBtnTitleColor: Colors.red);
+                  }, title: tr("tip"), message: tr("confirm_logout"), isOnlySureBtn: false, sureBtnTitle: tr("logout_action"), sureBtnTitleColor: Colors.red);
 
                 },
                 child: Container(
@@ -229,7 +230,7 @@ class _AboutPageState extends State<AboutPage> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text("退出登录", style: PS.normalTextStyle(color: Colors.red),),
+                      Text(tr("logout"), style: PS.normalTextStyle(color: Colors.red),),
                     ],
                   ),
                 ),

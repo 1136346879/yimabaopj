@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:collection';
 import 'dart:io';
 
+import 'package:easy_localization/easy_localization.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flustars/flustars.dart';
 import 'package:flutter/material.dart';
@@ -332,20 +333,20 @@ netSubscription = Connectivity().onConnectivityChanged.listen(_updateConnectionS
         // else if (duration > circle) {
         //   tip = "多了${duration - circle}天";
         // }
-        tip = "月经第${duration + 1}天";
+        tip = tr("period_day_n", args: [(duration + 1).toString()]);
       } else {
         if(duration < circle) {
           // tip = "${circle - duration}天后来";
-          tip = "距离经期还有${circle - duration}天";
+          tip = tr("distance_period", args: [(circle - duration).toString()]);
         }
         else if (duration == circle) {
-          tip = "今天来";
+          tip = tr("come_today");
         }
         else if (duration > circle && duration <= circle * 2) {
-          tip = "晚了${duration - circle}天";
+          tip = tr("late_days", args: [(duration - circle).toString()]);
         }
         else if (duration > circle * 2) {
-          tip = "建议就医";
+          tip = tr("see_doctor");
         }
       }
       if(isDoing) {
@@ -478,7 +479,7 @@ netSubscription = Connectivity().onConnectivityChanged.listen(_updateConnectionS
           leading: GestureDetector(onTap: _selectDate, child: Center(child: Row(
             children: [
               SizedBox(width: 10,),
-              Text("${DateUtil.formatDate(getNowDate(),format: "MM.dd")} ${DateUtil.getWeekday(getNowDate(), languageCode: "zh", short: true)}", style: PS.smallTextStyle(color: PS.secondTextColor)),
+              Text("${DateUtil.formatDate(getNowDate(),format: "MM.dd")} ${DateUtil.getWeekday(getNowDate(), languageCode: context.locale.languageCode, short: true)}", style: PS.smallTextStyle(color: PS.secondTextColor)),
             ],
           ))),
           // leading: GestureDetector(onTap: _selectDate, child: Center(child: Row(
@@ -532,7 +533,7 @@ netSubscription = Connectivity().onConnectivityChanged.listen(_updateConnectionS
                     focusedDay: _focusedDay,
                     // headerVisible: false,
                     startingDayOfWeek: StartingDayOfWeek.monday,
-                    locale: 'zh_CN',
+                    locale: context.locale.toString(),
                     calendarFormat: _calendarFormat,
                     headerStyle: HeaderStyle(
                         titleCentered: true,
@@ -834,7 +835,7 @@ netSubscription = Connectivity().onConnectivityChanged.listen(_updateConnectionS
                     valueListenable: _selectedEvents,
                     builder: (context, value, _) {
                       if(dateTimeToYMD(_selectedDay!).isAfter(dateTimeToYMD(getNowDate()))) {
-                        return Container(width: double.infinity, height: 200, child: Center(child: Text("期待明天会更好", style: PS.normalTextStyle(),)),);
+                        return Container(width: double.infinity, height: 200, child: Center(child: Text(tr("expect_better_tomorrow"), style: PS.normalTextStyle(),)),);
                       }
                       // return SizedBox();
                       // 能否标记姨妈来了走了
@@ -947,13 +948,13 @@ netSubscription = Connectivity().onConnectivityChanged.listen(_updateConnectionS
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: [
-                                  Text("姨妈来了吗？", style: PS.normalTextStyle(),),
+                                  Text(tr("period_started_q"), style: PS.normalTextStyle(),),
                                   FlutterSwitch(
                                     // width: 85.0,
                                     showOnOff: true,
                                     activeColor: Color(0xffE8A7AD),
-                                    activeText: " 是",
-                                    inactiveText: "否 ",
+                                    activeText: " ${tr('yes')}",
+                                    inactiveText: "${tr('no')} ",
                                     activeTextColor: Colors.white,
                                     inactiveTextColor: Colors.white,
                                     valueFontSize: 16.0,
@@ -998,15 +999,15 @@ netSubscription = Connectivity().onConnectivityChanged.listen(_updateConnectionS
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: [
-                                  Text("姨妈走了吗？", style: PS.normalTextStyle(),),
+                                  Text(tr("period_ended_q"), style: PS.normalTextStyle(),),
                                   FlutterSwitch(
                                     // width: 85.0,
                                     showOnOff: true,
                                     activeColor: Color(0xffE8A7AD),
                                     activeTextColor: Colors.white,
                                     inactiveTextColor: Colors.white,
-                                    activeText: " 是",
-                                    inactiveText: "否 ",
+                                    activeText: " ${tr('yes')}",
+                                    inactiveText: "${tr('no')} ",
                                     valueFontSize: 15.0,
                                     value: tagSwitchValue,
                                     onToggle: (bool value) async {
@@ -1053,7 +1054,7 @@ netSubscription = Connectivity().onConnectivityChanged.listen(_updateConnectionS
                                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                       crossAxisAlignment: CrossAxisAlignment.center,
                                       children: [
-                                        Text("疼痛", style: PS.normalTextStyle(),),
+                                        Text(tr("pain"), style: PS.normalTextStyle(),),
                                         Row(
                                           children: [
                                             Offstage(
@@ -1128,7 +1129,7 @@ netSubscription = Connectivity().onConnectivityChanged.listen(_updateConnectionS
                                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                           crossAxisAlignment: CrossAxisAlignment.center,
                                           children: [
-                                            Text("流量", style: PS.normalTextStyle(),),
+                                            Text(tr("flow"), style: PS.normalTextStyle(),),
                                             Row(
                                               children: [
                                                 Offstage(
@@ -1202,26 +1203,26 @@ netSubscription = Connectivity().onConnectivityChanged.listen(_updateConnectionS
                                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                     crossAxisAlignment: CrossAxisAlignment.center,
                                     children: [
-                                      Text("爱爱", style: PS.normalTextStyle(),),
+                                      Text(tr("sex"), style: PS.normalTextStyle(),),
                                       IconButton(onPressed: () {
                                         Widget _headMenuView = Container(
                                             color: Colors.grey[50],
                                             height: 36.0,
                                             child: Row(children: [
-                                              Expanded(child: Center(child: Text('时间'))),
-                                              Expanded(child: Center(child: Text('措施'))),
-                                              Expanded(child: Center(child: Text('时长'))),
+                                              Expanded(child: Center(child: Text(tr("time")))),
+                                              Expanded(child: Center(child: Text(tr("measure")))),
+                                              Expanded(child: Center(child: Text(tr("duration")))),
                                             ]));
 
                                         final timeData = [
-                                          List.generate(24, (index) => index.toString() + "时").toList(),
-                                          ["无措施", "避孕套", "避孕药", "体外排精"],
+                                          List.generate(24, (index) => index.toString() + tr("hour_suffix")).toList(),
+                                          [tr("no_measure"), tr("condom"), tr("pill"), tr("extracorporeal")],
                                           List.generate(99, (index) {
-                                            if(index == 0) return "保密";
-                                            return (index + 1).toString() + "分钟";
+                                            if(index == 0) return tr("secret");
+                                            return (index + 1).toString() + tr("minute");
                                           }).toList(),
                                         ];
-                                        String defaultTime = "${getNowDate().hour}时";
+                                        String defaultTime = "${getNowDate().hour}${tr('hour_suffix')}";
                                         Pickers.showMultiPicker(
                                           context,
                                           pickerStyle: PickerStyle(menu: _headMenuView, menuHeight: 36.0),
@@ -1262,7 +1263,7 @@ netSubscription = Connectivity().onConnectivityChanged.listen(_updateConnectionS
                                                 padding: EdgeInsets.zero,
                                                 itemBuilder: (BuildContext context){
                                                   return [
-                                                      PopupMenuItem(child: Text("删除"),value: "delete",),
+                                                      PopupMenuItem(child: Text(tr("delete")),value: "delete",),
                                                   ];
                                                 },
                                                 onSelected: (Object object) async {
@@ -1297,7 +1298,7 @@ netSubscription = Connectivity().onConnectivityChanged.listen(_updateConnectionS
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                Text("体温", style: PS.normalTextStyle(),),
+                                Text(tr("temperature"), style: PS.normalTextStyle(),),
                                 Row(
                                   children: [
                                     Offstage(offstage: temperature != null, child: IconButton(onPressed: () {
@@ -1339,7 +1340,7 @@ netSubscription = Connectivity().onConnectivityChanged.listen(_updateConnectionS
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
-                                Text("体重", style: PS.normalTextStyle(),),
+                                Text(tr("weight"), style: PS.normalTextStyle(),),
                                 Row(
                                   children: [
                                     Offstage(offstage: weight != null, child: IconButton(onPressed: () async {
@@ -1384,7 +1385,7 @@ netSubscription = Connectivity().onConnectivityChanged.listen(_updateConnectionS
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                Text("睡眠", style: PS.normalTextStyle(),),
+                                Text(tr("sleep"), style: PS.normalTextStyle(),),
                                 Row(
                                   children: [
                                     Offstage(offstage: sleep != null, child: IconButton(onPressed: () {
@@ -1432,7 +1433,7 @@ netSubscription = Connectivity().onConnectivityChanged.listen(_updateConnectionS
                                     child: Row(
                                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                       children: [
-                                        Text("日记", style: PS.normalTextStyle(),),
+                                        Text(tr("diary"), style: PS.normalTextStyle(),),
                                         Row(
                                           children: [
                                             Offstage(
@@ -1452,7 +1453,7 @@ netSubscription = Connectivity().onConnectivityChanged.listen(_updateConnectionS
                                                   return AddDiaryPage(_selectedDay!, editItem: diary!,);
                                                 }));
                                                 init();
-                                              }, child: Text("编辑", style: PS.smallTextStyle(color: Color(0xff888888)),)),
+                                              }, child: Text(tr("edit"), style: PS.smallTextStyle(color: Color(0xff888888)),)),
                                             )
                                           ],
                                         )

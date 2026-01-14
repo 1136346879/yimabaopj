@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -43,7 +44,7 @@ class _AgreementH5PageState extends State<AgreementH5Page> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.index == 0 ? "用户协议" : "隐私政策"),
+        title: Text(widget.index == 0 ? tr("user_agreement") : tr("privacy_policy")),
         // brightness: Brightness.dark,
         elevation: 0,
         backgroundColor: Colors.white,
@@ -60,12 +61,12 @@ class _AgreementH5PageState extends State<AgreementH5Page> {
               SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
               sharedPreferences.setBool(ProjectConfig.agreementKey, false);
               SystemNavigator.pop();
-            }, message: '撤销协议会清除所有数据，app恢复至首次安装状态', sureBtnTitle: "撤销", sureBtnTitleColor: Colors.red);
+            }, message: tr("revoke_agreement_warning"), sureBtnTitle: tr("revoke"), sureBtnTitleColor: Colors.red);
           }, child: Center(child: Container(
             padding: EdgeInsets.only(bottom: 3),
             child: Row(
               children: [
-                Text("撤销协议", style: PS.normalTextStyle(color: Colors.red),),
+                Text(tr("revoke_agreement"), style: PS.normalTextStyle(color: Colors.red),),
                 SizedBox(width: 15,)
               ],
             ),

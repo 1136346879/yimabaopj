@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -28,7 +29,7 @@ class _ContactPageState extends State<ContactPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-          title: Text("联系我们"),
+          title: Text(tr("contact_us")),
           // leadingWidth: 150,
           // brightness: Brightness.dark,
           elevation: 0,
@@ -60,17 +61,17 @@ class _ContactPageState extends State<ContactPage> {
                     // SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
                     // sharedPreferences.setBool(ProjectConfig.agreementKey, false);
                     // SystemNavigator.pop();
-                  }, title: '申请注销账号', message: '确定要注销账号吗？\n\n您的用户数据我们将继续为您保留12个月。如需继续使用姨妈宝APP，可以在12个月以内登录姨妈宝APP，数据还会恢复哦~\n',
-                      sureBtnTitle: "注销账号");
-                }, title: '注意', message: '1、申请注销账号后，账号信息将继续在服务器留存12个月。期间如果用户再次登录，则视为放弃账号注销，本app将继续为用户提供服务。\n\n2、申请注销账号后，用户连续12个月未登录，服务器将定期集中清理注销账号所有数据。用户数据被清理后将彻底丢失且无法恢复。\n\n3、如果有任何疑问请联系客服咨询。\n',
-                    sureBtnTitle: "申请注销",);
+                  }, title: tr("apply_delete_account"), message: tr("delete_account_confirm_msg"),
+                      sureBtnTitle: tr("delete_account_confirm_btn"));
+                }, title: tr("notice"), message: tr("delete_account_notice_msg"),
+                    sureBtnTitle: tr("apply_cancellation"),);
               }, child: Container(
                     color: Colors.white,
                     padding: EdgeInsets.all(16),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text("注销账号", style: PS.normalTextStyle(),),
+                        Text(tr("delete_account"), style: PS.normalTextStyle(),),
                         // Icon(Icons.chevron_right, color: Colors.grey,)
                       ],
                     ),
@@ -112,7 +113,7 @@ class _ContactPageState extends State<ContactPage> {
                     Row(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        Text("客服", style: PS.normalTextStyle(),),
+                        Text(tr("customer_service"), style: PS.normalTextStyle(),),
                       ],
                     ),
                     // Icon(Icons.chevron_right, color: Colors.grey,)

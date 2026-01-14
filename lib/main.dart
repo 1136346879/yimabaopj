@@ -30,7 +30,7 @@ Future<void> main() async {
     },
     appRunner: () => runApp(
       EasyLocalization(
-          supportedLocales: [Locale('zh')],
+          supportedLocales: [Locale('zh'), Locale('en')],
           path: 'assets/translations', // <-- change the path of the translation files
           fallbackLocale: Locale('zh'),
           child: MyApp(isAgree: hasAgree)
@@ -70,7 +70,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: '姨妈宝',
+      title: tr('app_name'),
       navigatorKey: MyRouter.navigatorKey,
       debugShowCheckedModeBanner: false,
       theme: ThemeData(

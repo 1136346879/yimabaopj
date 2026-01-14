@@ -4,6 +4,7 @@ import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:device_info_plus/device_info_plus.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flustars/flustars.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -182,7 +183,7 @@ class _SettingPageState extends State<SettingPage> {
                             // fluwx.sendWeChatAuth(scope: "snsapi_userinfo", state: "wechat_sdk_yimabao");
                           }, child: Image.asset("images/wechat.png", width: 50, height: 50,)),
                           SizedBox(height: 10,),
-                          Text("登录", style: PS.normalTextStyle())
+                          Text(tr("login"), style: PS.normalTextStyle())
                         ],
                       ),
                     ),
@@ -200,10 +201,10 @@ class _SettingPageState extends State<SettingPage> {
                                     await MineAPI.instance.memberLogout(context);
                                     userInfo = null;
                                     getCycle();
-                                  }, title: "提示", message: "确认退出登录？", isOnlySureBtn: false, sureBtnTitle: "退出", sureBtnTitleColor: Colors.red);
+                                  }, title: tr("tip"), message: tr("confirm_logout"), isOnlySureBtn: false, sureBtnTitle: tr("logout_action"), sureBtnTitleColor: Colors.red);
 
                                 },
-                                child: Text("退出登录", style: PS.normalTextStyle(color: Colors.white)),
+                                child: Text(tr("logout"), style: PS.normalTextStyle(color: Colors.white)),
                             ),
                               SizedBox(width: 10,)
                           ],),
@@ -317,10 +318,10 @@ class _SettingPageState extends State<SettingPage> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text("周期设置", style: PS.normalTextStyle(),),
+                    Text(tr("cycle_settings"), style: PS.normalTextStyle(),),
                     Row(
                       children: [
-                        Text("${doingVal}天, ${cycleVal}天", style: PS.smallTextStyle(color: Colors.grey),),
+                        Text("${doingVal}${tr('days')}, ${cycleVal}${tr('days')}", style: PS.smallTextStyle(color: Colors.grey),),
                         // Icon(Icons.chevron_right, color: Colors.grey,)
                       ],
                     )
@@ -368,7 +369,7 @@ class _SettingPageState extends State<SettingPage> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text("经期记录", style: PS.normalTextStyle(),),
+                    Text(tr("period_records"), style: PS.normalTextStyle(),),
                     Icon(Icons.arrow_forward_ios_sharp, size: 15, color: PS.cb2b2b2,)
                   ],
                 ),
@@ -388,7 +389,7 @@ class _SettingPageState extends State<SettingPage> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text("通知与提醒", style: PS.normalTextStyle(),),
+                    Text(tr("notifications_reminders"), style: PS.normalTextStyle(),),
                     Icon(Icons.arrow_forward_ios_sharp, size: 15, color: PS.cb2b2b2,)
                   ],
                 ),
@@ -409,7 +410,7 @@ class _SettingPageState extends State<SettingPage> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text("体温记录", style: PS.normalTextStyle(),),
+                    Text(tr("temperature_records"), style: PS.normalTextStyle(),),
                     Icon(Icons.arrow_forward_ios_sharp, size: 15, color: PS.cb2b2b2,)
                   ],
                 ),
@@ -430,7 +431,7 @@ class _SettingPageState extends State<SettingPage> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text("体重记录", style: PS.normalTextStyle(),),
+                    Text(tr("weight_records"), style: PS.normalTextStyle(),),
                     Icon(Icons.arrow_forward_ios_sharp, size: 15, color: PS.cb2b2b2,)
                   ],
                 ),
@@ -451,7 +452,7 @@ class _SettingPageState extends State<SettingPage> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text("睡眠记录", style: PS.normalTextStyle(),),
+                    Text(tr("sleep_records"), style: PS.normalTextStyle(),),
                     Icon(Icons.arrow_forward_ios_sharp, size: 15, color: PS.cb2b2b2,)
                   ],
                 ),
@@ -473,7 +474,7 @@ class _SettingPageState extends State<SettingPage> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text("所有日记", style: PS.normalTextStyle(),),
+                    Text(tr("all_diaries"), style: PS.normalTextStyle(),),
                     Icon(Icons.arrow_forward_ios_sharp, size: 15, color: PS.cb2b2b2,)
                   ],
                 ),
@@ -533,7 +534,7 @@ class _SettingPageState extends State<SettingPage> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          Padding(padding: EdgeInsets.only(top: PS.marginLarge), child: Text("分享", style: PS.titleTextStyle(),)),
+                          Padding(padding: EdgeInsets.only(top: PS.marginLarge), child: Text(tr("share"), style: PS.titleTextStyle(),)),
                           Row(
                             children: [
                               GestureDetector(
@@ -545,7 +546,7 @@ class _SettingPageState extends State<SettingPage> {
                                   child: Column(
                                     children: [
                                       Image.asset("images/icon64_wx_logo.png", width: 50,),
-                                      Text("微信")
+                                      Text(tr("wechat"))
                                     ],
                                   ),
                                 ),
@@ -559,7 +560,7 @@ class _SettingPageState extends State<SettingPage> {
                                   child: Column(
                                     children: [
                                       Image.asset("images/icon_res_download_moments.png", width: 50,),
-                                      Text("朋友圈")
+                                      Text(tr("moments"))
                                     ],
                                   ),
                                 ),
@@ -576,7 +577,7 @@ class _SettingPageState extends State<SettingPage> {
                                 color: PS.ce6e6e6,
                                 // width: double.infinity,
                                 // height: 50,
-                                child: Center(child: Text("取消", style: PS.normalTextStyle(),)),
+                                child: Center(child: Text(tr("cancel"), style: PS.normalTextStyle(),)),
                               ),
                             ),
                           )
@@ -593,13 +594,59 @@ class _SettingPageState extends State<SettingPage> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text("推荐给好友", style: PS.normalTextStyle(),),
+                    Text(tr("recommend_friends"), style: PS.normalTextStyle(),),
                   ],
                 ),
               ),
             ),
 
             Container(width: double.infinity, height: 10,),
+            GestureDetector(
+              behavior: HitTestBehavior.opaque,
+              onTap: () async {
+                showModalBottomSheet(context: context, builder: (BuildContext context) {
+                  return Container(
+                    height: 160,
+                    child: Column(
+                      children: [
+                        ListTile(
+                          title: Center(child: Text("中文")),
+                          onTap: () {
+                            context.setLocale(Locale('zh'));
+                            Navigator.pop(context);
+                          },
+                        ),
+                        Divider(height: 1,),
+                        ListTile(
+                          title: Center(child: Text("English")),
+                          onTap: () {
+                            context.setLocale(Locale('en'));
+                            Navigator.pop(context);
+                          },
+                        ),
+                      ],
+                    ),
+                  );
+                });
+              },
+              child: Container(
+                color: Colors.white,
+                padding: EdgeInsets.all(16),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(tr("language"), style: PS.normalTextStyle(),),
+                    Row(
+                      children: [
+                        Text(context.locale.languageCode == "zh" ? "中文" : "English", style: PS.smallTextStyle(color: Colors.grey),),
+                        Icon(Icons.arrow_forward_ios_sharp, size: 15, color: PS.cb2b2b2,)
+                      ],
+                    )
+                  ],
+                ),
+              ),
+            ),
+            Divider(height: 1,),
             GestureDetector(
               behavior: HitTestBehavior.opaque,
               onTap: () async {
@@ -615,7 +662,7 @@ class _SettingPageState extends State<SettingPage> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text("设置", style: PS.normalTextStyle(),),
+                    Text(tr("settings"), style: PS.normalTextStyle(),),
                     Icon(Icons.arrow_forward_ios_sharp, size: 15, color: PS.cb2b2b2,)
                   ],
                 ),

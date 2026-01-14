@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:ffi';
 
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -17,38 +18,38 @@ typedef DialogBtnAction = void Function();
 
 class MyDialog {
 
-  static showWith(BuildContext context, {required String message, bool barrierDismissible = true, required DialogBtnAction sureBtnAction , String title = "提示", String cancelBtnTitle = "取消", String sureBtnTitle = "确定", DialogBtnAction? cancelAction, bool isOnlysureBtn = false, bool onWillPopValue = true}) {
-    MyDialog.showCustomDialog(context: context, msg: message, sureBtnCallback: sureBtnAction, cancelBtnTitle: cancelBtnTitle, sureBtnTitle: sureBtnTitle, title: title, barrierDismissible: barrierDismissible, cancelBtnCallback: cancelAction, isOnlySureBtn: isOnlysureBtn, onWillPopValue: onWillPopValue);
+  static showWith(BuildContext context, {required String message, bool barrierDismissible = true, required DialogBtnAction sureBtnAction , String? title, String? cancelBtnTitle, String? sureBtnTitle, DialogBtnAction? cancelAction, bool isOnlysureBtn = false, bool onWillPopValue = true}) {
+    MyDialog.showCustomDialog(context: context, msg: message, sureBtnCallback: sureBtnAction, cancelBtnTitle: cancelBtnTitle ?? tr("cancel"), sureBtnTitle: sureBtnTitle ?? tr("confirm"), title: title ?? tr("tip"), barrierDismissible: barrierDismissible, cancelBtnCallback: cancelAction, isOnlySureBtn: isOnlysureBtn, onWillPopValue: onWillPopValue);
   }
 
-  static Future<T?> showAddRecordDateDialog<T>({required BuildContext context, Widget? customBody, String title = "记录哪一天"}) {
-    return showCustomDialog<T?>(context: context, isHideBottomBar: true, customBody: customBody, title: title, msg: null);
+  static Future<T?> showAddRecordDateDialog<T>({required BuildContext context, Widget? customBody, String? title}) {
+    return showCustomDialog<T?>(context: context, isHideBottomBar: true, customBody: customBody, title: title ?? tr("record_which_day"), msg: null);
   }
   static Future<void> showAlertDialog(
       BuildContext context, VoidCallback callback,
-      {String title = '提示',
+      {String? title,
         String? message,
         bool isOnlySureBtn = false,
         bool onWillPopValue = true,
         VoidCallback? cancelBtnCallback,
         bool barrierDismissible = true,
-        String sureBtnTitle = "确定",
+        String? sureBtnTitle,
         Color sureBtnTitleColor = PS.primaryColor,
         Color cancelBtnTitleColor = PS.textBlackColor,
       }) async {
-    await showCustomDialog(context: context, msg: message, cancelBtnCallback: cancelBtnCallback, sureBtnCallback: callback, title: title, isOnlySureBtn: isOnlySureBtn, onWillPopValue: onWillPopValue, barrierDismissible: barrierDismissible, sureBtnTitle: sureBtnTitle, sureBtnTitleColor: sureBtnTitleColor, cancelBtnTitleColor: cancelBtnTitleColor);
+    await showCustomDialog(context: context, msg: message, cancelBtnCallback: cancelBtnCallback, sureBtnCallback: callback, title: title ?? tr("tip"), isOnlySureBtn: isOnlySureBtn, onWillPopValue: onWillPopValue, barrierDismissible: barrierDismissible, sureBtnTitle: sureBtnTitle ?? tr("confirm"), sureBtnTitleColor: sureBtnTitleColor, cancelBtnTitleColor: cancelBtnTitleColor);
   }
 
   static Future<T?> showCustomDialog<T>(
       {
         required BuildContext context,
-        String title = "提示",
+        String? title,
         String? msg,
         Widget? customBody,
-        String sureBtnTitle = "确定",
+        String? sureBtnTitle,
         Color sureBtnTitleColor = PS.primaryColor,
         VoidCallback? sureBtnCallback,
-        String cancelBtnTitle = "取消",
+        String? cancelBtnTitle,
         Color cancelBtnTitleColor = PS.textBlackColor,
         VoidCallback? cancelBtnCallback,
         bool isOnlySureBtn = false,
@@ -88,7 +89,7 @@ class MyDialog {
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: <Widget>[
                             Text(
-                              title,
+                              title ?? tr("tip"),
                               style: PS.titleTextStyle(
                                   ),
                             ),
@@ -124,7 +125,7 @@ class MyDialog {
                             Expanded(
                               child: CustomButton(
                                 child: Text(
-                                  sureBtnTitle,
+                                  sureBtnTitle ?? tr("confirm"),
                                   style: PS.titleTextStyle(
                                       color: sureBtnTitleColor),
                                 ),
@@ -146,7 +147,7 @@ class MyDialog {
                                   offstage: isOnlySureBtn == true,
                                   child: CustomButton(
                                       child: Text(
-                                        cancelBtnTitle,
+                                        cancelBtnTitle ?? tr("cancel"),
                                         style: PS.titleTextStyle(
                                             color: cancelBtnTitleColor),
                                       ),
@@ -173,7 +174,7 @@ class MyDialog {
                               Expanded(
                                 child: CustomButton(
                                   child: Text(
-                                    sureBtnTitle,
+                                    sureBtnTitle ?? tr("confirm"),
                                     style: PS.titleTextStyle(
                                         color: sureBtnTitleColor),
                                   ),
@@ -212,7 +213,7 @@ class AddRecordDateDialogController {
     this.state = state;
   }
   String get selectedRecordDate {
-    return state?.result ?? "今天";
+    return state?.result ?? tr("today");
   }
 }
 
@@ -225,11 +226,13 @@ class AddRecordDateDialogContent extends StatefulWidget {
 
 class _AddRecordDateDialogContentState extends State<AddRecordDateDialogContent> {
   // final addressController = TextEditingController();
-  String result = "今天";
-  final dataSource = ["前天", "昨天", "今天"];
+  late String result;
+  late List<String> dataSource;
   @override
   void initState() {
     super.initState();
+    result = tr("today");
+    dataSource = [tr("day_before_yesterday"), tr("yesterday"), tr("today")];
     widget.controller.bindState(this);
   }
   @override
@@ -319,7 +322,7 @@ class _CycleDialogContentState extends State<CycleDialogContent> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
                 GestureDetector(behavior: HitTestBehavior.opaque, onTap: (){Navigator.of(context).pop();}, child: Icon(Icons.close_outlined)),
-                Text("周期设置", style: PS.titleTextStyle(),),
+                Text(tr("cycle_settings"), style: PS.titleTextStyle(),),
                 GestureDetector(
                     behavior: HitTestBehavior.opaque,
                     child: Icon(Icons.check),
@@ -338,7 +341,7 @@ class _CycleDialogContentState extends State<CycleDialogContent> {
               var selectedDoingIndex = await showDialog(context: context, builder: (BuildContext context){
                 return AlertDialog(
                   contentPadding: EdgeInsets.all(15),
-                  content: _CycleSubDialogContent(dataSource: doingDataSource, initIndex: doingPickerSelectedIndex, title: "修改姨妈周期",),
+                  content: _CycleSubDialogContent(dataSource: doingDataSource, initIndex: doingPickerSelectedIndex, title: tr("modify_period_cycle"),),
                 );
               });
               if (selectedDoingIndex != null) {
@@ -351,10 +354,10 @@ class _CycleDialogContentState extends State<CycleDialogContent> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text("姨妈期"),
+                  Text(tr("period_duration")),
                   Row(
                     children: [
-                      Text("${doingVal}天"),
+                      Text("${doingVal}${tr('days')}"),
                       Icon(Icons.chevron_right)
                     ],
                   )
@@ -369,7 +372,7 @@ class _CycleDialogContentState extends State<CycleDialogContent> {
               var selectedCycleIndex = await showDialog(context: context, builder: (BuildContext context){
                 return AlertDialog(
                   contentPadding: EdgeInsets.all(15),
-                  content: _CycleSubDialogContent(dataSource: cycleDataSource, initIndex: cyclePickerSelectedIndex, title: "修改姨妈间隔",),
+                  content: _CycleSubDialogContent(dataSource: cycleDataSource, initIndex: cyclePickerSelectedIndex, title: tr("modify_period_interval"),),
                 );
               });
               if (selectedCycleIndex != null) {
@@ -382,10 +385,10 @@ class _CycleDialogContentState extends State<CycleDialogContent> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text("间隔"),
+                  Text(tr("interval")),
                   Row(
                     children: [
-                      Text("${cycleVal}天"),
+                      Text("${cycleVal}${tr('days')}"),
                       Icon(Icons.chevron_right)
                     ],
                   )
@@ -454,7 +457,7 @@ class __CycleSubDialogContentState extends State<_CycleSubDialogContent> {
                   _selectedIndex = index;
                 },
                 itemBuilder: (BuildContext context, int index){
-                  return Center(child: Text("${widget.dataSource[index]}天"));
+                  return Center(child: Text("${widget.dataSource[index]}${tr('days')}"));
                 }
             ),
           )

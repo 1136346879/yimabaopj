@@ -3,6 +3,7 @@ import 'dart:io';
 import 'dart:math';
 
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flustars/flustars.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -246,7 +247,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver, Automa
     if(lastRecord != null) {
       //判断
       var isDoing = lastRecord["type"] == 1;
-      title = isDoing ? "姨妈走了吗?" : "姨妈来了吗?";
+      title = isDoing ? tr("period_ended_q") : tr("period_started_q");
     }
 
     MyDialog.showAlertDialog(context, () {
@@ -301,12 +302,12 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver, Automa
           // } else
             if(duration < circle) {
             //
-            tip = "${circle - duration}天后结束";
+            tip = tr("end_in_days", args: [(circle - duration).toString()]);
           } else if (duration == circle) {
-            tip = "今天结束";
+            tip = tr("end_today");
           }
           else if (duration > circle) {
-            tip = "多了${duration - circle}天";
+            tip = tr("overdue_days", args: [(duration - circle).toString()]);
           }
         } else {
           // if(duration < circle && circle - duration == 1) {
@@ -314,21 +315,21 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver, Automa
           // } else
             if(duration < circle) {
             //
-            tip = "${circle - duration}天后来";
+            tip = tr("come_in_days", args: [(circle - duration).toString()]);
           }
             else if (duration == circle) {
             // tip = "预计今天来";
-            tip = "今天来";
+            tip = tr("come_today");
           }
           else if (duration > circle && duration <= circle * 2) {
             // tip = "姨妈迷路了";
-            tip = "晚了${duration - circle}天";
+            tip = tr("late_days", args: [(duration - circle).toString()]);
           }
           else if (duration > circle * 2) {
-            tip = "建议就医";
+            tip = tr("see_doctor");
           }
         }
-        String btnTitle = isDoing ? "姨妈走了" : "姨妈来了";
+        String btnTitle = isDoing ? tr("period_ended") : tr("period_started");
         Widget RecordContainer = Container();
         if(dataSource["index"] != 0) {
           RecordContainer = Container(
@@ -360,9 +361,9 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver, Automa
                     //   // Offstage(offstage: dataSource["data"].length != 2, child: Text("${DateUtil.formatDateMs(int.parse(dataSource["data"].last["markAt"]), format: "yyyy.M.d")}", style: PS.normalTextStyle(color: Colors.white),)),
                     // ],),
                     Row(children: [
-                      Text("姨妈期：", style: PS.normalTextStyle(color: Colors.white),),
+                      Text(tr("period_cycle_label"), style: PS.normalTextStyle(color: Colors.white),),
                       SizedBox(width: 5,),
-                      Text(dataSource["data"].length == 2 ?  "${(DateUtil.getDateTimeByMs(int.parse(dataSource["data"].last["markAt"]) ).difference(DateUtil.getDateTimeByMs(int.parse(dataSource["data"].first["markAt"]))).inDays + 1)}天" : "", style: PS.normalTextStyle(color: Colors.white),),
+                      Text(dataSource["data"].length == 2 ?  "${(DateUtil.getDateTimeByMs(int.parse(dataSource["data"].last["markAt"]) ).difference(DateUtil.getDateTimeByMs(int.parse(dataSource["data"].first["markAt"]))).inDays + 1)}${tr('days')}" : "", style: PS.normalTextStyle(color: Colors.white),),
                     ],),
                     Row(children: [
                       // Text("开始：", style: PS.normalTextStyle(color: Colors.white),),
@@ -405,7 +406,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver, Automa
                               padding: const EdgeInsets.only(top: 5.0),
                               child: Text("${DateUtil.formatDateMs(int.parse(lastRecord['markAt']),format: "MM月dd日")}", style: PS.smallTextStyle(color: Colors.white),),
                             ),
-                            Text("${lastRecord["type"] == 1 ? "来" : "走"}", style: PS.largeTitleTextStyle(color: Colors.white),)
+                            Text("${lastRecord["type"] == 1 ? tr("start") : tr("end")}", style: PS.largeTitleTextStyle(color: Colors.white),)
                           ],
                           crossAxisAlignment: CrossAxisAlignment.start,
                         ),
@@ -429,12 +430,12 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver, Automa
                         children: [
                           Padding(
                             padding: const EdgeInsets.only(bottom: 30.0, right: 5),
-                            child: Text("第", style: PS.titleTextStyle(color: Colors.white),),
+                            child: Text(tr("number_prefix"), style: PS.titleTextStyle(color: Colors.white),),
                           ),
                           Text("${getNowDate().difference(DateUtil.getDateTimeByMs(int.parse(lastRecord["markAt"]))).inDays + 1}", style: TextStyle(color: Colors.white, fontSize: 120),),
                           Padding(
                             padding: const EdgeInsets.only(bottom: 30.0, left: 5),
-                            child: Text("天", style: PS.titleTextStyle(color: Colors.white),),
+                            child: Text(tr("day_suffix"), style: PS.titleTextStyle(color: Colors.white),),
                           )
                         ],
                         crossAxisAlignment: CrossAxisAlignment.end,
@@ -506,7 +507,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver, Automa
                       width: double.infinity,
                       height: 40,
                       child: Center(
-                        child: Text("历史记录", style: PS.normalTextStyle(color: Colors.white70),),
+                        child: Text(tr("history_records"), style: PS.normalTextStyle(color: Colors.white70),),
                       ),
                     ),
                     RecordContainer,
@@ -543,7 +544,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver, Automa
                           ),//圆角弧度
                         ),
                         onPressed: showAddRecordDialog,
-                        child: Text("${btnTitle}", style: PS.titleTextStyle(color: Colors.white),)
+                        child: Text(btnTitle, style: PS.titleTextStyle(color: Colors.white),)
                     ),
                   ),
                   SizedBox(height: 10,),
@@ -630,7 +631,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver, Automa
                     ),//圆角弧度
                   ),
                   onPressed: showAddRecordDialog,
-                  child: Text("姨妈来了", style: PS.titleTextStyle(color: Colors.white),)
+                  child: Text(tr("period_started"), style: PS.titleTextStyle(color: Colors.white),)
               ),
             )
           ],
@@ -675,7 +676,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver, Automa
           // 点击返回键的操作
           if(lastPopTime == null || DateTime.now().difference(lastPopTime) > Duration(seconds: 2)){
             lastPopTime = DateTime.now();
-            Fluttertoast.showToast(msg: '再划一次退出！');
+            Fluttertoast.showToast(msg: tr("press_again_to_exit"));
           }else{
             lastPopTime = DateTime.now();
             // 退出app
