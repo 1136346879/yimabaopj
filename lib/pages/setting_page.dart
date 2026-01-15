@@ -604,52 +604,6 @@ class _SettingPageState extends State<SettingPage> {
             GestureDetector(
               behavior: HitTestBehavior.opaque,
               onTap: () async {
-                showModalBottomSheet(context: context, builder: (BuildContext context) {
-                  return Container(
-                    height: 160,
-                    child: Column(
-                      children: [
-                        ListTile(
-                          title: Center(child: Text("中文")),
-                          onTap: () {
-                            context.setLocale(Locale('zh'));
-                            Navigator.pop(context);
-                          },
-                        ),
-                        Divider(height: 1,),
-                        ListTile(
-                          title: Center(child: Text("English")),
-                          onTap: () {
-                            context.setLocale(Locale('en'));
-                            Navigator.pop(context);
-                          },
-                        ),
-                      ],
-                    ),
-                  );
-                });
-              },
-              child: Container(
-                color: Colors.white,
-                padding: EdgeInsets.all(16),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(tr("language"), style: PS.normalTextStyle(),),
-                    Row(
-                      children: [
-                        Text(context.locale.languageCode == "zh" ? "中文" : "English", style: PS.smallTextStyle(color: Colors.grey),),
-                        Icon(Icons.arrow_forward_ios_sharp, size: 15, color: PS.cb2b2b2,)
-                      ],
-                    )
-                  ],
-                ),
-              ),
-            ),
-            Divider(height: 1,),
-            GestureDetector(
-              behavior: HitTestBehavior.opaque,
-              onTap: () async {
                 await Navigator.push(context, MaterialPageRoute(builder: (_) {
                   return AboutPage();
                 }));
